@@ -5,9 +5,12 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import ReduxThunk from 'redux-thunk';
 
+import moment from 'moment';
+
 import { init, fetchBills, drop } from './helpers/db';
 import billsReducer from './store/reducers/bills';
 import BillsNavigator from './navigation/BillsNavigator';
+
 
 init()
   .then(() => {
@@ -30,6 +33,8 @@ const fetchFonts = () => {
     'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf')
   });
 };
+
+moment.locale('nl');
 
 export default function App() {
   const [fontLoaded, setFontLoaded] = useState(false);

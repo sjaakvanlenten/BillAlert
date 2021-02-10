@@ -1,7 +1,12 @@
-import React, { useState, useCallback } from 'react';
-import { View, Text, Button, TextInput, ScrollView, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Button, TextInput, ScrollView, StyleSheet, Platform } from 'react-native';
 import { useDispatch } from 'react-redux';
+import moment from 'moment';
+
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 import * as billsActions from '../store/actions/bills';
+import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 const BillsManualInputScreen = props => {
     const [ title, setTitle] = useState('');
@@ -10,12 +15,27 @@ const BillsManualInputScreen = props => {
     const [ reference, setReference] = useState('');
     const [ dateExpiry, setDateExpiry] = useState('');
 
+    const [date, setDate] = useState(new Date(moment()));
+    const [show, setShow] = useState(false);
+
     const dispatch = useDispatch();
 
-    const submitHandler = useCallback( () => {
-        dispatch(billsActions.createBill(title, billAmount, IBANo, reference, dateExpiry))
-    }, [dispatch, title, billAmount, IBANo, reference, dateExpiry]);
+    const onChange = (event, selectedDate) => {
+        const currentDate = selectedDate || date;
+        setShow(Platform.OS === 'ios');
+        setDate(currentDate);
+        setDateExpiry(moment(date).format('LL'));        
+      };
 
+      const showDatepicker = () => {
+        setShow(true);
+      };
+
+    const submitHandler = () => {
+        dispatch(billsActions.createBill(title, billAmount, IBANo, reference, dateExpiry))
+    }
+
+   
     return (
         <ScrollView>
             <View style={styles.form}>
@@ -51,14 +71,19 @@ const BillsManualInputScreen = props => {
                         onChangeText={text => setReference(text)}    
                     />
                 </View>
-                <View style={styles.formControl}>
-                    <Text style={styles.label}>Vervaldatum</Text>
-                    <TextInput 
-                        style={styles.input} 
-                        value={dateExpiry}
-                        onChangeText={text => setDateExpiry(text)}
-                    />
-                </View>
+                <TouchableWithoutFeedback onPress={showDatepicker}>
+                    <View style={styles.formControl}>                
+                        <Text style={styles.label}>Vervaldatum</Text>                    
+                        <TextInput 
+                            style={styles.input} 
+                            placeholder={moment().format('LL')}
+                            onFocus={showDatepicker}
+                            value={moment(date).format('LL')}
+                            showSoftInputOnFocus={false}
+                            onChangeText={text => setDateExpiry(text)}
+                        />          
+                    </View>
+                </TouchableWithoutFeedback>
                 <View>
                     <Button
                         title="Opslaan"
@@ -67,6 +92,18 @@ const BillsManualInputScreen = props => {
                     />
                 </View>
             </View>
+            <View>
+      {show && (
+        <DateTimePicker
+          testID="dateTimePicker"
+          value={date}
+          mode="date"
+          is24Hour={true}
+          display="default"
+          onChange={onChange}
+        />
+      )}
+    </View>
         </ScrollView>
     );
 };
@@ -89,7 +126,5 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1
     }
 });
-
-
 
 export default BillsManualInputScreen;

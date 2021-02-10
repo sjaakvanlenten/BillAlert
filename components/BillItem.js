@@ -5,6 +5,7 @@ import Colors from '../constants/Colors';
 import BillItemText from './BillItemText';
 
 const BillItem = props => {
+
     let TouchableCmp = TouchableOpacity;
 
     if (Platform.OS === 'android' && Platform.Version >= 21) {
@@ -21,7 +22,7 @@ const BillItem = props => {
                 <BillItemText>{props.dateCreated} {'\u2022'} {props.billAmount}</BillItemText>
                 <Text style={styles.title}>{props.title}</Text>
                 <BillItemText>Vervaldatum: {props.dateExpiry}</BillItemText> 
-                    {props.status == 1 ? <BillItemText>Betaald</BillItemText> : <BillItemText>Open</BillItemText>}         
+                    {props.status == 1 ? <BillItemText>Betaald</BillItemText> : <BillItemText>Open</BillItemText>}     
         </View>
         </TouchableCmp>
     );
