@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Button, TextInput, ScrollView, StyleSheet, Platform } from 'react-native';
 import { useDispatch } from 'react-redux';
 import moment from 'moment';
@@ -20,14 +20,17 @@ const BillsManualInputScreen = props => {
 
     const dispatch = useDispatch();
 
+    useEffect(() => {
+        setDateExpiry(moment(date).format('LL')); 
+      }, [date]);
+    
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
         setShow(Platform.OS === 'ios');
-        setDate(currentDate);
-        setDateExpiry(moment(date).format('LL'));        
+        setDate(currentDate);     
       };
 
-      const showDatepicker = () => {
+    const showDatepicker = () => {
         setShow(true);
       };
 
@@ -35,7 +38,6 @@ const BillsManualInputScreen = props => {
         dispatch(billsActions.createBill(title, billAmount, IBANo, reference, dateExpiry))
     }
 
-   
     return (
         <ScrollView>
             <View style={styles.form}>
@@ -80,7 +82,7 @@ const BillsManualInputScreen = props => {
                             onFocus={showDatepicker}
                             value={moment(date).format('LL')}
                             showSoftInputOnFocus={false}
-                            onChangeText={text => setDateExpiry(text)}
+                            
                         />          
                     </View>
                 </TouchableWithoutFeedback>
