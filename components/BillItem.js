@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, TouchableNativeFeedback, Plat
 
 import Colors from '../constants/Colors';
 import BillItemText from './BillItemText';
+import moment from 'moment';
 
 const BillItem = props => {
 
@@ -21,7 +22,7 @@ const BillItem = props => {
         }]}>
                 <BillItemText>{props.dateCreated} {'\u2022'} {props.billAmount}</BillItemText>
                 <Text style={styles.title}>{props.title}</Text>
-                <BillItemText>Vervaldatum: {props.dateExpiry}</BillItemText> 
+                <BillItemText>Vervaldatum: {moment(props.dateExpiry).format('LL')}</BillItemText> 
                     {props.status == 1 ? <BillItemText>Betaald</BillItemText> : <BillItemText>Open</BillItemText>}     
         </View>
         </TouchableCmp>

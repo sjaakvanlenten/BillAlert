@@ -13,21 +13,16 @@ const BillsManualInputScreen = props => {
     const [ billAmount, setBillAmount] = useState('');
     const [ IBANo, setIBANo] = useState('');
     const [ reference, setReference] = useState('');
-    const [ dateExpiry, setDateExpiry] = useState('');
-
-    const [date, setDate] = useState(new Date(moment()));
+    const [ dateExpiry, setDateExpiry] = useState(new Date(moment()));
+   
     const [show, setShow] = useState(false);
 
     const dispatch = useDispatch();
-
-    useEffect(() => {
-        setDateExpiry(moment(date).format('LL')); 
-      }, [date]);
     
     const onChange = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
+        const currentDate = selectedDate || dateExpiry;
         setShow(Platform.OS === 'ios');
-        setDate(currentDate);     
+        setDateExpiry(currentDate);     
       };
 
     const showDatepicker = () => {
@@ -35,7 +30,7 @@ const BillsManualInputScreen = props => {
       };
 
     const submitHandler = () => {
-        dispatch(billsActions.createBill(title, billAmount, IBANo, reference, dateExpiry))
+        dispatch(billsActions.createBill(title, billAmount, IBANo, reference, moment(dateExpiry).format()))
     }
 
     return (
@@ -80,7 +75,7 @@ const BillsManualInputScreen = props => {
                             style={styles.input} 
                             placeholder={moment().format('LL')}
                             onFocus={showDatepicker}
-                            value={moment(date).format('LL')}
+                            value={moment(dateExpiry).format('LL')}
                             showSoftInputOnFocus={false}
                             
                         />          
@@ -98,7 +93,7 @@ const BillsManualInputScreen = props => {
       {show && (
         <DateTimePicker
           testID="dateTimePicker"
-          value={date}
+          value={dateExpiry}
           mode="date"
           is24Hour={true}
           display="default"
