@@ -22,7 +22,6 @@ const billsReducer = (state = initialState, action) => {
                 action.billData.IBANo, 
                 action.billData.reference, 
                 0, 
-                1
             );
             return {
                 ...state,

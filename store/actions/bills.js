@@ -14,7 +14,6 @@ export const createBill = (title, billAmount, IBANo, reference, dateExpiry) => {
                 IBANo, 
                 reference, 
                 0,
-                1
             );
             console.log(dbResult);
             dispatch({ type: CREATE_BILL, billData: {id: dbResult.insertId.toString(), title, billAmount, IBANo, reference, dateExpiry}})

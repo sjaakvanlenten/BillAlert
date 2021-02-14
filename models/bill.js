@@ -1,5 +1,5 @@
 class Bill {
-    constructor(id, title, dateCreated, dateExpiry, billAmount, IBANo, reference, status, urgency) {
+    constructor(id, title, dateCreated, dateExpiry, billAmount, IBANo, reference, status,) {
       this.id = id;
       this.title = title;
       this.dateCreated = dateCreated;
@@ -8,7 +8,6 @@ class Bill {
       this.IBANo = IBANo;
       this.reference = reference;
       this.status = status;
-      this.urgency = urgency;
     }
   }
   
