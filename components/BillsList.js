@@ -13,7 +13,6 @@ const BillsList = props => {
             dateExpiry={itemData.item.dateExpiry}
             billAmount={itemData.item.billAmount}
             status={itemData.item.status}
-            urgency={itemData.item.urgency}
             onSelectBill={() => {
               props.navigation.navigate( 'Details', {
                   billId: itemData.item.id,
@@ -29,7 +28,7 @@ const BillsList = props => {
         <View style={styles.billsList}>
         <FlatList
           data={props.listData}
-          keyExtractor={(item, index) => item.id}
+          keyExtractor={(item, index) => item.id.toString()}
           renderItem={renderBillItem}
         />
       </View>

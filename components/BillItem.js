@@ -9,6 +9,8 @@ const BillItem = props => {
 
     let TouchableCmp = TouchableOpacity;
 
+    let daysDifference = moment.duration(moment(props.dateExpiry) - moment()).days();
+
     if (Platform.OS === 'android' && Platform.Version >= 21) {
         TouchableCmp = TouchableNativeFeedback;
     }
@@ -16,14 +18,14 @@ const BillItem = props => {
     return (
         <TouchableCmp onPress={props.onSelectBill}>
         <View style={[styles.billItem, {backgroundColor: 
-            props.urgency === 3 ? Colors.billOverdue : 
-            props.urgency === 2 ? Colors.billUrgent :
+            daysDifference < 1 ? Colors.billOverdue : 
+            daysDifference < 7 ? Colors.billUrgent :
             Colors.billNormal
         }]}>
                 <BillItemText>{props.dateCreated} {'\u2022'} {props.billAmount}</BillItemText>
                 <Text style={styles.title}>{props.title}</Text>
                 <BillItemText>Vervaldatum: {moment(props.dateExpiry).format('LL')}</BillItemText> 
-                    {props.status == 1 ? <BillItemText>Betaald</BillItemText> : <BillItemText>Open</BillItemText>}     
+                    {props.status === 1 ? <BillItemText>Betaald</BillItemText> : <BillItemText>Open</BillItemText>}     
         </View>
         </TouchableCmp>
     );
