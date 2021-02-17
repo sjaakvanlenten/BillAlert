@@ -1,4 +1,4 @@
-import { CREATE_BILL, SET_BILLS } from '../actions/bills';
+import { CREATE_BILL, REMOVE_BILL, SET_BILLS } from '../actions/bills';
 import Bill from '../../models/bill';
 
 const initialState = {
@@ -26,8 +26,15 @@ const billsReducer = (state = initialState, action) => {
             return {
                 ...state,
                 bills: state.bills.concat(newBill),
-            } ;
-            default:
+            }
+        case REMOVE_BILL:
+            return {
+                ...state,
+                bills: state.bills.filter(
+                    bill => bill.id !== action.billId
+                )
+            }
+        default:
             return state;
     }
 

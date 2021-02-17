@@ -50,7 +50,7 @@ const BillsManualInputStackScreen = () => {
         <BillsManualInputStack.Screen
             name="ManualInput"
             component={BillsManualInputScreen}
-            options = {{ headerTitle: 'Invoer' }}
+            options = {{ headerTitle: 'Nieuwe Rekening' }}
         />
     </BillsManualInputStack.Navigator>
     )
@@ -79,7 +79,7 @@ const HomeTabNavigator = () => {
             name="ManualInput" 
             component={BillsManualInputStackScreen}
             options ={ () => ({
-                title: 'Invoeren',
+                title: 'Nieuwe Rekening',
                 tabBarIcon: ({color,size}) => {
                 return <Ionicons name={'md-add-circle'} size={size} color={color} />
             }

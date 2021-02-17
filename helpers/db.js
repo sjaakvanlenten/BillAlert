@@ -73,3 +73,21 @@ export const fetchBills = () => {
     });
     return promise;    
 }
+
+export const deleteBill = (id) => {
+    const promise = new Promise((resolve, reject) => {
+        db.transaction(tx => {
+            tx.executeSql(
+                'DELETE FROM bills WHERE id = ?',
+                [id],
+                (_, result) => {
+                    resolve(result);
+                },
+                (_, err) => {
+                    reject(err);
+                }
+            );
+        });
+    });
+    return promise;    
+}

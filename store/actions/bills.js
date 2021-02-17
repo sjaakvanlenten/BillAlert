@@ -1,7 +1,8 @@
 export const CREATE_BILL = "CREATE_BILL";
 export const SET_BILLS = 'SET_BILLS';
+export const REMOVE_BILL = 'REMOVE_BILL'
 
-import { insertBill, fetchBills } from '../../helpers/db';
+import { insertBill, fetchBills, deleteBill } from '../../helpers/db';
 
 export const createBill = (title, billAmount, IBANo, reference, dateExpiry) => {
     return async dispatch => {
@@ -31,6 +32,17 @@ export const loadBills = () => {
             const dbResult = await fetchBills();
             console.log(dbResult);
             dispatch({ type: SET_BILLS, bills: dbResult.rows._array });
+        } catch (err) {
+            throw err;
+        }
+    };
+};
+
+export const removeBill = billId => {
+    return async dispatch => {
+        try {
+            const dbResult = await deleteBill(billId);
+            dispatch({ type: REMOVE_BILL, billId: billId });
         } catch (err) {
             throw err;
         }
