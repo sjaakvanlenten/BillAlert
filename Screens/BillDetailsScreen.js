@@ -29,8 +29,7 @@ const BillDetailsScreen = props => {
         return null;
     }
 
-    return (
-        
+    return (     
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <Text>{selectedBill.title}</Text>
             <Text>{selectedBill.dateCreated}</Text>

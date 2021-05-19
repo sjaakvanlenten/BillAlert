@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Ionicons } from '@expo/vector-icons';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import { OverflowMenuProvider } from 'react-navigation-header-buttons';
 
 import BillsOverviewScreen, { screenOptions as BillsOverviewOptions} from '../Screens/BillsOverviewScreen';
 import BillDetailsScreen from '../Screens/BillDetailsScreen';
@@ -92,7 +93,9 @@ const HomeTabNavigator = () => {
 const BillsNavigator = () => {
     return (
         <NavigationContainer>
-            <HomeTabNavigator />
+            <OverflowMenuProvider>
+                <HomeTabNavigator />
+            </OverflowMenuProvider>            
         </NavigationContainer>
     );
 };

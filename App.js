@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import * as Font from 'expo-font';
-import { AppLoading } from 'expo';
+import  AppLoading from 'expo-app-loading';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import ReduxThunk from 'redux-thunk';
@@ -44,13 +44,14 @@ export default function App() {
       <AppLoading
         startAsync={fetchFonts}
         onFinish={() => setFontLoaded(true)}
+        onError={console.warn}
       />
     );
   }
 
   return (
     <Provider store={store}>
-      <BillsNavigator />
+            <BillsNavigator />
     </Provider>
   );
 }
