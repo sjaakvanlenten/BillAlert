@@ -1,6 +1,7 @@
 export const CREATE_BILL = "CREATE_BILL";
 export const SET_BILLS = 'SET_BILLS';
 export const REMOVE_BILL = 'REMOVE_BILL'
+export const FILTER_BILLS = 'FILTER_BILLS'
 
 import { insertBill, fetchBills, deleteBill } from '../../helpers/db';
 

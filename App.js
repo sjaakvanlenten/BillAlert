@@ -9,6 +9,7 @@ import moment from 'moment';
 
 import { init, fetchBills, drop } from './helpers/db';
 import billsReducer from './store/reducers/bills';
+import filterReducer from './store/reducers/filters';
 import BillsNavigator from './navigation/BillsNavigator';
 
 
@@ -22,7 +23,8 @@ init()
   });
 
 const rootReducer = combineReducers({
-  bills: billsReducer
+  bills: billsReducer,
+  filters: filterReducer
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));

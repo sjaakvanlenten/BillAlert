@@ -29,7 +29,7 @@ const BillItem = props => {
         </View>
         </TouchableCmp>
     );
-};
+}
 
 const styles = StyleSheet.create({
     billItem: {

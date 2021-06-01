@@ -1,32 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { MaterialIcons } from '@expo/vector-icons';
-import { HeaderButtons, OverflowMenu, HiddenItem } from 'react-navigation-header-buttons';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch, connect } from 'react-redux';
 
+import FilterMenu from '../components/UI/FilterMenu'
 import BillsList from '../components/BillsList';
-import HeaderButton from '../components/UI/HeaderButton';
+
 import * as billsActions from '../store/actions/bills';
+
+function mapStateToProps(state) {
+    return { filters: state.filters }
+  }
 
 const BillsOverviewScreen = props => {
     const { navigation } = props;
     const availableBills = useSelector(state => state.bills.bills);
-    const dispatch = useDispatch();
     
+    const dispatch = useDispatch();
+
     useEffect(() => {
         dispatch(billsActions.loadBills());
     }, [dispatch]);
 
     React.useLayoutEffect(() => {
         navigation.setOptions({
-            headerRight: () => (               
-                <HeaderButtons HeaderButtonComponent={HeaderButton}>                      
-                    <OverflowMenu
-                        style={{ marginHorizontal: 10 }}
-                        OverflowIcon={<MaterialIcons name="filter-list" size={23} color="white" />}
-                    >
-                        <HiddenItem title="hidden1" onPress={() => alert('hidden1')} />                                   
-                    </OverflowMenu>
-                </HeaderButtons>  
+            headerRight: () => (                                 
+                <FilterMenu />                
             ),
         });
       }, [navigation]);
@@ -38,9 +35,9 @@ const BillsOverviewScreen = props => {
     return (
         <BillsList 
             listData={displayedBills} 
-            navigation={props.navigation} 
+            navigation={props.navigation}
+            filter={props.filters.filters} 
         />
-
     );
 }
 
@@ -50,4 +47,4 @@ export const screenOptions = () => {
     };
 };
 
-export default BillsOverviewScreen;
+export default connect(mapStateToProps)(BillsOverviewScreen)
