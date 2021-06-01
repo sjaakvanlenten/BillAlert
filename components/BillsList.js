@@ -1,21 +1,23 @@
 import React from 'react';
 import { View, FlatList, StyleSheet } from 'react-native';
+import { connect } from 'react-redux';
 
 import BillItem  from './BillItem'
 import moment from 'moment';
 
 const BillsList = props => {
+    const filter = props.filters.filters
     
     const renderBillItem = itemData => {
-
+        
         let showBillItem = false;
         const daysDifference = moment.duration(moment(itemData.item.dateExpiry) - moment()).days();
        
-        if(props.filter[2] && daysDifference < 1) {
+        if(filter[2] && daysDifference < 1) {
             showBillItem = true;
-        } else if(props.filter[1] && daysDifference < 7 && daysDifference > 1) {
+        } else if(filter[1] && daysDifference < 7 && daysDifference > 1) {
             showBillItem = true;
-        } else if(props.filter[0] && daysDifference >= 7) {
+        } else if(filter[0] && daysDifference >= 7) {
             showBillItem = true;
         }
         
@@ -51,6 +53,10 @@ const BillsList = props => {
     );
 };
 
+function mapStateToProps(state) {
+    return { filters: state.filters }
+  }
+
 const styles = StyleSheet.create({
     billsList: {
         backgroundColor: '#EEEEEE',
@@ -61,4 +67,4 @@ const styles = StyleSheet.create({
     }
   });
 
-export default BillsList;
+export default connect(mapStateToProps)(BillsList)

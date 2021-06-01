@@ -47,7 +47,7 @@ const FilterMenu = () => {
                 state={isGreenBills}
                 onChange={
                     newValue => {
-                        setIsGreenBills(newValue)                   
+                        setIsGreenBills(newValue)                 
                         dispatch(filterActions.filterGreenBills())
                     }
                 }

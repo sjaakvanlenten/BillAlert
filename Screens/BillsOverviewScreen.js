@@ -1,14 +1,10 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch, connect } from 'react-redux';
+import { useSelector, useDispatch} from 'react-redux';
 
 import FilterMenu from '../components/UI/FilterMenu'
 import BillsList from '../components/BillsList';
 
 import * as billsActions from '../store/actions/bills';
-
-function mapStateToProps(state) {
-    return { filters: state.filters }
-  }
 
 const BillsOverviewScreen = props => {
     const { navigation } = props;
@@ -35,8 +31,7 @@ const BillsOverviewScreen = props => {
     return (
         <BillsList 
             listData={displayedBills} 
-            navigation={props.navigation}
-            filter={props.filters.filters} 
+            navigation={props.navigation}        
         />
     );
 }
@@ -47,4 +42,4 @@ export const screenOptions = () => {
     };
 };
 
-export default connect(mapStateToProps)(BillsOverviewScreen)
+export default BillsOverviewScreen;
