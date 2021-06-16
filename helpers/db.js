@@ -56,6 +56,26 @@ export const insertBill = (title, dateCreated, dateExpiry, billAmount, IBANo, re
     return promise;    
 }
 
+export const db_updateBill = ( title, dateCreated, dateExpiry, billAmount, IBANo, reference, status, billId) => {
+    const promise = new Promise((resolve, reject) => {
+        db.transaction(tx => {
+            tx.executeSql(
+                'UPDATE bills SET title = ?, dateCreated = ?, dateExpiry = ?, billAmount = ?, IBANo = ?, reference = ?, status = ? WHERE id = ?' 
+                ,
+                [title, dateCreated, dateExpiry, billAmount, IBANo, reference, status, billId],
+                (_, result) => {
+                    resolve(result);
+                },
+                (_, err) => {
+                    reject(err);
+                }
+            );
+        });
+    });
+    return promise;    
+}
+
+
 export const fetchBills = () => {
     const promise = new Promise((resolve, reject) => {
         db.transaction(tx => {

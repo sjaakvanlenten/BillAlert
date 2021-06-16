@@ -59,11 +59,12 @@ function mapStateToProps(state) {
 
 const styles = StyleSheet.create({
     billsList: {
-        backgroundColor: '#EEEEEE',
+        backgroundColor: 'white',
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      padding: 15
+      padding: 15,
+      width: '100%'
     }
   });
 

@@ -1,8 +1,10 @@
 import React, { useLayoutEffect } from 'react';
 import { View, Text, Button } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 import * as billsActions from '../store/actions/bills';
+import HeaderButton from '../components/UI/HeaderButton';
 
 
 const BillDetailsScreen = props => {
@@ -13,7 +15,20 @@ const BillDetailsScreen = props => {
 
     useLayoutEffect(() => {
         navigation.setOptions({
-          headerTitle: billTitle
+          headerTitle: billTitle,
+          headerRight: () => (
+            <HeaderButtons HeaderButtonComponent={HeaderButton}>
+              <Item
+                title="Edit"
+                iconName="edit"
+                onPress={() => {
+                  navigation.navigate('ManualInputEdit',{
+                      billId: billId
+                  });
+                }}
+              />
+            </HeaderButtons>
+          )
         });
       }, [navigation]);
 

@@ -17,7 +17,7 @@ const defaultNavOptions = {
       backgroundColor: Platform.OS === 'android' ? Colors.primary : ''
     },
     headerTitleStyle: {
-      fontFamily: 'open-sans-bold'
+      fontFamily: 'open-sans-bold',    
     },
     headerBackTitleStyle: {
       fontFamily: 'open-sans'
@@ -40,7 +40,12 @@ const BillsStackScreen = () => {
             <BillsStack.Screen 
                 name="Details" 
                 component={BillDetailsScreen} 
-            /> 
+            />
+            <BillsStack.Screen
+                name="ManualInputEdit"
+                component={BillsManualInputScreen} 
+                options = {{ headerTitle: 'Wijzig Rekening' }}
+                />
         </BillsStack.Navigator>
     );
 }
@@ -49,7 +54,7 @@ const BillsManualInputStackScreen = () => {
     return (
     <BillsManualInputStack.Navigator screenOptions={defaultNavOptions}>
         <BillsManualInputStack.Screen
-            name="ManualInput"
+            name="ManualInputCreate"
             component={BillsManualInputScreen}
             options = {{ headerTitle: 'Nieuwe Rekening' }}
         />
@@ -77,7 +82,7 @@ const HomeTabNavigator = () => {
         })}
         />
         <Tab.Screen 
-            name="ManualInput" 
+            name="ManualInputTab" 
             component={BillsManualInputStackScreen}
             options ={ () => ({
                 title: 'Nieuwe Rekening',
@@ -109,6 +114,8 @@ function shouldShowTabBar(route) {
     case 'Overview':
       return true
     case 'Details':
+      return false;
+    case 'ManualInputEdit':
       return false;
   }
 }

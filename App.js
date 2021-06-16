@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import ReduxThunk from 'redux-thunk';
 
 import moment from 'moment';
+import 'moment/locale/nl';
 
 import { init, fetchBills, drop } from './helpers/db';
 import billsReducer from './store/reducers/bills';

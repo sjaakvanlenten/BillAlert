@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch} from 'react-redux';
+import { View } from 'react-native';
 
 import FilterMenu from '../components/UI/FilterMenu'
 import BillsList from '../components/BillsList';
@@ -9,7 +10,7 @@ import * as billsActions from '../store/actions/bills';
 const BillsOverviewScreen = props => {
     const { navigation } = props;
     const availableBills = useSelector(state => state.bills.bills);
-    
+
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -18,8 +19,8 @@ const BillsOverviewScreen = props => {
 
     React.useLayoutEffect(() => {
         navigation.setOptions({
-            headerRight: () => (                                 
-                <FilterMenu />                
+            headerRight: () => (                               
+                <FilterMenu />              
             ),
         });
       }, [navigation]);

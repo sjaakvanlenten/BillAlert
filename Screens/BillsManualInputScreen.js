@@ -1,20 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Button, TextInput, ScrollView, StyleSheet, Platform } from 'react-native';
-import { useDispatch } from 'react-redux';
+import React, { useState } from 'react';
+import { View, ScrollView, StyleSheet, Platform } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
+import { TextInput, Button } from 'react-native-paper';
 import moment from 'moment';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import * as billsActions from '../store/actions/bills';
-import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import Colors from '../constants/Colors';
 
 const BillsManualInputScreen = props => {
-    const [ title, setTitle] = useState('');
-    const [ billAmount, setBillAmount] = useState('');
+    
+    const billId = props.route.params ? props.route.params.billId : null;
+    const editedBill = useSelector(state => state.bills.bills.find(bill => bill.id == billId))
+
+    const [ title, setTitle] = useState(editedBill ? editedBill.title : '');
+    const [ billAmount, setBillAmount] = useState(editedBill ? editedBill.billAmount : '');
     const [ IBANo, setIBANo] = useState('');
-    const [ reference, setReference] = useState('');
-    const [ dateExpiry, setDateExpiry] = useState(new Date(moment()));
-   
+    const [ reference, setReference] = useState(editedBill ? editedBill.reference : '');
+    const [ dateExpiry, setDateExpiry] = useState(editedBill ? new Date(editedBill.dateExpiry) : new Date(moment()));
+
     const [show, setShow] = useState(false);
 
     const dispatch = useDispatch();
@@ -30,64 +35,128 @@ const BillsManualInputScreen = props => {
       };
 
     const submitHandler = () => {
-        dispatch(billsActions.createBill(title, billAmount, IBANo, reference, moment(dateExpiry).format()))
+        if(editedBill){
+            dispatch(billsActions.updateBill(
+                billId,
+                title, 
+                billAmount, 
+                IBANo, 
+                reference, 
+                moment(dateExpiry).format()),
+                
+            );
+        } else{
+            dispatch(billsActions.createBill(
+                title, 
+                billAmount, 
+                IBANo, 
+                reference, 
+                moment(dateExpiry).format())
+            );
+        }
+
     }
 
+  
     return (
         <ScrollView>
             <View style={styles.form}>
-                <View style={styles.formControl}>
-                    <Text style={styles.label}>Titel</Text>
                     <TextInput 
-                        style={styles.input} 
+                        mode = 'outlined'
+                        label='Titel'
+                        outlineColor='green'
+                        style={[styles.input, {width: '50%'}]} 
                         value={title}
                         onChangeText={text => setTitle(text)}
+                        autoFocus={true}
+
                     />
-                </View>
+             
                 <View style={styles.formControl}>
-                    <Text style={styles.label}>Bedrag</Text>
+                    
                     <TextInput 
-                        style={styles.input} 
+                        mode = 'outlined'
+                        label='Bedrag'
+                        outlineColor={Colors.primary}
+                        style={[styles.input, {width: '30%'}]} 
                         value={billAmount}
                         onChangeText={text => setBillAmount(text)}
+                        keyboardType='numeric'
                     />
                 </View>
                 <View style={styles.formControl}>
-                    <Text style={styles.label}>IBAN nummer</Text>
+                    <View style={styles.iban}>
+                    <TextInput
+                        mode = 'outlined'
+                        disabled = {true}
+                        placeholder = 'NL'
+                        value = 'NL'
+                        style={[styles.input, {width: '15%'}]}
+                    />
+                    <TextInput
+                        mode = 'outlined'
+                        keyboardType='numeric'
+                        placeholder = '00'
+                        style={[styles.input, {width: '15%'}]}
+                    />
+                    <TextInput
+                        mode = 'outlined'
+                        autoCapitalize="characters"
+                        label='Bank'
+                        style={[styles.input, {width: '25%'}]}
+                    />
                     <TextInput 
-                        style={styles.input} 
+                        mode = 'outlined'
+                        placeholder='0000 0000 00'
+                        keyboardType='numeric'
+                        outlineColor={Colors.primary}
+                        style={[styles.input, {width: '40%'}]}
                         value={IBANo}
                         onChangeText={text => setIBANo(text)}
                     />
+                    </View>
                 </View>
                 <View style={styles.formControl}>
-                    <Text style={styles.label}>Betalingskenmerk</Text>
+                    
                     <TextInput 
+                        mode = 'outlined'
+                        label='Betalingskenmerk'
                         style={styles.input} 
                         value={reference}
+                        multiline={true}
+                        outlineColor={Colors.primary}
                         onChangeText={text => setReference(text)}    
                     />
                 </View>
-                <TouchableWithoutFeedback onPress={showDatepicker}>
-                    <View style={styles.formControl}>                
-                        <Text style={styles.label}>Vervaldatum</Text>                    
+                <View style={{flexDirection:'row', width: '100%', justifyContent: 'space-between', alignItems: 'center', flex: 1}}>               
+                <Button 
+                        mode="contained" 
+                        onPress={showDatepicker} 
+                        color={Colors.primary} 
+                    >
+                        Selecteer datum 
+                    </Button>                          
                         <TextInput 
+                            mode = 'outlined'
+                            label='Vervaldatum'
+                            outlineColor={Colors.primary}
+                            disabled = {true}
                             style={styles.input} 
                             placeholder={moment().format('LL')}
-                            onFocus={showDatepicker}
                             value={moment(dateExpiry).format('LL')}
-                            showSoftInputOnFocus={false}
                             
                         />          
                     </View>
-                </TouchableWithoutFeedback>
-                <View>
-                    <Button
-                        title="Opslaan"
-                        color="#434381"
-                        onPress={submitHandler}
-                    />
-                </View>
+                <View style={{flexDirection:'row', width: '100%', justifyContent: 'center', flex: 1}}>
+                    <Button 
+                        mode="contained" 
+                        onPress={submitHandler} 
+                        color={Colors.primary} 
+                        style={styles.button}
+                    >
+                        Rekening Opslaan 
+                    </Button>
+                    </View>
             </View>
             <View>
       {show && (
@@ -107,7 +176,7 @@ const BillsManualInputScreen = props => {
 
 const styles = StyleSheet.create({
     form: {
-        margin: 20
+        margin: 30
     },
     formControl: {
         width: '100%'
@@ -119,8 +188,15 @@ const styles = StyleSheet.create({
     input: {
         paddingHorizontal: 2,
         paddingVertical: 5,
-        borderBottomColor: '#ccc',
-        borderBottomWidth: 1
+    },
+    button: {
+        marginTop: 10,
+        padding: 5
+    },
+    iban: {
+        flexDirection:'row',
+        justifyContent: 'space-between'
+
     }
 });
 
