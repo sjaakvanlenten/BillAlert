@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useCallback, useEffect, } from 'react';
+import React, { useState, useReducer, useCallback, useEffect, useRef } from 'react';
 import { View, ScrollView, StyleSheet, Platform, } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { TextInput, Button } from 'react-native-paper';
@@ -45,7 +45,9 @@ const formReducer = (state, action) => {
 }
 
 const BillsManualInputScreen = props => {
-    
+
+    const IBANbankCodeRef = useRef();
+    const IBANaccountNumberRef = useRef();
     const billId = props.route.params ? props.route.params.billId : null;
     const editedBill = useSelector(state => state.bills.bills.find(bill => bill.id == billId))
 
@@ -108,6 +110,19 @@ const BillsManualInputScreen = props => {
         });
       }, [dispatchFormstate, ]);
 
+    const focusNextInputHandler = (inputIdentifier, inputValue) => {
+        switch(inputIdentifier){
+            case 'IBANcheckNumber':
+                if(inputValue.length == 2) {
+                    IBANbankCodeRef.current.focus()
+                }
+            case 'IBANbankCode':
+                if(inputValue.length == 4) {
+                    IBANaccountNumberRef.current.focus()
+                }    
+        }      
+    };
+
     const submitHandler = () => {
         if(!formState.formIsValid) {
             return;
@@ -143,7 +158,7 @@ const BillsManualInputScreen = props => {
             type: FORM_INPUT_RESET,
             value: initialState
         });
-         
+
         setIsSubmitted(true)
         props.navigation.goBack();        
     }
@@ -196,10 +211,11 @@ const BillsManualInputScreen = props => {
                         initiallyValid={!!editedBill}
                         minLength={2}
                         maxLength={2}
-                        isSubmitted={isSubmitted}
-                        
+                        isSubmitted={isSubmitted} 
+                        focusNextInput={focusNextInputHandler}                     
                     />
                     <Input
+                        ref={IBANbankCodeRef}
                         id='IBANbankCode'
                         autoCapitalize="characters"                        
                         placeholder='BANK'
@@ -209,9 +225,11 @@ const BillsManualInputScreen = props => {
                         initiallyValid={!!editedBill}
                         minLength={4}                       
                         maxLength={4}
-                        isSubmitted={isSubmitted}
+                        isSubmitted={isSubmitted} 
+                        focusNextInput={focusNextInputHandler}  
                     />
                     <Input
+                        ref={IBANaccountNumberRef}
                         id='IBANaccountNumber' 
                         placeholder='0000 0000 00'
                         keyboardType='numeric'                       

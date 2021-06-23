@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect} from 'react';
+import React, { useReducer, useEffect, forwardRef} from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput, HelperText } from 'react-native-paper';
 
@@ -34,7 +34,7 @@ const inputReducer = (state, action) => {
     }
 };
 
-const Input = props => {
+const Input = forwardRef((props, ref) => {
 
     const initialState = {
         value: props.initialValue ? props.initialValue : '',
@@ -43,13 +43,19 @@ const Input = props => {
     }
 
     const [inputState, dispatch] = useReducer( inputReducer, initialState, initializer);
-    const { onInputChange, id, isSubmitted } = props;
+    const { onInputChange, id, isSubmitted, focusNextInput } = props;
 
     useEffect(() => {
         if (inputState.touched) {
             onInputChange(id, inputState.value, inputState.isValid);
         }
     }, [inputState, onInputChange, id]);
+
+    useEffect(() => {       
+        if (focusNextInput) {
+            focusNextInput(id, inputState.value);
+        }
+    }, [inputState.value]);
 
     useEffect(() => {
         if(isSubmitted) {
@@ -82,6 +88,7 @@ const Input = props => {
         <View>
             <TextInput 
                 {...props}
+                ref={ref}
                 style = {[styles.input, props.style]}
                 mode ='outlined'
                 label={props.label}
@@ -97,7 +104,7 @@ const Input = props => {
             }
         </View>
     );
-};
+});
 
 const styles = StyleSheet.create({
     input: {       
