@@ -202,6 +202,7 @@ const BillsManualInputScreen = props => {
                         value = 'NL'
                     />
                     <Input
+                        iban
                         id='IBANcheckNumber'
                         keyboardType='numeric'
                         placeholder = '00'                        
@@ -215,6 +216,7 @@ const BillsManualInputScreen = props => {
                         focusNextInput={focusNextInputHandler}                     
                     />
                     <Input
+                        iban
                         ref={IBANbankCodeRef}
                         id='IBANbankCode'
                         autoCapitalize="characters"                        
@@ -229,6 +231,7 @@ const BillsManualInputScreen = props => {
                         focusNextInput={focusNextInputHandler}  
                     />
                     <Input
+                        iban
                         ref={IBANaccountNumberRef}
                         id='IBANaccountNumber' 
                         placeholder='0000 0000 00'

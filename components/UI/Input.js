@@ -97,7 +97,7 @@ const Input = forwardRef((props, ref) => {
                 onBlur={lostFocusHandler}
                 onFocus={focusHandler}
             />
-            { (!inputState.isValid && inputState.touched) &&
+            { (!inputState.isValid && inputState.touched && !iban) &&
                 <HelperText type="error" visible={!inputState.isValid && inputState.touched}>
                     {props.errorText}
                 </HelperText>

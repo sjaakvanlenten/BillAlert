@@ -3,7 +3,6 @@ import Bill from '../../models/bill';
 
 const initialState = {
     bills: [],
-    filteredBills: [],
 };
 
 const billsReducer = (state = initialState, action) => {
@@ -16,7 +15,7 @@ const billsReducer = (state = initialState, action) => {
             const newBill = new Bill(
                 action.billData.id, 
                 action.billData.title, 
-                '10 jan', 
+                action.billData.dateCreated, 
                 action.billData.dateExpiry, 
                 action.billData.billAmount,
                 action.billData.IBANo, 

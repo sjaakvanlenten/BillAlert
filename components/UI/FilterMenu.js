@@ -4,6 +4,7 @@ import { Menu, Switch, } from 'react-native-paper';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { useDispatch } from 'react-redux';
 
+import { Ionicons } from '@expo/vector-icons';
 import Colors from '../../constants/Colors';
 import HeaderButton from './HeaderButton';
 
@@ -37,7 +38,7 @@ const FilterMenu = () => {
             onDismiss={() => setShowMenu(false)}
             anchor= {
                 <HeaderButtons HeaderButtonComponent={HeaderButton}>
-                    <Item title="search" iconName="filter-list" onPress={() => setShowMenu(true)} />
+                    <Item title="filter" IconComponent={Ionicons} iconName="options-outline" onPress={() => setShowMenu(true)} />
                 </HeaderButtons>
             }
         >

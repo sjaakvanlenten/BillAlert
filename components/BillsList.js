@@ -7,6 +7,7 @@ import moment from 'moment';
 
 const BillsList = props => {
     const filter = props.filters.filters
+    const listData = props.listData;
     
     const renderBillItem = itemData => {
         
@@ -45,7 +46,7 @@ const BillsList = props => {
     return (
         <View style={styles.billsList}>
         <FlatList
-          data={props.listData}
+          data={listData}
           keyExtractor={(item, index) => item.id.toString()}
           renderItem={renderBillItem}
         />
