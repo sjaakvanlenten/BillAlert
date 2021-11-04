@@ -2,6 +2,7 @@ import React, { useLayoutEffect } from 'react';
 import { View, Text, Button } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import { MaterialIcons } from '@expo/vector-icons';
 
 import * as billsActions from '../store/actions/bills';
 import HeaderButton from '../components/UI/HeaderButton';
@@ -20,6 +21,7 @@ const BillDetailsScreen = props => {
             <HeaderButtons HeaderButtonComponent={HeaderButton}>
               <Item
                 title="Edit"
+                IconComponent={MaterialIcons}
                 iconName="edit"
                 onPress={() => {
                   navigation.navigate('ManualInputEdit',{

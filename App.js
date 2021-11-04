@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import * as Font from 'expo-font';
 import  AppLoading from 'expo-app-loading';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import ReduxThunk from 'redux-thunk';
 
 import moment from 'moment';
@@ -13,10 +13,12 @@ import billsReducer from './store/reducers/bills';
 import filterReducer from './store/reducers/filters';
 import BillsNavigator from './navigation/BillsNavigator';
 
+import * as billsActions from './store/actions/bills';
+
 
 init()
   .then(() => {
-    console.log('ajaa');
+    
   })
   .catch(err => {
     console.log('Initializing db failed.');
@@ -29,6 +31,8 @@ const rootReducer = combineReducers({
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
+
+store.dispatch(billsActions.loadBills())
 
 const fetchFonts = () => {
   return Font.loadAsync({
@@ -54,7 +58,7 @@ export default function App() {
 
   return (
     <Provider store={store}>
-            <BillsNavigator />
+        <BillsNavigator />
     </Provider>
   );
 }

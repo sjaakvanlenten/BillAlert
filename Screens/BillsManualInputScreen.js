@@ -45,7 +45,7 @@ const formReducer = (state, action) => {
 }
 
 const BillsManualInputScreen = props => {
-
+     
     const IBANbankCodeRef = useRef();
     const IBANaccountNumberRef = useRef();
     const billId = props.route.params ? props.route.params.billId : null;

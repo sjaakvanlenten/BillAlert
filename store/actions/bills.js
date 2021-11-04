@@ -8,7 +8,7 @@ import moment from 'moment';
 import { insertBill, fetchBills, deleteBill, db_updateBill } from '../../helpers/db';
 
 export const createBill = (title, billAmount, IBANo, reference, dateExpiry) => {
-    dateCreated = moment().subtract(2, 'months').format('LL')
+    dateCreated = moment().format('LL')
     return async dispatch => {
         try {
             const dbResult = await insertBill(
@@ -20,7 +20,6 @@ export const createBill = (title, billAmount, IBANo, reference, dateExpiry) => {
                 reference, 
                 0,
             );
-            console.log(dbResult);
             dispatch({ type: CREATE_BILL, billData: {id: dbResult.insertId.toString(), title, dateCreated, billAmount, IBANo, reference, dateExpiry}})
             }
         catch (err) {
@@ -31,11 +30,12 @@ export const createBill = (title, billAmount, IBANo, reference, dateExpiry) => {
 }
 
 export const updateBill = (billId, title, billAmount, IBANo, reference, dateExpiry) => {
+    dateCreated = moment().format('LL')
     return async dispatch => {
         try {
             const dbResult = await db_updateBill(
                 title,
-                '12 dec', 
+                dateCreated, 
                 dateExpiry, 
                 billAmount, 
                 IBANo, 
@@ -43,8 +43,7 @@ export const updateBill = (billId, title, billAmount, IBANo, reference, dateExpi
                 0,
                 billId,
             );
-            console.log(dbResult);
-            dispatch({ type: UPDATE_BILL, billData: {billId, title, billAmount, IBANo, reference, dateExpiry}})
+            dispatch({ type: UPDATE_BILL, billData: {billId, title, dateCreated, billAmount, IBANo, reference, dateExpiry}})
             }
         catch (err) {
             console.log(err);
@@ -57,7 +56,6 @@ export const loadBills = () => {
     return async dispatch => {
         try {
             const dbResult = await fetchBills();
-            console.log(dbResult);
             dispatch({ type: SET_BILLS, bills: dbResult.rows._array });
         } catch (err) {
             throw err;

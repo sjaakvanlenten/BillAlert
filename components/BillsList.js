@@ -5,20 +5,40 @@ import { connect } from 'react-redux';
 import BillItem  from './BillItem'
 import moment from 'moment';
 
-const BillsList = props => {
-    const filter = props.filters.filters
-    const listData = props.listData;
+const BillsList = ({ navigation, listData , sortBy, filters:{filters} }) => {
+
+    function sortData(sortBy) {
+        switch (sortBy) {
+            case 'title': {
+                return listData.sort((a, b) => a.title < b.title ? -1 : (a.title > b.title ? 1 : 0))
+            };
+            case 'dateExpiry_up': {
+                return listData.sort((a,b) => new Date(b.dateExpiry) - new Date(a.dateExpiry));        
+            };
+            case 'dateExpiry_down': {
+                return listData.sort((a,b) => new Date(a.dateExpiry) - new Date(b.dateExpiry));         
+            };
+            case 'dateCreated_up': {
+                return listData.sort((a,b) => new Date(b.dateCreated) - new Date(a.dateCreated));
+            };
+            case 'dateCreated_down': {
+                return listData.sort((a,b) => new Date(a.dateCreated) - new Date(b.dateCreated));
+            };            
+            default: 
+                return listData               
+        }
+    }
     
     const renderBillItem = itemData => {
         
         let showBillItem = false;
         const daysDifference = moment.duration(moment(itemData.item.dateExpiry) - moment()).days();
        
-        if(filter[2] && daysDifference < 1) {
+        if(filters[2] && daysDifference < 1) {
             showBillItem = true;
-        } else if(filter[1] && daysDifference < 7 && daysDifference > 1) {
+        } else if(filters[1] && daysDifference < 7 && daysDifference > 1) {
             showBillItem = true;
-        } else if(filter[0] && daysDifference >= 7) {
+        } else if(filters[0] && daysDifference >= 7) {
             showBillItem = true;
         }
         
@@ -31,11 +51,11 @@ const BillsList = props => {
                     billAmount={itemData.item.billAmount}
                     status={itemData.item.status}
                     onSelectBill={() => {
-                    props.navigation.navigate( 'Details', {
-                        billId: itemData.item.id,
-                        billTitle: itemData.item.title,
-                        }
-                    )
+                        navigation.navigate( 'Details', {
+                            billId: itemData.item.id,
+                            billTitle: itemData.item.title,
+                            }
+                        )
                     }}
                 />
             );
@@ -45,12 +65,12 @@ const BillsList = props => {
 
     return (
         <View style={styles.billsList}>
-        <FlatList
-          data={listData}
-          keyExtractor={(item, index) => item.id.toString()}
-          renderItem={renderBillItem}
-        />
-      </View>
+            <FlatList
+                data={sortData(sortBy)}
+                keyExtractor={item => item.id.toString()}
+                renderItem={renderBillItem}
+            />
+        </View>
     );
 };
 
@@ -60,12 +80,8 @@ function mapStateToProps(state) {
 
 const styles = StyleSheet.create({
     billsList: {
-        backgroundColor: 'white',
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 15,
-      width: '100%'
+      backgroundColor: 'white',
+      flex: 1,     
     }
   });
 

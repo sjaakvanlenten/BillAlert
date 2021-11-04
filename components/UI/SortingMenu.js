@@ -9,7 +9,7 @@ import Colors from '../../constants/Colors';
 import HeaderButton from './HeaderButton';
 
 const SortingMenu = props => {
-    const { sortBills } = props;
+    const { setBillsOrder } = props;
 
     const [showMenu, setShowMenu] = useState(false);
     const [value, setValue] = useState('dateCreated_up');
@@ -24,7 +24,7 @@ const SortingMenu = props => {
                 </HeaderButtons>
             }
         >
-            <RadioButton.Group onValueChange={newValue => {setValue(newValue); sortBills(newValue)}} value={value}>
+            <RadioButton.Group onValueChange={newValue => {setValue(newValue); setBillsOrder(newValue)}} value={value}>
                 <View style={styles.filterContainer}>
                     <Text>Titel</Text>
                     <RadioButton value="title" color={Colors.primary} />

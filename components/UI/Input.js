@@ -35,7 +35,7 @@ const inputReducer = (state, action) => {
 };
 
 const Input = forwardRef((props, ref) => {
-
+    
     const initialState = {
         value: props.initialValue ? props.initialValue : '',
         isValid: props.initiallyValid,
@@ -84,6 +84,7 @@ const Input = forwardRef((props, ref) => {
     const lostFocusHandler = () => {
         dispatch({ type: INPUT_BLUR });
     }
+    
     return (
         <View>
             <TextInput 
@@ -97,7 +98,7 @@ const Input = forwardRef((props, ref) => {
                 onBlur={lostFocusHandler}
                 onFocus={focusHandler}
             />
-            { (!inputState.isValid && inputState.touched && !iban) &&
+            { (!inputState.isValid && inputState.touched && !props.iban) &&
                 <HelperText type="error" visible={!inputState.isValid && inputState.touched}>
                     {props.errorText}
                 </HelperText>

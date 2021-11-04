@@ -1,72 +1,48 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch} from 'react-redux';
+import { useSelector} from 'react-redux';
 import { View } from 'react-native';
 
 import FilterMenu from '../components/UI/FilterMenu'
 import SortingMenu from '../components/UI/SortingMenu'
 import BillsList from '../components/BillsList';
 
-import * as billsActions from '../store/actions/bills';
-
 const BillsOverviewScreen = props => {
     const { navigation } = props;
-  
+
+    /* Local State */
     const [availableBills, setAvailableBills] = useState([]);
+    const [sortBy, setSortBy] = useState('');
     
+    /* Fetch bills from redux store */
     const bills = useSelector(state => state.bills.bills);
-    
+
+    /* Set local state when redux store changes */
     useEffect (() => {
         setAvailableBills(bills);
     }, [bills]);
     
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        dispatch(billsActions.loadBills());
-    }, [dispatch]);
-
+    /* Set the header menus */
     React.useLayoutEffect(() => {
         navigation.setOptions({
             headerRight: () => (   
                 <View style={{flexDirection:'row'}}>
-                    <SortingMenu sortBills={sortBills} />
+                    <SortingMenu setBillsOrder={setBillsOrder} />
                     <FilterMenu />                   
                 </View>                            
             ),
         });
       }, [navigation]);
 
-    function sortBills(sortBy) {
-        switch (sortBy) {
-            case 'title': {
-                  setAvailableBills(availableBills => availableBills.slice().sort((a, b) => a.title < b.title ? -1 : (a.title > b.title ? 1 : 0)))
-                break;
-            };
-            case 'dateExpiry_up': {
-                  setAvailableBills(availableBills => availableBills.slice().sort((a,b) => new Date(b.dateExpiry) - new Date(a.dateExpiry)));  
-                break;        
-            };
-            case 'dateExpiry_down': {
-                 setAvailableBills(availableBills => availableBills.slice().sort((a,b) => new Date(a.dateExpiry) - new Date(b.dateExpiry)));  
-                break;          
-            };
-            case 'dateCreated_up': {
-                 setAvailableBills(availableBills => availableBills.slice().sort((a,b) => new Date(b.dateCreated) - new Date(a.dateCreated)));
-                break;
-            };
-            case 'dateCreated_down': {
-                 setAvailableBills(availableBills => availableBills.slice().sort((a,b) => new Date(a.dateCreated) - new Date(b.dateCreated)));
-                break;
-            };
-            default: 
-                return availableBills               
-        }
+    /* Setting the order of the bills for the listData from SortingMenu */  
+    function setBillsOrder(sortBy) {
+        setSortBy(sortBy);
     }
 
     return (
         <BillsList 
             listData={availableBills.slice().filter(bill => bill.status == 0)} 
-            navigation={props.navigation}        
+            navigation={props.navigation}  
+            sortBy={sortBy}      
         />     
     );
 }

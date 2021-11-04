@@ -33,7 +33,7 @@ const billsReducer = (state = initialState, action) => {
               const updatedBill = new Bill(
                 action.billData.billId, 
                 action.billData.title, 
-                '10 jan', 
+                action.billData.dateCreated, 
                 action.billData.dateExpiry, 
                 action.billData.billAmount,
                 action.billData.IBANo, 
