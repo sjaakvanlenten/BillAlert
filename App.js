@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import * as Font from 'expo-font';
 import  AppLoading from 'expo-app-loading';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { Provider, useDispatch } from 'react-redux';
+import { Provider } from 'react-redux';
 import ReduxThunk from 'redux-thunk';
 
 import moment from 'moment';
@@ -10,7 +10,7 @@ import 'moment/locale/nl';
 
 import { init, fetchBills, drop } from './helpers/db';
 import billsReducer from './store/reducers/bills';
-import filterReducer from './store/reducers/filters';
+
 import BillsNavigator from './navigation/BillsNavigator';
 
 import * as billsActions from './store/actions/bills';
@@ -27,7 +27,6 @@ init()
 
 const rootReducer = combineReducers({
   bills: billsReducer,
-  filters: filterReducer
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));

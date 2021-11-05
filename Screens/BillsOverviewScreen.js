@@ -12,7 +12,11 @@ const BillsOverviewScreen = props => {
     /* Local State */
     const [availableBills, setAvailableBills] = useState([]);
     const [sortBy, setSortBy] = useState('');
-    
+    const [filters, setFilters] = useState({
+        filterGreen: true,
+        filterOrange: true,
+        filterRed: true,
+    })
     /* Fetch bills from redux store */
     const bills = useSelector(state => state.bills.bills);
 
@@ -27,7 +31,7 @@ const BillsOverviewScreen = props => {
             headerRight: () => (   
                 <View style={{flexDirection:'row'}}>
                     <SortingMenu setBillsOrder={setBillsOrder} />
-                    <FilterMenu />                   
+                    <FilterMenu filtersHandler={filtersHandler} />                   
                 </View>                            
             ),
         });
@@ -38,11 +42,17 @@ const BillsOverviewScreen = props => {
         setSortBy(sortBy);
     }
 
+    /* Setting the filters for the listData from FilterMenu */
+    function filtersHandler(filter, value) {
+        setFilters(filters => ({ ...filters, [filter] : value})) 
+    }
+
     return (
         <BillsList 
             listData={availableBills.slice().filter(bill => bill.status == 0)} 
             navigation={props.navigation}  
             sortBy={sortBy}      
+            filters={filters}
         />     
     );
 }

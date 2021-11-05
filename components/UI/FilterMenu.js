@@ -2,13 +2,11 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Menu, Switch, } from 'react-native-paper';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
-import { useDispatch } from 'react-redux';
 
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../../constants/Colors';
 import HeaderButton from './HeaderButton';
 
-import * as filterActions from '../../store/actions/filters';
 
 const FilterSwitch = props => {
     return (
@@ -24,13 +22,11 @@ const FilterSwitch = props => {
     );
   };
 
-const FilterMenu = () => {
+const FilterMenu = ({ filtersHandler }) => {
     const [showMenu, setShowMenu] = useState(false);
     const [isGreenBills, setIsGreenBills] = useState(true);
     const [isOrangeBills, setIsOrangeBills] = useState(true);
     const [isRedBills, setIsRedBills] = useState(true);
-
-    const dispatch = useDispatch();
 
     return (           
         <Menu
@@ -48,8 +44,8 @@ const FilterMenu = () => {
                 state={isGreenBills}
                 onChange={
                     newValue => {
-                        setIsGreenBills(newValue)                 
-                        dispatch(filterActions.filterGreenBills())
+                        setIsGreenBills(newValue)  
+                        filtersHandler('filterGreen', newValue)     
                     }
                 }
             />
@@ -60,7 +56,7 @@ const FilterMenu = () => {
                 onChange={
                     newValue => {
                         setIsOrangeBills(newValue)
-                        dispatch(filterActions.filterOrangeBills())
+                        filtersHandler('filterOrange', newValue)
                     }
                 }
             />
@@ -71,7 +67,7 @@ const FilterMenu = () => {
                 onChange={
                     newValue => {
                         setIsRedBills(newValue)
-                        dispatch(filterActions.filterRedBills())
+                        filtersHandler('filterRed', newValue)
                     }
                 }
             />                           

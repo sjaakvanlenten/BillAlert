@@ -1,13 +1,18 @@
-import React from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
-import { connect } from 'react-redux';
+import React, { useState } from 'react';
+import { View, FlatList, StyleSheet, } from 'react-native';
 
 import BillItem  from './BillItem'
 import moment from 'moment';
 
-const BillsList = ({ navigation, listData , sortBy, filters:{filters} }) => {
-
+const BillsList = ({ navigation, listData , sortBy, filters }) => {
+    const [currentSortby, setCurrentSortby] = useState('');
+    
     function sortData(sortBy) {
+        if(sortBy === currentSortby) {
+            return listData
+        }
+        setCurrentSortby(sortBy)
+
         switch (sortBy) {
             case 'title': {
                 return listData.sort((a, b) => a.title < b.title ? -1 : (a.title > b.title ? 1 : 0))
@@ -28,32 +33,31 @@ const BillsList = ({ navigation, listData , sortBy, filters:{filters} }) => {
                 return listData               
         }
     }
-    
-    const renderBillItem = itemData => {
-        
+
+    const renderBillItem = ({item}) => {
         let showBillItem = false;
-        const daysDifference = moment.duration(moment(itemData.item.dateExpiry) - moment()).days();
+        const daysDifference = moment.duration(moment(item.dateExpiry) - moment()).days();
        
-        if(filters[2] && daysDifference < 1) {
+        if(filters.filterRed && daysDifference < 1) {
             showBillItem = true;
-        } else if(filters[1] && daysDifference < 7 && daysDifference > 1) {
+        } else if(filters.filterOrange && daysDifference < 7 && daysDifference > 1) {
             showBillItem = true;
-        } else if(filters[0] && daysDifference >= 7) {
+        } else if(filters.filterGreen && daysDifference >= 7) {
             showBillItem = true;
         }
         
         if(showBillItem) {
             return (
                 <BillItem
-                    title={itemData.item.title}
-                    dateCreated={itemData.item.dateCreated}
-                    dateExpiry={itemData.item.dateExpiry}
-                    billAmount={itemData.item.billAmount}
-                    status={itemData.item.status}
+                    title={item.title}
+                    dateCreated={item.dateCreated}
+                    dateExpiry={item.dateExpiry}
+                    billAmount={item.billAmount}
+                    status={item.status}
                     onSelectBill={() => {
                         navigation.navigate( 'Details', {
-                            billId: itemData.item.id,
-                            billTitle: itemData.item.title,
+                            billId: item.id,
+                            billTitle: item.title,
                             }
                         )
                     }}
@@ -74,10 +78,6 @@ const BillsList = ({ navigation, listData , sortBy, filters:{filters} }) => {
     );
 };
 
-function mapStateToProps(state) {
-    return { filters: state.filters }
-  }
-
 const styles = StyleSheet.create({
     billsList: {
       backgroundColor: 'white',
@@ -85,4 +85,4 @@ const styles = StyleSheet.create({
     }
   });
 
-export default connect(mapStateToProps)(BillsList)
+export default BillsList

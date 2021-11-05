@@ -8,9 +8,8 @@ import { Fontisto } from '@expo/vector-icons';
 import Colors from '../../constants/Colors';
 import HeaderButton from './HeaderButton';
 
-const SortingMenu = props => {
-    const { setBillsOrder } = props;
-
+const SortingMenu = ({ setBillsOrder }) => {
+    
     const [showMenu, setShowMenu] = useState(false);
     const [value, setValue] = useState('dateCreated_up');
 
