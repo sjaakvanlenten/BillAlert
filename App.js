@@ -36,7 +36,16 @@ store.dispatch(billsActions.loadBills())
 const fetchFonts = () => {
   return Font.loadAsync({
     'open-sans': require('./assets/fonts/OpenSans-Regular.ttf'),
-    'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf')
+    'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf'),
+    'open-sans-semibold': require('./assets/fonts/OpenSans-SemiBold.ttf'),
+    'open-sans-medium': require('./assets/fonts/OpenSans-Medium.ttf'),
+    'open-sans-light': require('./assets/fonts/OpenSans-Light.ttf'),
+    'open-sans-extrabold': require('./assets/fonts/OpenSans-ExtraBold.ttf'),
+    'montserrat-regular': require('./assets/fonts/Montserrat/Montserrat-Regular.ttf'),
+    'montserrat-bold': require('./assets/fonts/Montserrat/Montserrat-Bold.ttf'),
+    'montserrat-medium': require('./assets/fonts/Montserrat/Montserrat-Medium.ttf'),
+    'montserrat-semibold': require('./assets/fonts/Montserrat/Montserrat-SemiBold.ttf'),
+    'montserrat-extrabold': require('./assets/fonts/Montserrat/Montserrat-ExtraBold.ttf'),
   });
 };
 

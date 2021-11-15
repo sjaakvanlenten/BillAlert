@@ -90,8 +90,7 @@ const Input = forwardRef((props, ref) => {
             <TextInput 
                 {...props}
                 ref={ref}
-                style = {[styles.input, props.style]}
-                mode ='outlined'
+                style = {props.iban ? [styles.input, styles.iban] : styles.input}
                 label={props.label}
                 value={inputState.value}
                 onChangeText={textChangeHandler}
@@ -110,8 +109,13 @@ const Input = forwardRef((props, ref) => {
 const styles = StyleSheet.create({
     input: {       
         paddingHorizontal: 2,
-        paddingVertical: 5,
+        paddingVertical: 2,
+        backgroundColor: 'white',
+        marginBottom: 10,
     },
+    iban: {
+        marginRight: 5,
+    }
 });
 
 export default Input;

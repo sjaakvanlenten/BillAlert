@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity,  Platform, TouchableNativeFeedback } from 'react-native';
+import { View, StyleSheet, TouchableOpacity,  Platform, TouchableNativeFeedback } from 'react-native';
+import { Card, Title, Paragraph } from 'react-native-paper';
 
 import Colors from '../constants/Colors';
-import BillItemText from './BillItemText';
 import moment from 'moment';
 
 const BillItem = props => {
@@ -17,17 +17,36 @@ const BillItem = props => {
 
     return (
         <View style={styles.billItem}>
-            <TouchableCmp style={{ flex: 1 }} onPress={props.onSelectBill}>
-                <View style={[styles.container, {backgroundColor: 
-                    daysDifference < 1 ? Colors.billOverdue : 
-                    daysDifference < 7 ? Colors.billUrgent :
-                    Colors.billNormal
-                }]}>
-                        <BillItemText>{props.dateCreated} {'\u2022'} {props.billAmount}</BillItemText>
-                        <Text style={styles.title}>{props.title}</Text>
-                        <BillItemText>Vervaldatum: {moment(props.dateExpiry).format('LL')}</BillItemText> 
-                        {props.status === 1 ? <BillItemText>Betaald</BillItemText> : <BillItemText>Open</BillItemText>}     
-                </View>
+            <TouchableCmp 
+                    useForeground 
+                    background={TouchableNativeFeedback.Ripple('#F3F3F3')}
+                    onPress={props.onSelectBill}>
+                <Card>
+                    <Card.Title 
+                        title={props.title}
+                        style={{backgroundColor: 
+                            daysDifference < 1 ? Colors.billOverdue : 
+                            daysDifference < 7 ? Colors.billUrgent :
+                            Colors.billNormal
+                            , marginBottom: 10
+                        }}
+                        titleStyle={{fontFamily: 'montserrat-bold', color: 'white', fontSize: 16}}
+                    />
+                    <Card.Content backgroundColor='white' style={{ flexDirection: 'row', }}>
+                        <View style={styles.cardContentItem}>
+                            <Title style={styles.title}>Bedrag</Title>
+                            <Paragraph style={styles.paragraph}>{props.billAmount}</Paragraph>                     
+                        </View>
+                        <View style={styles.cardContentItem}>
+                            <Title style={styles.title}>Status</Title>
+                            {props.status === 1 ? <Paragraph style={styles.paragraph}>Betaald</Paragraph> : <Paragraph style={styles.paragraph}>Open</Paragraph>} 
+                        </View>
+                        <View style={[styles.cardContentItem, {flex: 1.4}]}>
+                            <Title style={styles.title}>Vervaldatum</Title>
+                            <Paragraph style={styles.paragraph}>{moment(props.dateExpiry).format('LL')}</Paragraph>
+                        </View>
+                    </Card.Content>
+                </Card>
             </TouchableCmp>
         </View>
     );
@@ -40,12 +59,9 @@ const styles = StyleSheet.create({
         overflow: Platform.OS === 'android' ? 'hidden' : 'visible',
         marginHorizontal: 25,
         marginVertical: 15,
-        elevation: 6,
+        elevation: 5,
     },
     container: {
-        flex: 1,   
-        justifyContent: 'center',
-        alignItems: 'center',
         borderRadius: 10,
         padding: 20,
         shadowColor: 'black',
@@ -53,14 +69,17 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowRadius: 10,
     },
-    white: {
-        fontFamily: 'open-sans-bold',
-        color: '#FFFFFF'
-    },
     title: {
-        fontFamily: 'open-sans-bold', 
-        color: 'white', 
-        fontSize: 20,
+        fontFamily: 'montserrat-regular', 
+        color: 'grey', 
+        fontSize: 13,
+    },
+    cardContentItem: {
+        flex: 1,       
+    },
+    paragraph: {
+        fontSize: 14,
+        fontFamily: 'montserrat-medium'
     }
 });
 

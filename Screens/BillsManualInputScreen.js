@@ -1,7 +1,7 @@
 import React, { useState, useReducer, useCallback, useEffect, useRef } from 'react';
 import { View, ScrollView, StyleSheet, Platform, } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { TextInput, Button } from 'react-native-paper';
+import { TextInput, Button, IconButton, } from 'react-native-paper';
 import moment from 'moment';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -45,7 +45,6 @@ const formReducer = (state, action) => {
 }
 
 const BillsManualInputScreen = props => {
-     
     const IBANbankCodeRef = useRef();
     const IBANaccountNumberRef = useRef();
     const billId = props.route.params ? props.route.params.billId : null;
@@ -141,8 +140,7 @@ const BillsManualInputScreen = props => {
                 formState.inputValues.billAmount, 
                 IBANo, 
                 formState.inputValues.reference, 
-                moment(formState.inputValues.dateExpiry).format()),
-                
+                moment(formState.inputValues.dateExpiry).format()),            
             );
         } else {
             dispatch(billsActions.createBill(
@@ -164,12 +162,11 @@ const BillsManualInputScreen = props => {
     }
 
     return (
-        <ScrollView>
+        <ScrollView style={{backgroundColor: 'white'}}>
             <View style={styles.form}>
                 <Input
                     id='title'
-                    label ="Titel"
-                    style={{width: '50%'}} 
+                    label ="Titel"                    
                     errorText ="Geef een geldige titel op!"
                     keyboardType="default"
                     autoCapitalize="sentences"
@@ -186,7 +183,6 @@ const BillsManualInputScreen = props => {
                     label='Bedrag'
                     placeholder='€0,00'
                     errorText ="Geef een geldig bedrag op!"
-                    style={{width: '50%'}} 
                     keyboardType='numeric'
                     returnKeyType="next"
                     onInputChange={inputChangeHandler}
@@ -196,10 +192,12 @@ const BillsManualInputScreen = props => {
                     isSubmitted={isSubmitted}
                 />
                 <View style={styles.iban}>
-                    <Input
-                        disabled = {true}
+                    <Input    
+                        iban                    
                         placeholder = 'NL'
-                        value = 'NL'
+                        initialValue = 'NL'
+                        editable={false}
+                        selectTextOnFocus={false}
                     />
                     <Input
                         iban
@@ -245,6 +243,13 @@ const BillsManualInputScreen = props => {
                         maxLength={10}
                         isSubmitted={isSubmitted}
                     />
+                    <IconButton
+                        style={{marginTop: 15}}
+                        icon="notebook"
+                        color={Colors.primary}
+                        size={34}
+                        onPress={() => {}}
+                    />  
                 </View>               
                 <Input 
                     id='reference'
@@ -256,23 +261,23 @@ const BillsManualInputScreen = props => {
                     touched={true}
                     isSubmitted={isSubmitted}
                 />
-                <View style={{flexDirection:'row', width: '100%', justifyContent: 'space-between', alignItems: 'center', flex: 1}}>               
-                    <Button 
-                        mode="contained" 
-                        onPress={showDatepicker} 
-                        color={Colors.primary} 
-                    >
-                        Selecteer datum 
-                    </Button>                          
-                    <TextInput 
-                        mode = 'outlined'
+                <View style={{flexDirection:'row', alignItems: 'center', flex: 1}}>               
+                <TextInput 
                         label='Vervaldatum'
                         outlineColor={Colors.primary}
-                        disabled = {true}
-                        style={styles.input} 
+                        editable={false}
+                        selectTextOnFocus={false}
+                        style={{backgroundColor: 'white', paddingHorizontal: 2}} 
                         placeholder={moment().format('LL')}
                         value={moment(formState.inputValues.dateExpiry).format('LL')}                           
-                    />          
+                    /> 
+                    <IconButton
+                        style={{marginTop: 15}}
+                        icon="calendar"
+                        color={Colors.primary}
+                        size={34}
+                        onPress={showDatepicker}
+                    />    
                 </View>
                 <View style={{flexDirection:'row', width: '100%', justifyContent: 'center', flex: 1}}>
                     <Button 
@@ -280,7 +285,10 @@ const BillsManualInputScreen = props => {
                         disabled={!formState.formIsValid}
                         onPress={submitHandler} 
                         color={Colors.primary} 
-                        style={styles.button}
+                        style={{marginTop: 50, borderRadius: 50 }}
+                        contentStyle={{paddingVertical: 10, paddingHorizontal: 50}}
+                        uppercase= {false}
+                        labelStyle={{fontSize: 16, fontFamily:'open-sans-medium'}}
                     >
                         Rekening Opslaan 
                     </Button>
@@ -308,14 +316,24 @@ const styles = StyleSheet.create({
         margin: 30
     },
     iban: {       
-        flex:1, 
         flexDirection:'row',
-        justifyContent: 'space-between'
     },
     button: {
-        marginTop: 10,
-        padding: 5
+        marginTop: 30,
+        width: 200,
+        height: 80,
     },
+    container: {
+        flex: 1,
+        justifyContent: "center",
+        backgroundColor: "#ecf0f1",
+        padding: 8,
+      },
+      input: {
+        height: 40,
+        margin: 12,
+        borderWidth: 1,
+      },
 
 });
 

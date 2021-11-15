@@ -25,11 +25,11 @@ const BillsOverviewScreen = props => {
         setAvailableBills(bills);
     }, [bills]);
     
-    /* Set the header menus */
+    /* Set the header menu components */
     React.useLayoutEffect(() => {
         navigation.setOptions({
             headerRight: () => (   
-                <View style={{flexDirection:'row'}}>
+                <View style={{flexDirection:'row', paddingRight: 12.5 }}>
                     <SortingMenu setBillsOrder={setBillsOrder} />
                     <FilterMenu filtersHandler={filtersHandler} />                   
                 </View>                            
@@ -56,11 +56,5 @@ const BillsOverviewScreen = props => {
         />     
     );
 }
-
-export const screenOptions = () => {
-    return {
-        headerTitle: 'Rekeningen',
-    };
-};
 
 export default BillsOverviewScreen;

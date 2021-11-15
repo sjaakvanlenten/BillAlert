@@ -6,18 +6,19 @@ import { Ionicons } from '@expo/vector-icons';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { Provider as PaperProvider } from 'react-native-paper';
 
-import BillsOverviewScreen, { screenOptions as BillsOverviewOptions} from '../Screens/BillsOverviewScreen';
+import BillsOverviewScreen from '../Screens/BillsOverviewScreen';
 import BillDetailsScreen from '../Screens/BillDetailsScreen';
 import BillsManualInputScreen from '../Screens/BillsManualInputScreen';
 import Colors from '../constants/Colors';
 
 const defaultNavOptions = {
-    headerTitleAlign: 'center',
+    headerTitleAlign: 'left',
     headerStyle: {
-      backgroundColor: Platform.OS === 'android' ? Colors.primary : ''
+      backgroundColor: Platform.OS === 'android' ? Colors.primary : '',
     },
     headerTitleStyle: {
-      fontFamily: 'open-sans-bold',    
+      fontFamily: 'montserrat-medium',
+      paddingLeft: 12.5        
     },
     headerBackTitleStyle: {
       fontFamily: 'open-sans'
@@ -35,7 +36,7 @@ const BillsStackScreen = () => {
             <BillsStack.Screen 
                 name="Overview" 
                 component={BillsOverviewScreen} 
-                options={BillsOverviewOptions}                            
+                options={{headerTitle: 'Rekening overzicht'}}                            
             /> 
             <BillsStack.Screen 
                 name="Details" 
@@ -68,13 +69,14 @@ const HomeTabNavigator = () => {
     tabBarOptions={{
         activeTintColor: Colors.primary,
         inactiveTintColor: 'gray',
+        labelStyle: { fontFamily: 'montserrat-medium', fontSize: 12 }
       }}
     >
         <Tab.Screen 
             name="Overview" 
             component={BillsStackScreen} 
             options ={ ({route}) => ({
-                title: 'Overzicht',
+                tabBarLabel: 'Overzicht',                
                 tabBarVisible: shouldShowTabBar(route),
                 tabBarIcon: ({color,size}) => {
                 return <Ionicons name={'ios-list'} size={size} color={color} />
