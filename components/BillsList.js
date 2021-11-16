@@ -56,8 +56,7 @@ const BillsList = ({ navigation, listData , sortBy, filters }) => {
                     status={item.status}
                     onSelectBill={() => {
                         navigation.navigate( 'Details', {
-                            billId: item.id,
-                            billTitle: item.title,
+                            billId: item.id
                             }
                         )
                     }}

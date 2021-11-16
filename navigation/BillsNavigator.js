@@ -69,7 +69,8 @@ const HomeTabNavigator = () => {
     tabBarOptions={{
         activeTintColor: Colors.primary,
         inactiveTintColor: 'gray',
-        labelStyle: { fontFamily: 'montserrat-medium', fontSize: 12 }
+        labelStyle: { fontFamily: 'montserrat-medium', fontSize: 12 },
+        keyboardHidesTabBar: true
       }}
     >
         <Tab.Screen 

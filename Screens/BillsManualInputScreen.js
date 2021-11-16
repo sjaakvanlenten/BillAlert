@@ -1,5 +1,5 @@
 import React, { useState, useReducer, useCallback, useEffect, useRef } from 'react';
-import { View, ScrollView, StyleSheet, Platform, } from 'react-native';
+import { View, ScrollView, StyleSheet, Platform, ActivityIndicator, } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { TextInput, Button, IconButton, } from 'react-native-paper';
 import moment from 'moment';
@@ -44,11 +44,12 @@ const formReducer = (state, action) => {
     }
 }
 
-const BillsManualInputScreen = props => {
+const BillsManualInputScreen = ({navigation, route}) => {
+    
     const IBANbankCodeRef = useRef();
     const IBANaccountNumberRef = useRef();
-    const billId = props.route.params ? props.route.params.billId : null;
-    const editedBill = useSelector(state => state.bills.bills.find(bill => bill.id == billId))
+    const billId = route.params ? route.params.billId : null;
+    const editedBill = billId !== null ? useSelector(state => state.bills.bills.find(bill => bill.id == billId)) : null
 
     const initialState = {
         inputValues: {
@@ -75,15 +76,16 @@ const BillsManualInputScreen = props => {
     const [formState, dispatchFormstate] = useReducer(formReducer, initialState, initializer);
     const [datePicker, setdatePicker] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch();
 
     useEffect(() => {
-        const unsubscribe = props.navigation.addListener('focus', () => {
+        const unsubscribe = navigation.addListener('focus', () => {
           setIsSubmitted(false)
         });
-    
+   
         return unsubscribe;
-      }, [props.navigation]);
+      }, [navigation]);
 
     const dateChangeHandler = (event, selectedDate) => {
         const currentDate = selectedDate || formState.inputValues.dateExpiry;
@@ -122,7 +124,7 @@ const BillsManualInputScreen = props => {
         }      
     };
 
-    const submitHandler = () => {
+    const submitHandler = useCallback(async () => {
         if(!formState.formIsValid) {
             return;
         }
@@ -131,35 +133,51 @@ const BillsManualInputScreen = props => {
             formState.inputValues.IBANcheckNumber, 
             formState.inputValues.IBANbankCode,
             formState.inputValues.IBANaccountNumber
-            );
-
-        if(editedBill) {
-            dispatch(billsActions.updateBill(
-                billId,
-                formState.inputValues.title, 
-                formState.inputValues.billAmount, 
-                IBANo, 
-                formState.inputValues.reference, 
-                moment(formState.inputValues.dateExpiry).format()),            
-            );
-        } else {
-            dispatch(billsActions.createBill(
-                formState.inputValues.title, 
-                formState.inputValues.billAmount, 
-                IBANo, 
-                formState.inputValues.reference, 
-                moment(formState.inputValues.dateExpiry).format())
-            );
-        }
-
+        );
+        
+        setIsLoading(true);
         dispatchFormstate({
             type: FORM_INPUT_RESET,
             value: initialState
         });
-
         setIsSubmitted(true)
-        props.navigation.goBack();        
-    }
+
+        try {
+            if(editedBill) {
+                await dispatch(billsActions.updateBill(
+                    billId,
+                    formState.inputValues.title, 
+                    formState.inputValues.billAmount, 
+                    IBANo, 
+                    formState.inputValues.reference, 
+                    moment(formState.inputValues.dateExpiry).format()),            
+                );
+            } else {
+                await dispatch(billsActions.createBill(
+                    formState.inputValues.title, 
+                    formState.inputValues.billAmount, 
+                    IBANo, 
+                    formState.inputValues.reference, 
+                    moment(formState.inputValues.dateExpiry).format())
+                );
+                setIsLoading(false);
+            }           
+        } catch(err) {
+            Alert.alert('Er ging iets verkeerd, probeer opnieuw', [
+                { text: 'Okay' }
+            ]);
+        } finally {      
+            navigation.goBack(); 
+        }           
+    }, [formState, billId, dispatch]);
+
+    if (isLoading) {
+        return (
+          <View style={styles.centered}>
+            <ActivityIndicator size={80} color={Colors.primary} />
+          </View>
+        );
+      }
 
     return (
         <ScrollView style={{backgroundColor: 'white'}}>
@@ -285,9 +303,9 @@ const BillsManualInputScreen = props => {
                         disabled={!formState.formIsValid}
                         onPress={submitHandler} 
                         color={Colors.primary} 
-                        style={{marginTop: 50, borderRadius: 50 }}
+                        style={{marginTop: 50, borderRadius: 50}}
                         contentStyle={{paddingVertical: 10, paddingHorizontal: 50}}
-                        uppercase= {false}
+                        uppercase={false}
                         labelStyle={{fontSize: 16, fontFamily:'open-sans-medium'}}
                     >
                         Rekening Opslaan 
@@ -318,23 +336,11 @@ const styles = StyleSheet.create({
     iban: {       
         flexDirection:'row',
     },
-    button: {
-        marginTop: 30,
-        width: 200,
-        height: 80,
-    },
-    container: {
+    centered: {
         flex: 1,
-        justifyContent: "center",
-        backgroundColor: "#ecf0f1",
-        padding: 8,
-      },
-      input: {
-        height: 40,
-        margin: 12,
-        borderWidth: 1,
-      },
-
+        justifyContent: 'center',
+        alignItems: 'center'
+      }
 });
 
 export default BillsManualInputScreen;
