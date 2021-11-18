@@ -35,7 +35,7 @@ const inputReducer = (state, action) => {
 };
 
 const Input = forwardRef((props, ref) => {
-    
+
     const initialState = {
         value: props.initialValue ? props.initialValue : '',
         isValid: props.initiallyValid,
@@ -51,9 +51,9 @@ const Input = forwardRef((props, ref) => {
         }
     }, [inputState, onInputChange, id]);
 
-    useEffect(() => {       
+    useEffect(() => {
         if (focusNextInput) {
-            focusNextInput(id, inputState.value);
+            focusNextInput(id, inputState.value, props.maxLength);
         }
     }, [inputState.value]);
 
@@ -84,7 +84,7 @@ const Input = forwardRef((props, ref) => {
     const lostFocusHandler = () => {
         dispatch({ type: INPUT_BLUR });
     }
-    
+
     return (
         <View>
             <TextInput 

@@ -1,9 +1,11 @@
-import { CREATE_BILL, UPDATE_BILL, REMOVE_BILL, SET_BILLS } from '../actions/bills';
+import { CREATE_BILL, UPDATE_BILL, REMOVE_BILL, SET_BILLS, UPDATE_PAYMENT_STATUS } from '../actions/bills';
 import Bill from '../../models/bill';
 
 const initialState = {
     bills: [],
 };
+
+let billIndex = null;
 
 const billsReducer = (state = initialState, action) => {
     switch (action.type) {
@@ -14,7 +16,8 @@ const billsReducer = (state = initialState, action) => {
         case CREATE_BILL:
             const newBill = new Bill(
                 action.billData.id, 
-                action.billData.title, 
+                action.billData.title,
+                action.billData.receiver,  
                 action.billData.dateCreated, 
                 action.billData.dateExpiry, 
                 action.billData.billAmount,
@@ -27,12 +30,13 @@ const billsReducer = (state = initialState, action) => {
                 bills: state.bills.concat(newBill),
             }
         case UPDATE_BILL:
-            const billIndex = state.bills.findIndex(
+            billIndex = state.bills.findIndex(
                 bill => bill.id === action.billData.billId
               );
               const updatedBill = new Bill(
                 action.billData.billId, 
                 action.billData.title, 
+                action.billData.receiver,
                 action.billData.dateCreated, 
                 action.billData.dateExpiry, 
                 action.billData.billAmount,
@@ -47,6 +51,16 @@ const billsReducer = (state = initialState, action) => {
                 ...state,
                 bills: updatedBills
               };
+        case UPDATE_PAYMENT_STATUS:
+            billIndex = state.bills.findIndex(
+                bill => bill.id === action.billId
+            );
+            const BillsCopy = [...state.bills];
+            BillsCopy[billIndex]['status'] = 1;
+            return {
+                ...state,
+                bills: BillsCopy
+            }
         case REMOVE_BILL:
             return {
                 ...state,

@@ -16,6 +16,7 @@ const BillsOverviewScreen = props => {
         filterGreen: true,
         filterOrange: true,
         filterRed: true,
+        filterPayedBills: false,
     })
     /* Fetch bills from redux store */
     const bills = useSelector(state => state.bills.bills);
@@ -49,7 +50,7 @@ const BillsOverviewScreen = props => {
 
     return (
         <BillsList 
-            listData={availableBills.slice().filter(bill => bill.status == 0)} 
+            listData={availableBills} 
             navigation={props.navigation}  
             sortBy={sortBy}      
             filters={filters}

@@ -4,6 +4,26 @@ import { View, FlatList, StyleSheet, } from 'react-native';
 import BillItem  from './BillItem'
 import moment from 'moment';
 
+const handleFilters = (item, filters) => {
+
+    const daysDifference = moment.duration(moment(item.dateExpiry) - moment()).days();
+    let showBillItem = false;
+
+    if(filters.filterRed && daysDifference < 1) {
+        showBillItem = true;
+    } else if(filters.filterOrange && daysDifference < 7 && daysDifference >= 1) {
+        showBillItem = true;
+    } else if(filters.filterGreen && daysDifference >= 7) {
+        showBillItem = true;
+    } 
+
+    if(!filters.filterPayedBills && item.status === 1) {
+        showBillItem = false;
+    }
+
+    return showBillItem;
+};
+
 const BillsList = ({ navigation, listData , sortBy, filters }) => {
     const [currentSortby, setCurrentSortby] = useState('');
     
@@ -35,18 +55,8 @@ const BillsList = ({ navigation, listData , sortBy, filters }) => {
     }
 
     const renderBillItem = ({item}) => {
-        let showBillItem = false;
-        const daysDifference = moment.duration(moment(item.dateExpiry) - moment()).days();
-       
-        if(filters.filterRed && daysDifference < 1) {
-            showBillItem = true;
-        } else if(filters.filterOrange && daysDifference < 7 && daysDifference > 1) {
-            showBillItem = true;
-        } else if(filters.filterGreen && daysDifference >= 7) {
-            showBillItem = true;
-        }
-        
-        if(showBillItem) {
+               
+        if(handleFilters(item, filters)) {
             return (
                 <BillItem
                     title={item.title}

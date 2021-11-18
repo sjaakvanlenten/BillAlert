@@ -36,7 +36,7 @@ const BillsStackScreen = () => {
             <BillsStack.Screen 
                 name="Overview" 
                 component={BillsOverviewScreen} 
-                options={{headerTitle: 'Rekening overzicht'}}                            
+                options={{headerTitle: 'Rekeningen'}}                            
             /> 
             <BillsStack.Screen 
                 name="Details" 

@@ -1,5 +1,5 @@
 import React, { useState, useReducer, useCallback, useEffect, useRef } from 'react';
-import { View, ScrollView, StyleSheet, Platform, ActivityIndicator, } from 'react-native';
+import { View, ScrollView, StyleSheet, Platform, ActivityIndicator, Alert, } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { TextInput, Button, IconButton, } from 'react-native-paper';
 import moment from 'moment';
@@ -46,6 +46,7 @@ const formReducer = (state, action) => {
 
 const BillsManualInputScreen = ({navigation, route}) => {
     
+    const IBANcheckNumberRef = useRef();
     const IBANbankCodeRef = useRef();
     const IBANaccountNumberRef = useRef();
     const billId = route.params ? route.params.billId : null;
@@ -54,6 +55,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
     const initialState = {
         inputValues: {
             title: editedBill ? editedBill.title : '',
+            receiver: editedBill ? editedBill.receiver : '',
             billAmount: editedBill ? editedBill.billAmount : '',
             IBANcheckNumber: editedBill ? editedBill.IBANo.slice(2,4) : '',
             IBANbankCode: editedBill ? editedBill.IBANo.slice(4,8) : '',
@@ -63,6 +65,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
         },
         inputValidities: {
             title: editedBill ? true : false,
+            receiver: editedBill ? true : false,
             billAmount: editedBill ? true : false,
             IBANcheckNumber: editedBill ? true : false,
             IBANbankCode: editedBill ? true : false,
@@ -111,16 +114,18 @@ const BillsManualInputScreen = ({navigation, route}) => {
         });
       }, [dispatchFormstate, ]);
 
-    const focusNextInputHandler = (inputIdentifier, inputValue) => {
+    const focusNextInputHandler = (inputIdentifier, inputValue, inputMaxLength) => {
         switch(inputIdentifier){
             case 'IBANcheckNumber':
-                if(inputValue.length == 2) {
+                if(inputValue.length == inputMaxLength && IBANcheckNumberRef.current.isFocused()) {
                     IBANbankCodeRef.current.focus()
+                    break;
                 }
             case 'IBANbankCode':
-                if(inputValue.length == 4) {
+                if(inputValue.length == inputMaxLength && IBANbankCodeRef.current.isFocused()) {
                     IBANaccountNumberRef.current.focus()
-                }    
+                    break;
+                }                  
         }      
     };
 
@@ -147,6 +152,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
                 await dispatch(billsActions.updateBill(
                     billId,
                     formState.inputValues.title, 
+                    formState.inputValues.receiver,
                     formState.inputValues.billAmount, 
                     IBANo, 
                     formState.inputValues.reference, 
@@ -155,7 +161,8 @@ const BillsManualInputScreen = ({navigation, route}) => {
             } else {
                 await dispatch(billsActions.createBill(
                     formState.inputValues.title, 
-                    formState.inputValues.billAmount, 
+                    formState.inputValues.receiver,
+                    formState.inputValues.billAmount,                   
                     IBANo, 
                     formState.inputValues.reference, 
                     moment(formState.inputValues.dateExpiry).format())
@@ -195,7 +202,21 @@ const BillsManualInputScreen = ({navigation, route}) => {
                     initiallyValid={!!editedBill}
                     required
                     isSubmitted={isSubmitted}
-                />                
+                /> 
+                <Input
+                    id='receiver'
+                    label ="Ten name van"                    
+                    errorText ="Geef een geldige ontvanger op!"
+                    keyboardType="default"
+                    autoCapitalize="sentences"
+                    autoCorrect
+                    returnKeyType="next"
+                    onInputChange={inputChangeHandler}
+                    initialValue={editedBill ? editedBill.receiver : formState.inputValues.receiver}
+                    initiallyValid={!!editedBill}
+                    required
+                    isSubmitted={isSubmitted}
+                />                   
                 <Input
                     id='billAmount' 
                     label='Bedrag'
@@ -219,6 +240,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
                     />
                     <Input
                         iban
+                        ref={IBANcheckNumberRef}
                         id='IBANcheckNumber'
                         keyboardType='numeric'
                         placeholder = '00'                        
@@ -229,7 +251,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
                         minLength={2}
                         maxLength={2}
                         isSubmitted={isSubmitted} 
-                        focusNextInput={focusNextInputHandler}                     
+                        focusNextInput={focusNextInputHandler}                
                     />
                     <Input
                         iban

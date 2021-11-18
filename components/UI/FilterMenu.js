@@ -27,6 +27,7 @@ const FilterMenu = ({ filtersHandler }) => {
     const [isGreenBills, setIsGreenBills] = useState(true);
     const [isOrangeBills, setIsOrangeBills] = useState(true);
     const [isRedBills, setIsRedBills] = useState(true);
+    const [showPayedBills, setShowPayedBills] = useState(false);
 
     return (           
         <Menu
@@ -68,6 +69,17 @@ const FilterMenu = ({ filtersHandler }) => {
                     newValue => {
                         setIsRedBills(newValue)
                         filtersHandler('filterRed', newValue)
+                    }
+                }
+            /> 
+            <FilterSwitch
+                label="Betaald"
+                color={Colors.primary}
+                state={showPayedBills}
+                onChange={
+                    newValue => {
+                        setShowPayedBills(newValue)
+                        filtersHandler('filterPayedBills', newValue)
                     }
                 }
             />                           

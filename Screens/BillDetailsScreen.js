@@ -23,6 +23,10 @@ const BillDetailsScreen = ({navigation, route : {params : { billId }}}) => {
         navigation.goBack();
     }
 
+    const payBillHandler = () => {
+        dispatch(billsActions.updatePaymentStatus(billId))
+    }
+
     useLayoutEffect(() => {
         navigation.setOptions({
           headerTitle: selectedBill.title,
@@ -50,7 +54,7 @@ const BillDetailsScreen = ({navigation, route : {params : { billId }}}) => {
                 <Card.Content backgroundColor='white'>
                     <View style={styles.cardContentItem}>
                         <Text style={styles.title}>Ten name van</Text>
-                        <Text style={styles.paragraph}>Voorbeeld</Text>                     
+                        <Text style={styles.paragraph}>{selectedBill.receiver}</Text>                     
                     </View>
                     <View style={styles.cardContentItem}>
                         <Text style={styles.title}>Aangemaakt op</Text>
@@ -78,7 +82,7 @@ const BillDetailsScreen = ({navigation, route : {params : { billId }}}) => {
                     </View>
                     <View style={styles.cardContentItem}>
                         <Text style={styles.title}>Beschrijving</Text>
-                        <Text style={styles.paragraph}>2390483489</Text>                     
+                        <Text style={styles.paragraph}>{selectedBill.reference}</Text>                     
                     </View>
                 </Card.Content>
             </Card>
@@ -96,7 +100,7 @@ const BillDetailsScreen = ({navigation, route : {params : { billId }}}) => {
                     Verwijder
                 </Button>
                 <Button 
-                    onPress={deleteHandler}
+                    onPress={payBillHandler}
                     mode="contained" 
                     icon="check-bold"
                     color={Colors.primary}
