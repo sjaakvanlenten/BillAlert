@@ -353,7 +353,8 @@ const BillsManualInputScreen = ({navigation, route}) => {
 
 const styles = StyleSheet.create({
     form: {
-        margin: 30
+        margin: 30,
+        marginTop: 0,
     },
     iban: {       
         flexDirection:'row',

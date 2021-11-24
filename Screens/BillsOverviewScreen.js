@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector} from 'react-redux';
 import { View } from 'react-native';
+import moment from 'moment';
 
 import FilterMenu from '../components/UI/FilterMenu'
 import SortingMenu from '../components/UI/SortingMenu'
@@ -18,13 +19,21 @@ const BillsOverviewScreen = props => {
         filterRed: true,
         filterPayedBills: false,
     })
-    /* Fetch bills from redux store */
-    const bills = useSelector(state => state.bills.bills);
+    const [monthFilter, setMonthFilter] = useState(null)
 
-    /* Set local state when redux store changes */
-    useEffect (() => {
-        setAvailableBills(bills);
-    }, [bills]);
+    /* Fetch bills from redux store */
+    const bills = useSelector(state => state.bills.bills)
+
+    /* Set local state when redux store changes and check for month filter*/
+    useEffect (() => {    
+        if(monthFilter !== null) {
+            setAvailableBills(bills.filter(bill =>
+                moment(bill.dateExpiry).format('MMMM') == monthFilter.charAt(0).toLowerCase() + monthFilter.slice(1))
+            )
+        } else {
+            setAvailableBills(bills);
+        }
+    }, [bills, monthFilter]);
     
     /* Set the header menu components */
     React.useLayoutEffect(() => {
@@ -32,22 +41,26 @@ const BillsOverviewScreen = props => {
             headerRight: () => (   
                 <View style={{flexDirection:'row', paddingRight: 12.5 }}>
                     <SortingMenu setBillsOrder={setBillsOrder} />
-                    <FilterMenu filtersHandler={filtersHandler} />                   
+                    <FilterMenu filtersHandler={filtersHandler} filterMonthHandler={filterMonthHandler} />                   
                 </View>                            
             ),
         });
       }, [navigation]);
 
     /* Setting the order of the bills for the listData from SortingMenu */  
-    function setBillsOrder(sortBy) {
+    const setBillsOrder = useCallback((sortBy) => {
         setSortBy(sortBy);
-    }
+    }, [sortBy]);
 
     /* Setting the filters for the listData from FilterMenu */
-    function filtersHandler(filter, value) {
+    const filtersHandler = useCallback((filter, value) => {
         setFilters(filters => ({ ...filters, [filter] : value})) 
-    }
+    }, [filters]);
 
+    const filterMonthHandler = useCallback((month) => {
+        month === "Alle Maanden" ? setMonthFilter(null) : setMonthFilter(month);
+    }, [monthFilter]);
+    
     return (
         <BillsList 
             listData={availableBills} 

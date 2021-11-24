@@ -9,16 +9,18 @@ const handleFilters = (item, filters) => {
     const daysDifference = moment.duration(moment(item.dateExpiry) - moment()).days();
     let showBillItem = false;
 
-    if(filters.filterRed && daysDifference < 1) {
-        showBillItem = true;
-    } else if(filters.filterOrange && daysDifference < 7 && daysDifference >= 1) {
-        showBillItem = true;
-    } else if(filters.filterGreen && daysDifference >= 7) {
-        showBillItem = true;
-    } 
+    if(item.status === 0) {
+        if(filters.filterRed && daysDifference < 1) {
+            showBillItem = true;
+        } else if(filters.filterOrange && daysDifference < 7 && daysDifference >= 1) {
+            showBillItem = true;
+        } else if(filters.filterGreen && daysDifference >= 7) {
+            showBillItem = true;
+        } 
+    }
 
-    if(!filters.filterPayedBills && item.status === 1) {
-        showBillItem = false;
+    if(filters.filterPayedBills && item.status === 1) {
+        showBillItem = true;
     }
 
     return showBillItem;

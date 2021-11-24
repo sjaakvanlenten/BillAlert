@@ -1,15 +1,42 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity,  Platform, TouchableNativeFeedback } from 'react-native';
 import { Card, Title, Paragraph } from 'react-native-paper';
+import { Ionicons } from '@expo/vector-icons';
 
 import Colors from '../constants/Colors';
 import moment from 'moment';
 
-const BillItem = props => {
+const BillItem = item => {
 
     let TouchableCmp = TouchableOpacity;
 
-    let daysDifference = moment.duration(moment(props.dateExpiry) - moment()).days();
+    let daysDifference = moment.duration(moment(item.dateExpiry) - moment()).days();
+
+    let itemInfo = {
+        cardColor: Colors.primary,
+        statusIcon: null,
+        statusText: 'Open',
+        textColor: 'black',
+    }
+
+    if(item.status === 1) {
+        itemInfo.cardColor = Colors.billPayed
+        itemInfo.statusIcon = "md-checkmark-circle"     
+        itemInfo.statusText = 'Betaald'
+    }
+    else {
+        if(daysDifference < 1) {
+            itemInfo.cardColor = Colors.billOverdue
+            itemInfo.statusIcon = "ios-alert-circle"     
+            itemInfo.statusText = 'Te laat'
+            itemInfo.textColor = Colors.billOverdue
+        } 
+        else if(daysDifference < 7) {
+            itemInfo.cardColor = Colors.billUrgent
+            itemInfo.statusIcon = "warning"     
+            itemInfo.statusText = 'Urgent' 
+        }
+    }
 
     if (Platform.OS === 'android' && Platform.Version >= 21) {
         TouchableCmp = TouchableNativeFeedback;
@@ -18,32 +45,47 @@ const BillItem = props => {
     return (
         <View style={styles.billItem}>
             <TouchableCmp 
-                    useForeground 
-                    background={TouchableNativeFeedback.Ripple('#F3F3F3')}
-                    onPress={props.onSelectBill}>
-                <Card>
+                useForeground 
+                background={TouchableNativeFeedback.Ripple('#F3F3F3')}
+                onPress={item.onSelectBill}
+            >        
+                <Card style={styles.container}>
                     <Card.Title 
-                        title={props.title}
-                        style={{backgroundColor: 
-                            daysDifference < 1 ? Colors.billOverdue : 
-                            daysDifference < 7 ? Colors.billUrgent :
-                            Colors.billNormal
-                            , marginBottom: 10
+                        title={item.title}
+                        style={{
+                            backgroundColor: itemInfo.cardColor,
+                            marginBottom: 10,
+                            borderTopLeftRadius: 10,
+                            borderTopRightRadius: 10,
                         }}
                         titleStyle={{fontFamily: 'montserrat-bold', color: 'white', fontSize: 16}}
                     />
-                    <Card.Content backgroundColor='white' style={{ flexDirection: 'row', }}>
+                    <Card.Content 
+                        backgroundColor='white' 
+                        style={{ 
+                            flexDirection: 'row', 
+                            borderBottomLeftRadius: 10, 
+                            borderBottomRightRadius: 10
+                        }}
+                        >
                         <View style={styles.cardContentItem}>
                             <Title style={styles.title}>Bedrag</Title>
-                            <Paragraph style={styles.paragraph}>{props.billAmount}</Paragraph>                     
+                            <Paragraph style={[styles.paragraph, {color: itemInfo.textColor}]}>{`€${item.billAmount}`}</Paragraph>                     
                         </View>
                         <View style={styles.cardContentItem}>
                             <Title style={styles.title}>Status</Title>
-                            {props.status === 1 ? <Paragraph style={styles.paragraph}>Betaald</Paragraph> : <Paragraph style={styles.paragraph}>Open</Paragraph>} 
+                            <View style={{flexDirection: 'row', alignItems: 'center',}}>
+                                <Paragraph style={[styles.paragraph, {color: itemInfo.textColor}]}>{itemInfo.statusText}</Paragraph> 
+                                <Ionicons 
+                                    name={itemInfo.statusIcon} 
+                                    size={16} color={itemInfo.cardColor} 
+                                    style={{paddingLeft: 2, paddingTop: 2, }} 
+                                />
+                            </View>
                         </View>
                         <View style={[styles.cardContentItem, {flex: 1.4}]}>
                             <Title style={styles.title}>Vervaldatum</Title>
-                            <Paragraph style={styles.paragraph}>{moment(props.dateExpiry).format('LL')}</Paragraph>
+                            <Paragraph style={[styles.paragraph, {color: itemInfo.textColor}]}>{moment(item.dateExpiry).format('LL')}</Paragraph>
                         </View>
                     </Card.Content>
                 </Card>
@@ -62,12 +104,12 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     container: {
-        borderRadius: 10,
-        padding: 20,
+        flex: 1,
         shadowColor: 'black',
         shadowOpacity: 0.26,
         shadowOffset: { width: 0, height: 2 },
-        shadowRadius: 10,
+        shadowRadius: 5,
+        borderRadius: 10,
     },
     title: {
         fontFamily: 'montserrat-regular', 
@@ -75,11 +117,12 @@ const styles = StyleSheet.create({
         fontSize: 13,
     },
     cardContentItem: {
-        flex: 1,       
+        flex: 1,   
+        borderRadius: 10,    
     },
     paragraph: {
         fontSize: 14,
-        fontFamily: 'montserrat-medium'
+        fontFamily: 'montserrat-medium',
     }
 });
 

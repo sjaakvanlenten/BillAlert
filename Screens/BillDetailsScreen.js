@@ -51,7 +51,7 @@ const BillDetailsScreen = ({navigation, route : {params : { billId }}}) => {
         <View style={{ flex: 1, backgroundColor: 'white'}}>
             
             <Card style={styles.cardContainer}>
-                <Card.Content backgroundColor='white'>
+                <Card.Content backgroundColor='white' style={{borderRadius: 10}}>
                     <View style={styles.cardContentItem}>
                         <Text style={styles.title}>Ten name van</Text>
                         <Text style={styles.paragraph}>{selectedBill.receiver}</Text>                     
@@ -70,7 +70,7 @@ const BillDetailsScreen = ({navigation, route : {params : { billId }}}) => {
                     </View>
                     <View style={styles.cardContentItem}>
                         <Text style={styles.title}>Resterende dagen</Text>
-                        <Text style={styles.paragraph}>{daysDifference}</Text>                     
+                        <Text style={styles.paragraph}>{daysDifference >= 1 ? daysDifference : 0}</Text>                     
                     </View>
                     <View style={styles.cardContentItem}>
                         <Text style={styles.title}>Status</Text>
