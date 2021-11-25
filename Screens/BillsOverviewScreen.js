@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector} from 'react-redux';
 import { View } from 'react-native';
 import moment from 'moment';
@@ -6,6 +6,7 @@ import moment from 'moment';
 import FilterMenu from '../components/UI/FilterMenu'
 import SortingMenu from '../components/UI/SortingMenu'
 import BillsList from '../components/BillsList';
+import InfoBar from '../components/InfoBar';
 
 const BillsOverviewScreen = props => {
     const { navigation } = props;
@@ -57,17 +58,35 @@ const BillsOverviewScreen = props => {
         setFilters(filters => ({ ...filters, [filter] : value})) 
     }, [filters]);
 
+    /* Setting the available bills filtered by month */
     const filterMonthHandler = useCallback((month) => {
         month === "Alle Maanden" ? setMonthFilter(null) : setMonthFilter(month);
     }, [monthFilter]);
-    
+
+    /* Calculating and storing the total billAmount */
+    const totalBillAmount = useMemo(() => {
+        return availableBills.reduce((total, bill) => {
+            if(bill.status === 1) {
+                return total          
+            } else {           
+                return total + parseFloat(bill.billAmount)
+            }
+        }, 0)
+    }, [availableBills])
+
     return (
-        <BillsList 
-            listData={availableBills} 
-            navigation={props.navigation}  
-            sortBy={sortBy}      
-            filters={filters}
-        />     
+        <View style={{flex: 1, backgroundColor: 'white'}}>
+            <InfoBar 
+                totalBillAmount={totalBillAmount}
+                openBillsAmount={availableBills.filter(bill => bill.status !== 1).length}
+            />
+            <BillsList 
+                listData={availableBills} 
+                navigation={props.navigation}  
+                sortBy={sortBy}      
+                filters={filters}
+            />    
+        </View>
     );
 }
 

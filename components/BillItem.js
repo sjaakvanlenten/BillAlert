@@ -54,7 +54,7 @@ const BillItem = item => {
                         title={item.title}
                         style={{
                             backgroundColor: itemInfo.cardColor,
-                            marginBottom: 10,
+                            marginBottom: 5,
                             borderTopLeftRadius: 10,
                             borderTopRightRadius: 10,
                         }}
