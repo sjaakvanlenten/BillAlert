@@ -10,6 +10,7 @@ import BillsOverviewScreen from '../Screens/BillsOverviewScreen';
 import BillDetailsScreen from '../Screens/BillDetailsScreen';
 import BillsManualInputScreen from '../Screens/BillsManualInputScreen';
 import Colors from '../constants/Colors';
+import { AsyncStorageProvider } from '../hooks/useAsyncStorage';
 
 const defaultNavOptions = {
     headerTitleAlign: 'left',
@@ -102,7 +103,9 @@ const BillsNavigator = () => {
     return (
         <PaperProvider>
             <NavigationContainer>
-                    <HomeTabNavigator />            
+                    <AsyncStorageProvider>
+                        <HomeTabNavigator />  
+                    </AsyncStorageProvider>          
             </NavigationContainer>
         </PaperProvider>
     );

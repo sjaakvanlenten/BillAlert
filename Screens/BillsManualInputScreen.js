@@ -1,17 +1,20 @@
 import React, { useState, useReducer, useCallback, useEffect, useRef } from 'react';
 import { View, ScrollView, StyleSheet, Platform, ActivityIndicator, Alert, } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { TextInput, Button, IconButton, } from 'react-native-paper';
+import { TextInput, Button, IconButton, Text, Checkbox, } from 'react-native-paper';
 import moment from 'moment';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+import ReceiversMenu from '../components/UI/ReceiversMenu';
 import * as billsActions from '../store/actions/bills';
 import Colors from '../constants/Colors';
 import Input from '../components/UI/Input';
+import useAsyncStorage from '../hooks/useAsyncStorage';
 
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE';
 const FORM_INPUT_RESET = 'FORM_INPUT_RESET';
+const FORM_UPDATE_FROM_RECEIVERLIST = 'FORM_UPDATE_FROM_RECEIVERLIST';
 
 const initializer = initialState => initialState
 
@@ -36,6 +39,31 @@ const formReducer = (state, action) => {
                 inputValues: updatedValues
             };
         }
+        case FORM_UPDATE_FROM_RECEIVERLIST: {
+            const updatedValues = {
+                ...state.inputValues,
+                ['receiver'] : action.value[0],
+                ['IBANcheckNumber'] : action.value[1].slice(2,4),
+                ['IBANbankCode'] : action.value[1].slice(4,8),
+                ['IBANaccountNumber'] : action.value[1].slice(8),
+            };
+            const updatedValidities = {
+                ...state.inputValidities,
+                ['receiver'] : true,
+                ['IBANcheckNumber'] : true,
+                ['IBANbankCode'] : true,
+                ['IBANaccountNumber'] : true,
+            };
+            let updatedFormIsValid = true;
+            for (const key in updatedValidities) {
+                updatedFormIsValid = updatedFormIsValid && updatedValidities[key]
+            }
+            return {
+                formIsValid: updatedFormIsValid,
+                inputValidities: updatedValidities,
+                inputValues: updatedValues
+            };
+        }
         case FORM_INPUT_RESET: {
             return initializer(action.value);   
         }
@@ -45,12 +73,13 @@ const formReducer = (state, action) => {
 }
 
 const BillsManualInputScreen = ({navigation, route}) => {
-    
     const IBANcheckNumberRef = useRef();
     const IBANbankCodeRef = useRef();
     const IBANaccountNumberRef = useRef();
     const billId = route.params ? route.params.billId : null;
     const editedBill = billId !== null ? useSelector(state => state.bills.bills.find(bill => bill.id == billId)) : null
+    const { receiversList, storeReceiver } = useAsyncStorage();
+    const dispatch = useDispatch();
 
     const initialState = {
         inputValues: {
@@ -80,8 +109,8 @@ const BillsManualInputScreen = ({navigation, route}) => {
     const [datePicker, setdatePicker] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const dispatch = useDispatch();
-
+    const [saveReceiverChecked, setSaveReceiverChecked] = useState(false);
+    
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
           setIsSubmitted(false)
@@ -104,7 +133,14 @@ const BillsManualInputScreen = ({navigation, route}) => {
     const showDatepicker = () => {
         setdatePicker(true);
       };
-      
+    
+    const InsertReceiverFromMenu = useCallback((receiverData) => {   
+        dispatchFormstate({
+            type: FORM_UPDATE_FROM_RECEIVERLIST,
+            value: receiverData
+        });
+    }, [dispatchFormstate]);  
+
     const inputChangeHandler = useCallback((inputIdentifier, inputValue, inputValidity) => {
         dispatchFormstate({
             type: FORM_INPUT_UPDATE,
@@ -112,7 +148,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
             isValid: inputValidity,
             input: inputIdentifier
         });
-      }, [dispatchFormstate, ]);
+      }, [dispatchFormstate]);
 
     const focusNextInputHandler = (inputIdentifier, inputValue, inputMaxLength) => {
         switch(inputIdentifier){
@@ -130,17 +166,21 @@ const BillsManualInputScreen = ({navigation, route}) => {
     };
 
     const submitHandler = useCallback(async () => {
-        if(!formState.formIsValid) {
-            return;
-        }
-        
+        if(!formState.formIsValid) return;
+    
         const IBANo = 'NL'.concat(
             formState.inputValues.IBANcheckNumber, 
             formState.inputValues.IBANbankCode,
             formState.inputValues.IBANaccountNumber
-        );
-        
+        );  
+
         setIsLoading(true);
+
+        if(saveReceiverChecked) {
+            storeReceiver({ [formState.inputValues.receiver] : IBANo})
+            setSaveReceiverChecked(false);
+        }
+
         dispatchFormstate({
             type: FORM_INPUT_RESET,
             value: initialState
@@ -176,7 +216,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
         } finally {      
             navigation.goBack(); 
         }           
-    }, [formState, billId, dispatch]);
+    }, [saveReceiverChecked, formState, billId, dispatch]);
 
     if (isLoading) {
         return (
@@ -203,6 +243,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
                     required
                     isSubmitted={isSubmitted}
                 /> 
+                <View style={{flexDirection: 'row', flex: 1}}>
                 <Input
                     id='receiver'
                     label ="Ten name van"                    
@@ -210,13 +251,19 @@ const BillsManualInputScreen = ({navigation, route}) => {
                     keyboardType="default"
                     autoCapitalize="sentences"
                     autoCorrect
+                    style={{minWidth: '70%'}}
                     returnKeyType="next"
                     onInputChange={inputChangeHandler}
                     initialValue={editedBill ? editedBill.receiver : formState.inputValues.receiver}
                     initiallyValid={!!editedBill}
                     required
                     isSubmitted={isSubmitted}
-                />                   
+                />      
+                <ReceiversMenu 
+                    InsertReceiverFromMenu = {InsertReceiverFromMenu}
+                    receiversList = {receiversList}
+                />          
+                </View>    
                 <Input
                     id='billAmount' 
                     label='Bedrag'
@@ -283,14 +330,20 @@ const BillsManualInputScreen = ({navigation, route}) => {
                         maxLength={10}
                         isSubmitted={isSubmitted}
                     />
-                    <IconButton
-                        style={{marginTop: 15}}
-                        icon="notebook"
+
+                </View>  
+                <View style={{flexDirection: 'row', alignItems: 'center', width: 190}}>
+                    <Text style={{fontFamily: 'montserrat-medium', fontSize: 14, color: 'black', marginRight: 5}}>Ontvanger opslaan</Text>
+                    <Checkbox.Android
+                        label = 'ReceiverCheckbox'
+                        style={{borderWidth: 1}}
                         color={Colors.primary}
-                        size={34}
-                        onPress={() => {}}
-                    />  
-                </View>               
+                        status={saveReceiverChecked ? 'checked' : 'unchecked'}
+                        onPress={() => {
+                            setSaveReceiverChecked(!saveReceiverChecked);
+                        }}
+                    />
+                </View>             
                 <Input 
                     id='reference'
                     label='Betalingskenmerk'
@@ -312,7 +365,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
                         value={moment(formState.inputValues.dateExpiry).format('LL')}                           
                     /> 
                     <IconButton
-                        style={{marginTop: 15}}
+                        style={{top: 10, marginLeft: 15}}
                         icon="calendar"
                         color={Colors.primary}
                         size={34}
@@ -326,9 +379,9 @@ const BillsManualInputScreen = ({navigation, route}) => {
                         onPress={submitHandler} 
                         color={Colors.primary} 
                         style={{marginTop: 50, borderRadius: 50}}
-                        contentStyle={{paddingVertical: 10, paddingHorizontal: 50}}
+                        contentStyle={{paddingVertical: 5, paddingHorizontal: 15}}
                         uppercase={false}
-                        labelStyle={{fontSize: 16, fontFamily:'open-sans-medium'}}
+                        labelStyle={{fontSize: 14, fontFamily:'open-sans-medium'}}
                     >
                         Rekening Opslaan 
                     </Button>

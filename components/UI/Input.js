@@ -35,7 +35,7 @@ const inputReducer = (state, action) => {
 };
 
 const Input = forwardRef((props, ref) => {
-
+    
     const initialState = {
         value: props.initialValue ? props.initialValue : '',
         isValid: props.initiallyValid,
@@ -43,7 +43,11 @@ const Input = forwardRef((props, ref) => {
     }
 
     const [inputState, dispatch] = useReducer( inputReducer, initialState, initializer);
-    const { onInputChange, id, isSubmitted, focusNextInput } = props;
+    const { onInputChange, id, isSubmitted, focusNextInput, initialValue } = props;
+
+    useEffect(() => {
+        dispatch({type: INPUT_CHANGE, value: initialValue, isValid: true });
+    }, [initialValue])
 
     useEffect(() => {
         if (inputState.touched) {
@@ -90,7 +94,7 @@ const Input = forwardRef((props, ref) => {
             <TextInput 
                 {...props}
                 ref={ref}
-                style = {props.iban ? [styles.input, styles.iban] : styles.input}
+                style = {props.iban ? [styles.input, styles.iban] : [styles.input, props.style]}
                 label={props.label}
                 value={inputState.value}
                 onChangeText={textChangeHandler}

@@ -2,7 +2,6 @@ import React, { memo } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
 const InfoBar = ({ openBillsAmount, totalBillAmount }) => {
-    console.log('rerender')
     return (
         <View style={styles.infoBar}>              
             <View style={styles.main}>

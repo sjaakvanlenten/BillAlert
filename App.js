@@ -73,7 +73,7 @@ export default function App() {
   return (
     <Provider store={store}>
             <PaperProvider theme={theme}>
-        <BillsNavigator />
+                <BillsNavigator />
             </PaperProvider>
     </Provider>
   );
