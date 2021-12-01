@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useLayoutEffect } from 'react';
 import { useSelector} from 'react-redux';
-import { View } from 'react-native';
+import { View, Dimensions } from 'react-native';
 import moment from 'moment';
 
 import FilterMenu from '../components/UI/FilterMenu'
 import SortingMenu from '../components/UI/SortingMenu'
 import BillsList from '../components/BillsList';
 import InfoBar from '../components/InfoBar';
+import CustomSearchbar from '../components/UI/CustomSearchbar';
 
 const BillsOverviewScreen = props => {
     const { navigation } = props;
@@ -19,8 +20,11 @@ const BillsOverviewScreen = props => {
         filterOrange: true,
         filterRed: true,
         filterPayedBills: false,
+        filterOnlyPayed: false,
     })
     const [monthFilter, setMonthFilter] = useState(null)
+    const [searchPressed, setSearchPressed] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
 
     /* Fetch bills from redux store */
     const bills = useSelector(state => state.bills.bills)
@@ -35,18 +39,43 @@ const BillsOverviewScreen = props => {
             setAvailableBills(bills);
         }
     }, [bills, monthFilter]);
-    
-    /* Set the header menu components */
-    React.useLayoutEffect(() => {
+
+      useLayoutEffect(() => {
         navigation.setOptions({
+            headerTitle: !searchPressed ? 'Rekeningen' : '',
+  
             headerRight: () => (   
-                <View style={{flexDirection:'row', paddingRight: 12.5 }}>
+                <View style={{flexDirection:'row', 
+                    paddingRight: 12.5, 
+                    flex: 1, 
+                    alignItems: 'center', 
+                    paddingVertical: 10,
+                    width: searchPressed ? Dimensions.get('window').width : '100%',
+                    justifyContent: 'flex-end',
+                    paddingLeft: 5,
+                }}>
+                    <CustomSearchbar 
+                        setSearchPressHandler={setSearchPressHandler}
+                        searchHandler={searchHandler}
+                        searchPressed={searchPressed}/>
                     <SortingMenu setBillsOrder={setBillsOrder} />
-                    <FilterMenu filtersHandler={filtersHandler} filterMonthHandler={filterMonthHandler} />                   
+                    <FilterMenu 
+                        filtersHandler={filtersHandler} 
+                        filterMonthHandler={filterMonthHandler} 
+                        filters={filters}
+                    />                   
                 </View>                            
             ),
         });
-      }, [navigation]);
+      }, [navigation, searchPressed, filters, searchQuery]);
+    
+    const setSearchPressHandler = useCallback(() => {
+        setSearchPressed(searchPressed => !searchPressed)
+    }, [searchPressed]);
+
+    const searchHandler = query => {
+        setSearchQuery(query.trim().toLowerCase());
+    }
 
     /* Setting the order of the bills for the listData from SortingMenu */  
     const setBillsOrder = useCallback((sortBy) => {
@@ -55,7 +84,23 @@ const BillsOverviewScreen = props => {
 
     /* Setting the filters for the listData from FilterMenu */
     const filtersHandler = useCallback((filter, value) => {
-        setFilters(filters => ({ ...filters, [filter] : value})) 
+        if(filter === 'filterOnlyPayed') {
+            setFilters(filters => ({
+                ...filters, 
+                ['filterGreen'] : value == true ? false : true,
+                ['filterOrange'] : value == true ? false : true,
+                ['filterRed'] : value == true ? false : true,
+                ['filterPayedBills'] : value,
+                ['filterOnlyPayed'] : value,
+            })) 
+        }
+        else {
+            setFilters(filters => ({ 
+                ...filters, 
+                [filter] : value,
+                ['filterOnlyPayed'] : false
+            })) 
+        }
     }, [filters]);
 
     /* Setting the available bills filtered by month */
@@ -85,6 +130,7 @@ const BillsOverviewScreen = props => {
                 navigation={props.navigation}  
                 sortBy={sortBy}      
                 filters={filters}
+                searchQuery={searchQuery}
             />    
         </View>
     );

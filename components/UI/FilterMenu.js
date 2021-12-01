@@ -8,25 +8,8 @@ import Colors from '../../constants/Colors';
 import MonthList from './MonthList';
 import HeaderButton from './HeaderButton';
 
-
-const FilterSwitch = props => {
-    return (
-        <Switch
-          trackColor={{ true: props.color, false: 'lightgrey' }}
-          thumbColor={Platform.OS === 'android' ? props.color : ''}
-          value={props.state}
-          style={styles.switch}
-          onValueChange={props.onChange}
-        />
-    );
-  };
-
-const FilterMenu = ({ filtersHandler, filterMonthHandler }) => {
+const FilterMenu = ({ filtersHandler, filterMonthHandler, filters }) => {
     const [showMenu, setShowMenu] = useState(false);
-    const [isGreenBills, setIsGreenBills] = useState(true);
-    const [isOrangeBills, setIsOrangeBills] = useState(true);
-    const [isRedBills, setIsRedBills] = useState(true);
-    const [showPayedBills, setShowPayedBills] = useState(false);
     const [month, setMonth] = useState(null)
 
     const updateMonth = useCallback((month) => {
@@ -54,50 +37,34 @@ const FilterMenu = ({ filtersHandler, filterMonthHandler }) => {
                     <Title style={{fontFamily: 'montserrat-medium', fontSize: 14, }}>Filters</Title>
                 </View>
                 <View style={styles.filterSwitchesContainer}>
-                    <FilterSwitch
-                        label="Normaal"
-                        color={Colors.primary}
-                        state={isGreenBills}
-                        onChange={
-                            newValue => {
-                                setIsGreenBills(newValue)  
-                                filtersHandler('filterGreen', newValue)     
-                            }
-                        }
+                    <Switch
+                        trackColor={{ true: Colors.primary, false: 'lightgrey' }}
+                        thumbColor={Platform.OS === 'android' ? Colors.primary : ''}
+                        value={filters.filterGreen}
+                        style={styles.switch}
+                        onValueChange={() => filtersHandler('filterGreen', !filters.filterGreen)}
                     />
-                    <FilterSwitch
-                        label="Urgent"
-                        color={Colors.billUrgent}
-                        state={isOrangeBills}
-                        onChange={
-                            newValue => {
-                                setIsOrangeBills(newValue)
-                                filtersHandler('filterOrange', newValue)
-                            }
-                        }
+                    <Switch
+                        trackColor={{ true: Colors.billUrgent, false: 'lightgrey' }}
+                        thumbColor={Platform.OS === 'android' ? Colors.billUrgent : ''}
+                        value={filters.filterOrange}
+                        style={styles.switch}
+                        onValueChange={() => filtersHandler('filterOrange', !filters.filterOrange)}
                     />
-                    <FilterSwitch
-                        label="Te laat"
-                        color={Colors.billOverdue}
-                        state={isRedBills}
-                        onChange={
-                            newValue => {
-                                setIsRedBills(newValue)
-                                filtersHandler('filterRed', newValue)
-                            }
-                        }
-                    /> 
-                    <FilterSwitch
-                        label="Betaald"
-                        color={Colors.billPayed}
-                        state={showPayedBills}
-                        onChange={
-                            newValue => {
-                                setShowPayedBills(newValue)
-                                filtersHandler('filterPayedBills', newValue)
-                            }
-                        }
-                    />  
+                    <Switch
+                        trackColor={{ true: Colors.billOverdue, false: 'lightgrey' }}
+                        thumbColor={Platform.OS === 'android' ? Colors.billOverdue : ''}
+                        value={filters.filterRed}
+                        style={styles.switch}
+                        onValueChange={() => filtersHandler('filterRed', !filters.filterRed)}
+                    />
+                    <Switch
+                        trackColor={{ true: Colors.billPayed, false: 'lightgrey' }}
+                        thumbColor={Platform.OS === 'android' ? Colors.billPayed : ''}
+                        value={filters.filterPayedBills}
+                        style={styles.switch}
+                        onValueChange={() => filtersHandler('filterPayedBills', !filters.filterPayedBills)}
+                    />
                 </View>
             </View>  
             <View style={styles.periodFilterContainer}>
@@ -106,7 +73,17 @@ const FilterMenu = ({ filtersHandler, filterMonthHandler }) => {
                     updateMonth={updateMonth}
                     month ={month}
                 />               
-            </View>                       
+            </View>
+            <View style={styles.periodFilterContainer}>
+                <Title style={{fontFamily: 'montserrat-medium', fontSize: 14, }}>Alleen betaalde Rekeningen</Title>                             
+                    <Switch
+                        trackColor={{ true: Colors.billPayed, false: 'lightgrey' }}
+                        thumbColor={Platform.OS === 'android' ? Colors.billPayed : ''}
+                        value={filters.filterOnlyPayed}
+                        style={[styles.switch, {transform: Platform.OS === 'ios' ? [{rotate: '0deg' }, {scaleX: 0.7}, {scaleY: 0.7}] : [{rotate: '0deg' }]}]}
+                        onValueChange={() => filtersHandler('filterOnlyPayed', !filters.filterOnlyPayed)}
+                    />       
+            </View>                         
         </Menu>      
     );
 };

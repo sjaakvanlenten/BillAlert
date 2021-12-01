@@ -15,11 +15,12 @@ import { AsyncStorageProvider } from '../hooks/useAsyncStorage';
 const defaultNavOptions = {
     headerTitleAlign: 'left',
     headerStyle: {
-      backgroundColor: Platform.OS === 'android' ? Colors.primary : '',
+      backgroundColor: Platform.OS === 'android' ? Colors.primary : '',    
     },
     headerTitleStyle: {
-      fontFamily: 'montserrat-medium',
-      paddingLeft: 12.5        
+      fontFamily: 'montserrat-medium',    
+      fontSize: 20,  
+      color: Platform.OS === 'android' ? 'white' : Colors.primary
     },
     headerBackTitleStyle: {
       fontFamily: 'open-sans'
@@ -37,7 +38,7 @@ const BillsStackScreen = () => {
             <BillsStack.Screen 
                 name="Overview" 
                 component={BillsOverviewScreen} 
-                options={{headerTitle: 'Rekeningen'}}                            
+                options={{headerTitle: 'Rekeningen', headerBackTitleVisible: false}}                            
             /> 
             <BillsStack.Screen 
                 name="Details" 

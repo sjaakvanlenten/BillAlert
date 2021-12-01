@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Menu, RadioButton } from 'react-native-paper';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
@@ -82,4 +82,4 @@ const styles = StyleSheet.create({
     }
   });
 
-export default SortingMenu;
+export default memo(SortingMenu);

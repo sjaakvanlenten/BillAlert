@@ -26,7 +26,7 @@ const handleFilters = (item, filters) => {
     return showBillItem;
 };
 
-const BillsList = ({ navigation, listData , sortBy, filters }) => {
+const BillsList = ({ navigation, listData , sortBy, filters, searchQuery }) => {
     const [currentSortby, setCurrentSortby] = useState('');
     
     function sortData(sortBy) {
@@ -57,23 +57,25 @@ const BillsList = ({ navigation, listData , sortBy, filters }) => {
     }
 
     const renderBillItem = ({item}) => {
-               
+
         if(handleFilters(item, filters)) {
-            return (
-                <BillItem
-                    title={item.title}
-                    dateCreated={item.dateCreated}
-                    dateExpiry={item.dateExpiry}
-                    billAmount={item.billAmount}
-                    status={item.status}
-                    onSelectBill={() => {
-                        navigation.navigate( 'Details', {
-                            billId: item.id
-                            }
-                        )
-                    }}
-                />
-            );
+            if(item.title.toLowerCase().includes(searchQuery)) {
+                return (
+                    <BillItem
+                        title={item.title}
+                        dateCreated={item.dateCreated}
+                        dateExpiry={item.dateExpiry}
+                        billAmount={item.billAmount}
+                        status={item.status}
+                        onSelectBill={() => {
+                            navigation.navigate( 'Details', {
+                                billId: item.id
+                                }
+                            )
+                        }}
+                    />
+                );
+            }
         }
         else return null;
     };

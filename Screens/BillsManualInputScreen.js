@@ -3,7 +3,6 @@ import { View, ScrollView, StyleSheet, Platform, ActivityIndicator, Alert, } fro
 import { useSelector, useDispatch } from 'react-redux';
 import { TextInput, Button, IconButton, Text, Checkbox, } from 'react-native-paper';
 import moment from 'moment';
-
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import ReceiversMenu from '../components/UI/ReceiversMenu';
@@ -110,14 +109,6 @@ const BillsManualInputScreen = ({navigation, route}) => {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [saveReceiverChecked, setSaveReceiverChecked] = useState(false);
-    
-    useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
-          setIsSubmitted(false)
-        });
-   
-        return unsubscribe;
-      }, [navigation]);
 
     const dateChangeHandler = (event, selectedDate) => {
         const currentDate = selectedDate || formState.inputValues.dateExpiry;
@@ -142,13 +133,15 @@ const BillsManualInputScreen = ({navigation, route}) => {
     }, [dispatchFormstate]);  
 
     const inputChangeHandler = useCallback((inputIdentifier, inputValue, inputValidity) => {
-        dispatchFormstate({
-            type: FORM_INPUT_UPDATE,
-            value: inputValue,
-            isValid: inputValidity,
-            input: inputIdentifier
-        });
-      }, [dispatchFormstate]);
+        if(inputValue !== formState.inputValues[inputIdentifier]) {
+            dispatchFormstate({
+                type: FORM_INPUT_UPDATE,
+                value: inputValue,
+                isValid: inputValidity,
+                input: inputIdentifier
+            });
+        }
+      }, [dispatchFormstate, formState]);
 
     const focusNextInputHandler = (inputIdentifier, inputValue, inputMaxLength) => {
         switch(inputIdentifier){
@@ -215,6 +208,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
             ]);
         } finally {      
             navigation.goBack(); 
+            setIsSubmitted(false)
         }           
     }, [saveReceiverChecked, formState, billId, dispatch]);
 
@@ -298,7 +292,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
                         minLength={2}
                         maxLength={2}
                         isSubmitted={isSubmitted} 
-                        focusNextInput={focusNextInputHandler}                
+                        focusNextInput={focusNextInputHandler}      
                     />
                     <Input
                         iban
@@ -351,7 +345,6 @@ const BillsManualInputScreen = ({navigation, route}) => {
                     onInputChange={inputChangeHandler}
                     initialValue={editedBill ? editedBill.reference : formState.inputValues.reference}
                     initiallyValid={true}
-                    touched={true}
                     isSubmitted={isSubmitted}
                 />
                 <View style={{flexDirection:'row', alignItems: 'center', flex: 1}}>               

@@ -39,11 +39,11 @@ const Input = forwardRef((props, ref) => {
     const initialState = {
         value: props.initialValue ? props.initialValue : '',
         isValid: props.initiallyValid,
-        touched: props.touched ? true : false
+        touched: false
     }
 
     const [inputState, dispatch] = useReducer( inputReducer, initialState, initializer);
-    const { onInputChange, id, isSubmitted, focusNextInput, initialValue } = props;
+    const { onInputChange, id, isSubmitted, focusNextInput, initialValue} = props;
 
     useEffect(() => {
         dispatch({type: INPUT_CHANGE, value: initialValue, isValid: true });
@@ -56,7 +56,7 @@ const Input = forwardRef((props, ref) => {
     }, [inputState, onInputChange, id]);
 
     useEffect(() => {
-        if (focusNextInput) {
+        if (focusNextInput && inputState.value.length == props.maxLength) {
             focusNextInput(id, inputState.value, props.maxLength);
         }
     }, [inputState.value]);

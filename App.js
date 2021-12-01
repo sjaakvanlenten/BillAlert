@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as Font from 'expo-font';
 import  AppLoading from 'expo-app-loading';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import ReduxThunk from 'redux-thunk';
 import { configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
-
 import moment from 'moment';
 import 'moment/locale/nl';
 
@@ -15,7 +14,6 @@ import billsReducer from './store/reducers/bills';
 import BillsNavigator from './navigation/BillsNavigator';
 
 import * as billsActions from './store/actions/bills';
-
 
 init()
   .then(() => {
