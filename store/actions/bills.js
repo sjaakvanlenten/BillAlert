@@ -2,14 +2,14 @@ export const CREATE_BILL = "CREATE_BILL";
 export const UPDATE_BILL = "UPDATE_BILL";
 export const SET_BILLS = 'SET_BILLS';
 export const REMOVE_BILL = 'REMOVE_BILL';
-export const UPDATE_PAYMENT_STATUS = 'UPDATE_PAYMENT_STATUS';
+export const UPDATE_PAYMENT_DATE = 'UPDATE_PAYMENT_DATE';
 
 import moment from 'moment';
 
-import { insertBill, fetchBills, deleteBill, db_updateBill, db_updatePaymentStatus } from '../../helpers/db';
+import { insertBill, fetchBills, deleteBill, db_updateBill, db_updatePaymentDate } from '../../helpers/db';
 
 export const createBill = (title, receiver, billAmount, IBANo, reference, dateExpiry) => {
-    dateCreated = moment().format('LL')
+    dateCreated = moment().format()
     return async dispatch => {
         try {
             const dbResult = await insertBill(
@@ -20,7 +20,7 @@ export const createBill = (title, receiver, billAmount, IBANo, reference, dateEx
                 billAmount, 
                 IBANo, 
                 reference, 
-                0,
+                null,
             );
             dispatch({ type: CREATE_BILL, billData: {id: dbResult.insertId.toString(), title, receiver, dateCreated, billAmount, IBANo, reference, dateExpiry}})
             }
@@ -31,7 +31,7 @@ export const createBill = (title, receiver, billAmount, IBANo, reference, dateEx
 }
 
 export const updateBill = (billId, title, receiver, billAmount, IBANo, reference, dateExpiry) => {
-    dateCreated = moment().format('LL')
+    dateCreated = moment().format()
     return async dispatch => {
         try {
             const dbResult = await db_updateBill(
@@ -42,7 +42,6 @@ export const updateBill = (billId, title, receiver, billAmount, IBANo, reference
                 billAmount, 
                 IBANo, 
                 reference, 
-                0,
                 billId,
             );
             dispatch({ type: UPDATE_BILL, billData: {billId, title, receiver, dateCreated, billAmount, IBANo, reference, dateExpiry}})
@@ -64,11 +63,12 @@ export const loadBills = () => {
     };
 };
 
-export const updatePaymentStatus = billId => {
+export const updatePaymentDate = billId => {
+    const datePayed = moment().format()
     return async dispatch => {
         try {
-            const dbResult = await db_updatePaymentStatus(billId);
-            dispatch({ type: UPDATE_PAYMENT_STATUS, billId: billId });
+            const dbResult = await db_updatePaymentDate(datePayed, billId);
+            dispatch({ type: UPDATE_PAYMENT_DATE, billData:{ billId, datePayed }});
         } catch (err) {
             throw err;
         }

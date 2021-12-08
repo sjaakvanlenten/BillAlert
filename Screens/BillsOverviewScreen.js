@@ -9,8 +9,7 @@ import BillsList from '../components/BillsList';
 import InfoBar from '../components/InfoBar';
 import CustomSearchbar from '../components/UI/CustomSearchbar';
 
-const BillsOverviewScreen = props => {
-    const { navigation } = props;
+const BillsOverviewScreen = ({navigation}) => {
 
     /* Local State */
     const [availableBills, setAvailableBills] = useState([]);
@@ -111,7 +110,7 @@ const BillsOverviewScreen = props => {
     /* Calculating and storing the total billAmount */
     const totalBillAmount = useMemo(() => {
         return availableBills.reduce((total, bill) => {
-            if(bill.status === 1) {
+            if(bill.paymentDate !== null) {
                 return total          
             } else {           
                 return total + parseFloat(bill.billAmount)
@@ -123,11 +122,10 @@ const BillsOverviewScreen = props => {
         <View style={{flex: 1, backgroundColor: 'white'}}>
             <InfoBar 
                 totalBillAmount={totalBillAmount}
-                openBillsAmount={availableBills.filter(bill => bill.status !== 1).length}
+                openBillsAmount={availableBills.filter(bill => bill.paymentDate === null).length}
             />
             <BillsList 
                 listData={availableBills} 
-                navigation={props.navigation}  
                 sortBy={sortBy}      
                 filters={filters}
                 searchQuery={searchQuery}

@@ -1,22 +1,26 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { Card, Button } from 'react-native-paper';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import moment from 'moment';
 
 import * as billsActions from '../store/actions/bills';
 import HeaderButton from '../components/UI/HeaderButton';
 import Colors from '../constants/Colors';
 
-const BillDetailsScreen = ({navigation, route : {params : { billId }}}) => {
+const BillDetailsScreen = ({navigation, route : {params : { billId, itemInfo }}}) => {
+    const [billInfo, setBillInfo] = useState(itemInfo)
   
     const dispatch = useDispatch();
 
     const selectedBill = useSelector(state => state.bills.bills.find(bill => bill.id == billId), next => next === undefined);
-    
-    const daysDifference = moment.duration(moment(selectedBill.dateExpiry) - moment()).days();
+
+    const paymentDateDaysDifference = moment(selectedBill.paymentDate).startOf('day').diff(
+        moment(selectedBill.dateExpiry).startOf('day'), 
+        'days'
+    )
 
     const deleteHandler = () => {        
         dispatch(billsActions.removeBill(billId))
@@ -24,7 +28,14 @@ const BillDetailsScreen = ({navigation, route : {params : { billId }}}) => {
     }
 
     const payBillHandler = () => {
-        dispatch(billsActions.updatePaymentStatus(billId))
+        setBillInfo(billInfo => {
+            return {
+                ...billInfo, 
+                ['textColor'] : 'black',
+                ['statusIcon'] : "check-circle", 
+                ['cardColor'] : Colors.billPayed,
+                }});
+        dispatch(billsActions.updatePaymentDate(billId))
     }
 
     useLayoutEffect(() => {
@@ -53,12 +64,12 @@ const BillDetailsScreen = ({navigation, route : {params : { billId }}}) => {
             <Card style={styles.cardContainer}>
                 <Card.Content backgroundColor='white' style={{borderRadius: 10}}>
                     <View style={styles.cardContentItem}>
-                        <Text style={styles.title}>Ten name van</Text>
-                        <Text style={styles.paragraph}>{selectedBill.receiver}</Text>                     
+                        <Text style={styles.title}>Aangemaakt op</Text>
+                        <Text style={styles.paragraph}>{moment(selectedBill.dateCreated).format('LL')}</Text>                     
                     </View>
                     <View style={styles.cardContentItem}>
-                        <Text style={styles.title}>Aangemaakt op</Text>
-                        <Text style={styles.paragraph}>{selectedBill.dateCreated}</Text>                     
+                        <Text style={styles.title}>Ten name van</Text>
+                        <Text style={styles.paragraph}>{selectedBill.receiver}</Text>                     
                     </View>
                     <View style={styles.cardContentItem}>
                         <Text style={styles.title}>Bedrag</Text>
@@ -68,22 +79,55 @@ const BillDetailsScreen = ({navigation, route : {params : { billId }}}) => {
                         <Text style={styles.title}>IBAN</Text>
                         <Text style={styles.paragraph}>{selectedBill.IBANo}</Text>                     
                     </View>
+                    {selectedBill.reference !== '' &&
+                        <View style={styles.cardContentItem}>
+                            <Text style={styles.title}>Beschrijving</Text>
+                            <Text style={styles.paragraph}>{selectedBill.reference}</Text>                     
+                        </View>
+                    }
                     <View style={styles.cardContentItem}>
-                        <Text style={styles.title}>Resterende dagen</Text>
-                        <Text style={styles.paragraph}>{daysDifference >= 1 ? daysDifference : 0}</Text>                     
-                    </View>
-                    <View style={styles.cardContentItem}>
-                        <Text style={styles.title}>Status</Text>
-                        {selectedBill.status === 1 ? <Text style={styles.paragraph}>Betaald</Text> : <Text style={styles.paragraph}>Open</Text>} 
-                    </View>
-                    <View style={styles.cardContentItem}>
-                        <Text style={styles.title}>Vervaldatum</Text>
+                        <Text style={styles.title}>Betalen voor</Text>
                         <Text style={styles.paragraph}>{moment(selectedBill.dateExpiry).format('LL')}</Text>
                     </View>
-                    <View style={styles.cardContentItem}>
-                        <Text style={styles.title}>Beschrijving</Text>
-                        <Text style={styles.paragraph}>{selectedBill.reference}</Text>                     
+                    <View style={[styles.cardContentItem, {marginBottom: 15}]}>
+                        <Text style={styles.title}>Status</Text>
+                        <View style={{flexDirection: 'row'}}>
+                            <Text style={[styles.paragraph, {color: billInfo.textColor}]}>
+                                {selectedBill.paymentDate !== null 
+                                    ? `Betaald op ${moment(selectedBill.paymentDate).format('LL')}` 
+                                    : billInfo.statusText
+                                }
+                            </Text>
+                            <MaterialCommunityIcons
+                                name={billInfo.statusIcon} 
+                                size={20} color={billInfo.cardColor} 
+                                style={{paddingLeft: 5, paddingTop: 2, }} 
+                            />
+                        </View>
                     </View>
+                    {selectedBill.paymentDate !== null ?
+                        <View style={[styles.cardContentItem, {
+                                backgroundColor: paymentDateDaysDifference < 0 ? Colors.billPayed : Colors.billOverdue, 
+                                alignSelf: 'flex-start', 
+                                padding: 5, 
+                                paddingHorizontal: 20,
+                                borderRadius: 25,
+                                marginBottom: 0,
+                            }
+                        ]}>        
+                            <Text style={[styles.paragraph, {color: '#fff'}]}>
+                                {paymentDateDaysDifference >= 0
+                                    ? `${paymentDateDaysDifference+1} ${paymentDateDaysDifference === 0 ? 'dag' : 'dagen'} te laat betaald` 
+                                    : 'Op tijd betaald'
+                                }
+                            </Text>                    
+                        </View>
+                    : 
+                        <View style={[styles.cardContentItem, {marginBottom: 0}]}>        
+                            <Text style={styles.title}>Resterende dagen</Text>
+                            <Text style={styles.paragraph}>{itemInfo.headerText}</Text>                    
+                        </View>        
+                    }
                 </Card.Content>
             </Card>
             <View style={styles.buttonContainer}>
@@ -100,13 +144,14 @@ const BillDetailsScreen = ({navigation, route : {params : { billId }}}) => {
                     Verwijder
                 </Button>
                 <Button 
-                    onPress={payBillHandler}
+                    onPress={selectedBill.paymentDate === null ? payBillHandler : null}
                     mode="contained" 
                     icon="check-bold"
-                    color={Colors.primary}
+                    color={selectedBill.paymentDate !== null ? Colors.billPayed : Colors.primary}
+                    dark={true}
                     style={styles.button}
                     contentStyle={[styles.buttonContent, {flexDirection: 'row-reverse'}]}
-                    uppercase= {false}
+                    uppercase={false}
                     labelStyle={styles.buttonLabel}
                 >
                     Betaald
@@ -123,7 +168,6 @@ const styles = StyleSheet.create({
         marginHorizontal: 25,
         marginTop: 25,
         elevation: 5,
-        paddingBottom: 10,
     },
     buttonContainer: {
         flexDirection:'row',
@@ -133,8 +177,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 25 
     },
     cardContentItem: {
-        flexDirection: 'column',
-        justifyContent: 'space-between',
         marginBottom: 20,
     },
     button: {

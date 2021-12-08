@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
         height: 30,
         width: 70,
         borderRadius: 50,
-        backgroundColor: '#7b7ba7',
+        backgroundColor: '#69699a',
         transform:  [{rotate: '45deg' }]
     },
     right: {
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
         height: 30,
         width: 70,
         borderRadius: 50,
-        backgroundColor: '#7b7ba7',
+        backgroundColor: '#69699a',
         transform:  [{rotate: '135deg' }]
     },
     main: {
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         alignItems: 'center',
         borderRadius: 50,
-        backgroundColor: '#7b7ba7',
+        backgroundColor: '#69699a',
     },
     text: {
         fontSize: 15,

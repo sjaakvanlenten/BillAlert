@@ -1,4 +1,4 @@
-import { CREATE_BILL, UPDATE_BILL, REMOVE_BILL, SET_BILLS, UPDATE_PAYMENT_STATUS } from '../actions/bills';
+import { CREATE_BILL, UPDATE_BILL, REMOVE_BILL, SET_BILLS, UPDATE_PAYMENT_DATE } from '../actions/bills';
 import Bill from '../../models/bill';
 
 const initialState = {
@@ -23,7 +23,7 @@ const billsReducer = (state = initialState, action) => {
                 action.billData.billAmount,
                 action.billData.IBANo, 
                 action.billData.reference, 
-                0, 
+                null,
             );
             return {
                 ...state,
@@ -42,7 +42,6 @@ const billsReducer = (state = initialState, action) => {
                 action.billData.billAmount,
                 action.billData.IBANo, 
                 action.billData.reference, 
-                0, 
             );
             const updatedBills = [...state.bills];
             updatedBills[billIndex] = updatedBill;
@@ -51,12 +50,12 @@ const billsReducer = (state = initialState, action) => {
                 ...state,
                 bills: updatedBills
               };
-        case UPDATE_PAYMENT_STATUS:
+        case UPDATE_PAYMENT_DATE:
             billIndex = state.bills.findIndex(
-                bill => bill.id === action.billId
+                bill => bill.id === action.billData.billId
             );
             const BillsCopy = [...state.bills];
-            BillsCopy[billIndex]['status'] = 1;
+            BillsCopy[billIndex]['paymentDate'] = action.billData.datePayed;
             return {
                 ...state,
                 bills: BillsCopy

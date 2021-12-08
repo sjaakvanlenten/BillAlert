@@ -1,40 +1,45 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity,  Platform, TouchableNativeFeedback } from 'react-native';
+import { View, StyleSheet, TouchableOpacity,  Platform, TouchableNativeFeedback, Text } from 'react-native';
 import { Card, Title, Paragraph } from 'react-native-paper';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 import Colors from '../constants/Colors';
 import moment from 'moment';
 
-const BillItem = item => {
-
+const BillItem = ({item}) => {
+    const navigation = useNavigation()
     let TouchableCmp = TouchableOpacity;
 
-    let daysDifference = moment.duration(moment(item.dateExpiry) - moment()).days();
+    const daysDifference = moment(item.dateExpiry).startOf('day').diff(moment().startOf('day'), 'days')
 
-    let itemInfo = {
+    const itemInfo = { //Normal Bill
         cardColor: Colors.primary,
-        statusIcon: null,
+        statusIcon: null, 
         statusText: 'Open',
         textColor: 'black',
+        headerText : `Nog ${daysDifference} dagen`,
     }
 
-    if(item.status === 1) {
+    if(item.paymentDate !== null) { //Payed Bill
         itemInfo.cardColor = Colors.billPayed
-        itemInfo.statusIcon = "md-checkmark-circle"     
+        itemInfo.statusIcon = "check-circle"     
         itemInfo.statusText = 'Betaald'
+        itemInfo.headerText = 'Betaald'
     }
     else {
-        if(daysDifference < 1) {
+        if(daysDifference <= 0) { //Bill Overdue
             itemInfo.cardColor = Colors.billOverdue
-            itemInfo.statusIcon = "ios-alert-circle"     
+            itemInfo.statusIcon = "alarm-light"    
             itemInfo.statusText = 'Te laat'
-            itemInfo.textColor = Colors.billOverdue
+            itemInfo.textColor = Colors.billOverdue,
+            itemInfo.headerText = `${(daysDifference*-1)+1} ${daysDifference == 0 ? 'dag' : 'dagen'} te laat!`
         } 
-        else if(daysDifference < 7) {
+        else if(daysDifference < 7) { //Urgent Bill
             itemInfo.cardColor = Colors.billUrgent
-            itemInfo.statusIcon = "warning"     
+            itemInfo.statusIcon = "alert"     
             itemInfo.statusText = 'Urgent' 
+            if(daysDifference == 1) itemInfo.headerText= 'Laatste dag!'
         }
     }
 
@@ -47,18 +52,39 @@ const BillItem = item => {
             <TouchableCmp 
                 useForeground 
                 background={TouchableNativeFeedback.Ripple('#F3F3F3')}
-                onPress={item.onSelectBill}
+                onPress={() => {
+                    navigation.navigate( 'Details', {
+                        billId: item.id,
+                        itemInfo: itemInfo,
+                        }
+                    )
+                }}
             >        
                 <Card style={styles.container}>
                     <Card.Title 
-                        title={item.title}
+                        title={item.title}  
+                        subtitle={moment(item.dateCreated).format('LL')}
                         style={{
                             backgroundColor: itemInfo.cardColor,
                             marginBottom: 5,
                             borderTopLeftRadius: 10,
                             borderTopRightRadius: 10,
+                            minHeight: 60,
+                            paddingRight: 16,
                         }}
                         titleStyle={{fontFamily: 'montserrat-bold', color: 'white', fontSize: 16}}
+                        subtitleStyle={{fontFamily: 'montserrat-medium', color: 'white', fontSize: 10,  lineHeight: 12}}
+                        right={() => (    
+                                <Text
+                                    style={{
+                                        fontFamily: 'montserrat-semibold',
+                                        color: 'white',
+                                        fontSize: 14,
+                                    }}
+                                >
+                                    {itemInfo.headerText}
+                                </Text> 
+                        )}
                     />
                     <Card.Content 
                         backgroundColor='white' 
@@ -76,7 +102,7 @@ const BillItem = item => {
                             <Title style={styles.title}>Status</Title>
                             <View style={{flexDirection: 'row', alignItems: 'center',}}>
                                 <Paragraph style={[styles.paragraph, {color: itemInfo.textColor}]}>{itemInfo.statusText}</Paragraph> 
-                                <Ionicons 
+                                <MaterialCommunityIcons
                                     name={itemInfo.statusIcon} 
                                     size={16} color={itemInfo.cardColor} 
                                     style={{paddingLeft: 2, paddingTop: 2, }} 
@@ -84,8 +110,15 @@ const BillItem = item => {
                             </View>
                         </View>
                         <View style={[styles.cardContentItem, {flex: 1.4}]}>
-                            <Title style={styles.title}>Vervaldatum</Title>
-                            <Paragraph style={[styles.paragraph, {color: itemInfo.textColor}]}>{moment(item.dateExpiry).format('LL')}</Paragraph>
+                            <Title style={styles.title}>
+                                {item.paymentDate !== null ? 'Betaald op' : 'Betalen voor'} 
+                            </Title>
+                            <Paragraph style={[styles.paragraph, {color: itemInfo.textColor}]}>
+                                {item.paymentDate !== null 
+                                    ? moment(item.paymentDate).format('LL')
+                                    : moment(item.dateExpiry).format('LL')
+                                }
+                            </Paragraph>
                         </View>
                     </Card.Content>
                 </Card>
@@ -99,7 +132,7 @@ const styles = StyleSheet.create({
         flex: 1,   
         borderRadius: 10,
         overflow: Platform.OS === 'android' ? 'hidden' : 'visible',
-        marginHorizontal: 25,
+        marginHorizontal: Platform.OS === 'android' ? 20 : 10,
         marginVertical: 15,
         elevation: 5,
     },

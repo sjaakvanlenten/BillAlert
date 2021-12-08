@@ -133,7 +133,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
     }, [dispatchFormstate]);  
 
     const inputChangeHandler = useCallback((inputIdentifier, inputValue, inputValidity) => {
-        if(inputValue !== formState.inputValues[inputIdentifier]) {
+        if(inputValue !== formState.inputValues[inputIdentifier]) {  
             dispatchFormstate({
                 type: FORM_INPUT_UPDATE,
                 value: inputValue,
@@ -349,7 +349,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
                 />
                 <View style={{flexDirection:'row', alignItems: 'center', flex: 1}}>               
                 <TextInput 
-                        label='Vervaldatum'
+                        label='Betalen voor'
                         outlineColor={Colors.primary}
                         editable={false}
                         selectTextOnFocus={false}

@@ -4,7 +4,7 @@ import { Menu, RadioButton } from 'react-native-paper';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 import { MaterialIcons } from '@expo/vector-icons';
-import { Fontisto } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
 import Colors from '../../constants/Colors';
 import HeaderButton from './HeaderButton';
 
@@ -15,6 +15,7 @@ const SortingMenu = ({ setBillsOrder }) => {
 
     return (           
         <Menu
+            style={{width: '65%'}}
             visible={showMenu}
             onDismiss={() => setShowMenu(false)}
             anchor= {
@@ -25,34 +26,37 @@ const SortingMenu = ({ setBillsOrder }) => {
         >
             <RadioButton.Group onValueChange={newValue => {setValue(newValue); setBillsOrder(newValue)}} value={value}>
                 <View style={styles.filterContainer}>
-                    <Text>Titel</Text>
+                    <View flexDirection='row' alignItems='center'>
+                        <Text style={styles.text}>Titel </Text>
+                        <FontAwesome5 name="sort-alpha-down" size={16} color={Colors.primary} />
+                    </View>                    
                     <RadioButton value="title" color={Colors.primary} />
                 </View>
                 <View style={styles.filterContainer}>
                     <View flexDirection='row' alignItems='center'>
-                        <Text>Vervaldatum </Text>
-                        <Fontisto name="arrow-up-l" size={16} color="black" />
+                        <Text style={styles.text}>Vervaldatum </Text>
+                        <FontAwesome5 name="sort-numeric-up-alt" size={16} color={Colors.primary} />
                     </View>
                     <RadioButton value="dateExpiry_up" color={Colors.primary} />
                 </View>
                 <View style={styles.filterContainer}>
                     <View flexDirection='row' alignItems='center'>
-                        <Text>Vervaldatum </Text>
-                        <Fontisto name="arrow-down-l" size={16} color="black"/>
+                        <Text style={styles.text}>Vervaldatum </Text>
+                        <FontAwesome5 name="sort-numeric-down" size={16} color={Colors.primary}/>
                     </View>
                     <RadioButton value="dateExpiry_down" color={Colors.primary} />
                 </View>
                 <View style={styles.filterContainer}>
                     <View flexDirection='row' alignItems='center'>
-                        <Text>Datum aangemaakt </Text>
-                        <Fontisto name="arrow-up-l" size={16} color="black" />
+                        <Text style={styles.text}>Datum aangemaakt </Text>
+                        <FontAwesome5 name="sort-numeric-up-alt" size={16} color={Colors.primary} />
                     </View>
                     <RadioButton value="dateCreated_up" color={Colors.primary} />
                 </View>
                 <View style={styles.filterContainer}>
                     <View flexDirection='row' alignItems='center'>
-                        <Text>Datum aangemaakt </Text>
-                        <Fontisto name="arrow-down-l" size={16} color="black" />
+                        <Text style={styles.text}>Datum aangemaakt </Text>
+                        <FontAwesome5 name="sort-numeric-down" size={16} color={Colors.primary}/>
                     </View>
                     <RadioButton value="dateCreated_down" color={Colors.primary} />
                 </View>
@@ -79,6 +83,11 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       padding: 10,
       marginLeft: 10
+    },
+    text: {
+        fontFamily: 'montserrat-medium',
+        marginRight: 10,
+        fontSize: 14,
     }
   });
 

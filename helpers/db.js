@@ -24,7 +24,7 @@ export const init = () => {
     const promise = new Promise((resolve, reject) => {
         db.transaction(tx => {
             tx.executeSql(
-                'CREATE TABLE IF NOT EXISTS bills (id INTEGER PRIMARY KEY NOT NULL, title TEXT NOT NULL, receiver TEXT NOT NULL, dateCreated TEXT NOT NULL, dateExpiry TEXT NOT NULL, billAmount TEXT NOT NULL, IBANo TEXT NOT NULL, reference TEXT NOT NULL, status INTEGER NOT NULL);',
+                'CREATE TABLE IF NOT EXISTS bills (id INTEGER PRIMARY KEY NOT NULL, title TEXT NOT NULL, receiver TEXT NOT NULL, dateCreated TEXT NOT NULL, dateExpiry TEXT NOT NULL, billAmount TEXT NOT NULL, IBANo TEXT NOT NULL, reference TEXT NOT NULL, paymentDate TEXT);',
                 [],
                 () => {
                     resolve();
@@ -38,12 +38,12 @@ export const init = () => {
     return promise;
 }
 
-export const insertBill = (title, receiver, dateCreated, dateExpiry, billAmount, IBANo, reference, status) => {
+export const insertBill = (title, receiver, dateCreated, dateExpiry, billAmount, IBANo, reference, paymentDate) => {
     const promise = new Promise((resolve, reject) => {
         db.transaction(tx => {
             tx.executeSql(
-                'INSERT INTO bills (title, receiver, dateCreated, dateExpiry, billAmount, IBANo, reference, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-                [title, receiver, dateCreated, dateExpiry, billAmount, IBANo, reference, status],
+                'INSERT INTO bills (title, receiver, dateCreated, dateExpiry, billAmount, IBANo, reference, paymentDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                [title, receiver, dateCreated, dateExpiry, billAmount, IBANo, reference, paymentDate],
                 (_, result) => {
                     resolve(result);
                 },
@@ -56,13 +56,13 @@ export const insertBill = (title, receiver, dateCreated, dateExpiry, billAmount,
     return promise;    
 }
 
-export const db_updateBill = ( title, receiver, dateCreated, dateExpiry, billAmount, IBANo, reference, status, billId) => {
+export const db_updateBill = ( title, receiver, dateCreated, dateExpiry, billAmount, IBANo, reference, billId) => {
     const promise = new Promise((resolve, reject) => {
         db.transaction(tx => {
             tx.executeSql(
-                'UPDATE bills SET title = ?, receiver = ?, dateCreated = ?, dateExpiry = ?, billAmount = ?, IBANo = ?, reference = ?, status = ? WHERE id = ?' 
+                'UPDATE bills SET title = ?, receiver = ?, dateCreated = ?, dateExpiry = ?, billAmount = ?, IBANo = ?, reference = ? WHERE id = ?' 
                 ,
-                [title, receiver, dateCreated, dateExpiry, billAmount, IBANo, reference, status, billId],
+                [title, receiver, dateCreated, dateExpiry, billAmount, IBANo, reference, billId],
                 (_, result) => {
                     resolve(result);
                 },
@@ -75,13 +75,13 @@ export const db_updateBill = ( title, receiver, dateCreated, dateExpiry, billAmo
     return promise;    
 }
 
-export const db_updatePaymentStatus = (billId) => {
+export const db_updatePaymentDate = (datePayed, billId) => {
     const promise = new Promise((resolve, reject) => {
         db.transaction(tx => {
             tx.executeSql(
-                'UPDATE bills SET status = 1  WHERE id = ?' 
+                'UPDATE bills SET paymentDate = ?  WHERE id = ?' 
                 ,
-                [billId],
+                [datePayed, billId],
                 (_, result) => {
                     resolve(result);
                 },

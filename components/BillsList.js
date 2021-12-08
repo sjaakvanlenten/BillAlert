@@ -9,7 +9,7 @@ const handleFilters = (item, filters) => {
     const daysDifference = moment.duration(moment(item.dateExpiry) - moment()).days();
     let showBillItem = false;
 
-    if(item.status === 0) {
+    if(item.paymentDate === null) {
         if(filters.filterRed && daysDifference < 1) {
             showBillItem = true;
         } else if(filters.filterOrange && daysDifference < 7 && daysDifference >= 1) {
@@ -19,14 +19,13 @@ const handleFilters = (item, filters) => {
         } 
     }
 
-    if(filters.filterPayedBills && item.status === 1) {
-        showBillItem = true;
-    }
+    if(filters.filterPayedBills && item.paymentDate !== null) showBillItem = true;
 
     return showBillItem;
 };
 
-const BillsList = ({ navigation, listData , sortBy, filters, searchQuery }) => {
+const BillsList = ({ listData , sortBy, filters, searchQuery }) => {
+    
     const [currentSortby, setCurrentSortby] = useState('');
     
     function sortData(sortBy) {
@@ -57,22 +56,11 @@ const BillsList = ({ navigation, listData , sortBy, filters, searchQuery }) => {
     }
 
     const renderBillItem = ({item}) => {
-
         if(handleFilters(item, filters)) {
             if(item.title.toLowerCase().includes(searchQuery)) {
                 return (
                     <BillItem
-                        title={item.title}
-                        dateCreated={item.dateCreated}
-                        dateExpiry={item.dateExpiry}
-                        billAmount={item.billAmount}
-                        status={item.status}
-                        onSelectBill={() => {
-                            navigation.navigate( 'Details', {
-                                billId: item.id
-                                }
-                            )
-                        }}
+                        item={item}
                     />
                 );
             }
