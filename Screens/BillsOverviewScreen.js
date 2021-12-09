@@ -8,6 +8,7 @@ import SortingMenu from '../components/UI/SortingMenu'
 import BillsList from '../components/BillsList';
 import InfoBar from '../components/InfoBar';
 import CustomSearchbar from '../components/UI/CustomSearchbar';
+import { FAB } from 'react-native-paper';
 
 const BillsOverviewScreen = ({navigation}) => {
 
@@ -39,13 +40,13 @@ const BillsOverviewScreen = ({navigation}) => {
         }
     }, [bills, monthFilter]);
 
-      useLayoutEffect(() => {
-        navigation.setOptions({
+    useLayoutEffect(() => {
+        const stackNavigator = navigation.dangerouslyGetParent()
+            stackNavigator.setOptions({
             headerTitle: !searchPressed ? 'Rekeningen' : '',
-  
+        
             headerRight: () => (   
                 <View style={{flexDirection:'row', 
-                    paddingRight: 12.5, 
                     flex: 1, 
                     alignItems: 'center', 
                     paddingVertical: 10,
@@ -129,7 +130,18 @@ const BillsOverviewScreen = ({navigation}) => {
                 sortBy={sortBy}      
                 filters={filters}
                 searchQuery={searchQuery}
-            />    
+            />  
+            <FAB
+                style={{
+                    position: 'absolute',
+                    margin: 16,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: '#69699a'
+                  }}
+                icon="plus"
+                onPress={() => navigation.navigate('ManualInput')}
+            />  
         </View>
     );
 }

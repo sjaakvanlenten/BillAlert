@@ -48,7 +48,7 @@ const BillDetailsScreen = ({navigation, route : {params : { billId, itemInfo }}}
                 IconComponent={MaterialIcons}
                 iconName="edit"
                 onPress={() => {
-                  navigation.navigate('ManualInputEdit', {
+                  navigation.navigate('ManualInput', {
                       billId
                   });
                 }}

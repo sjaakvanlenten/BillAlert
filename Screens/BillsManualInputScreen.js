@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useReducer, useCallback, useRef, useLayoutEffect } from 'react';
 import { View, ScrollView, StyleSheet, Platform, ActivityIndicator, Alert, } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { TextInput, Button, IconButton, Text, Checkbox, } from 'react-native-paper';
@@ -109,6 +109,12 @@ const BillsManualInputScreen = ({navigation, route}) => {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [saveReceiverChecked, setSaveReceiverChecked] = useState(false);
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerTitle: editedBill ? 'Wijzig Rekening' : 'Nieuwe Rekening'
+        })
+    }, [editedBill])
 
     const dateChangeHandler = (event, selectedDate) => {
         const currentDate = selectedDate || formState.inputValues.dateExpiry;
