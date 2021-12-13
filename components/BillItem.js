@@ -72,7 +72,7 @@ const BillItem = ({item}) => {
                             minHeight: 60,
                             paddingRight: 16,
                         }}
-                        titleStyle={{fontFamily: 'montserrat-bold', color: 'white', fontSize: 16}}
+                        titleStyle={{fontFamily: 'montserrat-medium', color: 'white', fontSize: 16}}
                         subtitleStyle={{fontFamily: 'montserrat-medium', color: 'white', fontSize: 10,  lineHeight: 12}}
                         right={() => (    
                                 <Text

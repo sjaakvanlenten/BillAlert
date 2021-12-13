@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View} from 'react-native'
+import { View } from 'react-native'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
 import { Searchbar } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -10,7 +10,7 @@ const CustomSearchbar = ({ setSearchPressHandler, searchHandler, searchPressed }
     const [searchQuery, setSearchQuery] = useState('')
 
     return (
-        <View style={{flex: 1}}>
+        <View style={{flex: searchPressed ? 1 : 0}}>
             {!searchPressed ? (
                 <HeaderButtons HeaderButtonComponent={HeaderButton}>
                     <Item 
@@ -23,6 +23,7 @@ const CustomSearchbar = ({ setSearchPressHandler, searchHandler, searchPressed }
             ) : (
                 <View style={{flex: 1}}>
                     <Searchbar
+                    autoFocus
                         style={{flex: 1, borderRadius: 25, marginRight: 10}}
                         placeholder="Zoeken"
                         onChangeText={query => {

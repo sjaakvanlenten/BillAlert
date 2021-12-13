@@ -12,25 +12,37 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 
 const DrawerContent = (props) => {
-  
     return (
-        <View style={{flex: 1}}>          
-            <View>
+        <View>          
                 <Drawer.Section>
                     <DrawerItem
-                        icon={() => <MaterialCommunityIcons name="cog-outline" size={22} color={Colors.primary}/>}
+                        icon={() => <MaterialCommunityIcons 
+                            name="cog-outline" 
+                            size={22} 
+                            color='white'
+                        />}
                         label='Instellingen'
-                        onPress={()=>{props.navigation.navigate('ManualInput')}}
-                        labelStyle={{fontFamily: 'montserrat-medium'}}
+                        onPress={()=>{}}
+                        labelStyle={{
+                            fontFamily: 'montserrat-medium',
+                            color: 'white'
+                        }}
                     />
                     <DrawerItem
-                        icon={() => <MaterialCommunityIcons name="trash-can-outline" size={22} color={Colors.primary}/>}
+                        icon={() => <MaterialCommunityIcons 
+                            name="trash-can-outline" 
+                            size={22} 
+                            color='white'
+                        />}
                         label='Prullenbak'
-                        onPress={()=>{props.navigation.navigate('ManualInput')}}
-                        labelStyle={{fontFamily: 'montserrat-medium'}}
+                        onPress={()=>{}}
+                        labelStyle={{
+                            fontFamily: 'montserrat-medium',
+                            color: 'white'
+                        }}
                     />
                 </Drawer.Section>
-            </View>    
+ 
         </View>
     )
 }

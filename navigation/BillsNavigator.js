@@ -14,18 +14,23 @@ import { AsyncStorageProvider } from '../hooks/useAsyncStorage';
 import HeaderButton from '../components/UI/HeaderButton';
 import DrawerContent from '../components/DrawerContent';
 import { DrawerActions } from '@react-navigation/native';
+import { Platform } from 'react-native';
 
 const defaultNavOptions = {
+    headerBackTitleVisible: false,
     headerTitleAlign: 'left',
     headerStyle: {
-      backgroundColor: Platform.OS === 'android' ? Colors.primary : '',    
+      backgroundColor: Colors.primary, 
+        elevation: 0,
+        shadowOpacity: 0,
+        borderBottomWidth: 0,
     },
     headerTitleStyle: {
       fontFamily: 'montserrat-medium',    
       fontSize: 20,  
-      color: Platform.OS === 'android' ? 'white' : Colors.primary
+      color: 'white'
     },
-    headerTintColor: Platform.OS === 'android' ? 'white' : Colors.primary
+    headerTintColor: 'white'
   };
   
 const Drawer = createDrawerNavigator();
@@ -35,7 +40,7 @@ const BillsStackScreen = () => {
     return (
         <BillsStack.Navigator screenOptions={defaultNavOptions}>
             <BillsStack.Screen 
-                name="Overview" 
+                name="Home" 
                 component={SideDrawer} 
                 options={({navigation}) => ({
                     headerBackTitleVisible: false,
@@ -69,9 +74,11 @@ const SideDrawer = () => {
         <Drawer.Navigator 
             screenOptions={{ 
                 swipeEnabled: false,
-            }}
-            drawerStyle={{
-                width: 240,
+                headerShown: false,
+                drawerStyle: {
+                    backgroundColor: Colors.primary,
+                    width: 240
+                }
             }}
             drawerContent={props => <DrawerContent {...props} />}
         >
@@ -83,7 +90,7 @@ const SideDrawer = () => {
 const BillsNavigator = () => {
     return (
         <PaperProvider>
-            <NavigationContainer>
+            <NavigationContainer theme={{ colors: { background: Colors.primary } }}>
                     <AsyncStorageProvider>
                         <BillsStackScreen />
                     </AsyncStorageProvider>          

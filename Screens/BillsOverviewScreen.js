@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useCallback, useMemo, useLayoutEffect } from 'react';
 import { useSelector} from 'react-redux';
-import { View, Dimensions } from 'react-native';
+import { View, Dimensions, BackHandler, Platform } from 'react-native';
 import moment from 'moment';
-
+import { StatusBar } from 'expo-status-bar';
 import FilterMenu from '../components/UI/FilterMenu'
 import SortingMenu from '../components/UI/SortingMenu'
 import BillsList from '../components/BillsList';
 import InfoBar from '../components/InfoBar';
 import CustomSearchbar from '../components/UI/CustomSearchbar';
 import { FAB } from 'react-native-paper';
+import { useFocusEffect } from '@react-navigation/core';
 
 const BillsOverviewScreen = ({navigation}) => {
 
@@ -41,7 +42,7 @@ const BillsOverviewScreen = ({navigation}) => {
     }, [bills, monthFilter]);
 
     useLayoutEffect(() => {
-        const stackNavigator = navigation.dangerouslyGetParent()
+        const stackNavigator = navigation.getParent()
             stackNavigator.setOptions({
             headerTitle: !searchPressed ? 'Rekeningen' : '',
         
@@ -57,7 +58,8 @@ const BillsOverviewScreen = ({navigation}) => {
                     <CustomSearchbar 
                         setSearchPressHandler={setSearchPressHandler}
                         searchHandler={searchHandler}
-                        searchPressed={searchPressed}/>
+                        searchPressed={searchPressed}
+                    />
                     <SortingMenu setBillsOrder={setBillsOrder} />
                     <FilterMenu 
                         filtersHandler={filtersHandler} 
@@ -69,6 +71,24 @@ const BillsOverviewScreen = ({navigation}) => {
         });
       }, [navigation, searchPressed, filters, searchQuery]);
     
+    /* Android Backbutton will hide searchBar */
+    useFocusEffect(
+        useCallback(() => {
+          const onBackPress = () => {
+            if (searchPressed) {
+              setSearchPressed(false);
+              return true;
+            } else {
+              return false;
+            }
+          };
+    
+        BackHandler.addEventListener('hardwareBackPress', onBackPress);
+    
+        return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+        }, [searchPressed])
+    );  
+
     const setSearchPressHandler = useCallback(() => {
         setSearchPressed(searchPressed => !searchPressed)
     }, [searchPressed]);
@@ -136,12 +156,13 @@ const BillsOverviewScreen = ({navigation}) => {
                     position: 'absolute',
                     margin: 16,
                     right: 0,
-                    bottom: 0,
+                    bottom: 0,           
                     backgroundColor: '#69699a'
                   }}
                 icon="plus"
                 onPress={() => navigation.navigate('ManualInput')}
             />  
+            {Platform.OS === 'ios' && <StatusBar style="light" />} 
         </View>
     );
 }
