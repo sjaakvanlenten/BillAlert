@@ -12,7 +12,7 @@ import Colors from '../constants/Colors';
 
 const BillDetailsScreen = ({navigation, route : {params : { billId, itemInfo }}}) => {
     const [billInfo, setBillInfo] = useState(itemInfo)
-  
+    
     const dispatch = useDispatch();
 
     const selectedBill = useSelector(state => state.bills.bills.find(bill => bill.id == billId), next => next === undefined);

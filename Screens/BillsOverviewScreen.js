@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo, useLayoutEffect } from 'react';
 import { View, Dimensions, BackHandler, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { shallowEqual, useSelector} from 'react-redux';
+import { connect} from 'react-redux';
 import { useFocusEffect } from '@react-navigation/core';
 import { FAB } from 'react-native-paper';
 import moment from 'moment';
@@ -12,7 +12,7 @@ import BillsList from '../components/BillsList';
 import InfoBar from '../components/InfoBar';
 import CustomSearchbar from '../components/UI/CustomSearchbar';
 
-const BillsOverviewScreen = ({navigation}) => {
+const BillsOverviewScreen = ({bills, navigation}) => {
 
     /* Local State */
     const [availableBills, setAvailableBills] = useState([]);
@@ -27,10 +27,7 @@ const BillsOverviewScreen = ({navigation}) => {
     const [monthFilter, setMonthFilter] = useState(null)
     const [searchPressed, setSearchPressed] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
-
-    /* Fetch bills from redux store */
-    const bills = useSelector(state => state.bills.bills.filter(bill => bill.deletionDate === null), shallowEqual)
-  
+ 
     /* Set local state when redux store changes and check for month filter*/
     useEffect (() => {    
         if(monthFilter !== null) {
@@ -168,5 +165,9 @@ const BillsOverviewScreen = ({navigation}) => {
         </View>
     );
 }
-
-export default BillsOverviewScreen;
+const mapStateToProps = state => {
+    return{
+        bills: state.bills.bills.filter(bill => bill.deletionDate === null)
+    }
+}
+export default connect(mapStateToProps)(BillsOverviewScreen);

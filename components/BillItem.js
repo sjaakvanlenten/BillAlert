@@ -23,20 +23,19 @@ const BillItem = ({item, selectBill}) => {
         textColor: 'black',
         headerText : `Nog ${daysDifference} dagen`,
     }
-
-    if(item.paymentDate !== null) { //Payed Bill
-        itemInfo.cardColor = Colors.billPayed
-        itemInfo.statusIcon = "check-circle"     
-        itemInfo.statusText = 'Betaald'
-        itemInfo.headerText = 'Betaald'
-    }
-    else if(item.deletionDate !== null){
+    if(item.deletionDate !== null){
         itemInfo.cardColor = '#464646'
         itemInfo.statusIcon = null    
         itemInfo.statusText = ''
         itemInfo.headerText = ''
     }
-    else {
+    if(item.paymentDate !== null && item.deletionDate === null ) { //Payed Bill
+        itemInfo.cardColor = Colors.billPayed
+        itemInfo.statusIcon = "check-circle"     
+        itemInfo.statusText = 'Betaald'
+        itemInfo.headerText = 'Betaald'
+    }
+    if(item.deletionDate === null && item.paymentDate === null) {
         if(daysDifference <= 0) { //Bill Overdue
             itemInfo.cardColor = Colors.billOverdue
             itemInfo.statusIcon = "alarm-light"    

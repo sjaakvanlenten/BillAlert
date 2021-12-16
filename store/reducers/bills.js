@@ -51,7 +51,7 @@ const billsReducer = (state = initialState, action) => {
                 action.billData.billAmount,
                 action.billData.IBANo, 
                 action.billData.reference, 
-                null,
+                state.bills[billIndex].paymentDate,
                 null,
             );
             const updatedBills = [...state.bills];
