@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity,  Platform, TouchableNativeFeedback, Text } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { Card, Title, Paragraph } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -7,8 +8,10 @@ import { useNavigation } from '@react-navigation/native';
 import Colors from '../constants/Colors';
 import moment from 'moment';
 
-const BillItem = ({item}) => {
+const BillItem = ({item, selectBill}) => {
     const navigation = useNavigation()
+    const [billSelected, setBillSelected] = useState(false);
+
     let TouchableCmp = TouchableOpacity;
 
     const daysDifference = moment(item.dateExpiry).startOf('day').diff(moment().startOf('day'), 'days')
@@ -26,6 +29,12 @@ const BillItem = ({item}) => {
         itemInfo.statusIcon = "check-circle"     
         itemInfo.statusText = 'Betaald'
         itemInfo.headerText = 'Betaald'
+    }
+    else if(item.deletionDate !== null){
+        itemInfo.cardColor = '#464646'
+        itemInfo.statusIcon = null    
+        itemInfo.statusText = ''
+        itemInfo.headerText = ''
     }
     else {
         if(daysDifference <= 0) { //Bill Overdue
@@ -53,13 +62,19 @@ const BillItem = ({item}) => {
                 useForeground 
                 background={TouchableNativeFeedback.Ripple('#F3F3F3')}
                 onPress={() => {
-                    navigation.navigate( 'Details', {
-                        billId: item.id,
-                        itemInfo: itemInfo,
-                        }
-                    )
+                    if(item.deletionDate !== null) {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light) 
+                        selectBill(item.id, !billSelected);
+                        setBillSelected(billSelected => !billSelected);
+                    } else {
+                        navigation.navigate( 'Details', {
+                            billId: item.id,
+                            itemInfo: itemInfo,
+                            }
+                        )
+                    }
                 }}
-            >        
+            >                 
                 <Card style={styles.container}>
                     <Card.Title 
                         title={item.title}  
@@ -86,6 +101,7 @@ const BillItem = ({item}) => {
                                 </Text> 
                         )}
                     />
+                    { billSelected && <View style={styles.overlay} /> /*selection overlay */ }
                     <Card.Content 
                         backgroundColor='white' 
                         style={{ 
@@ -120,10 +136,11 @@ const BillItem = ({item}) => {
                                 }
                             </Paragraph>
                         </View>
-                    </Card.Content>
+                        {billSelected && <View style={styles.overlay} /> /*selection overlay */ } 
+                    </Card.Content>          
                 </Card>
-            </TouchableCmp>
-        </View>
+            </TouchableCmp>         
+        </View>     
     );
 }
 
@@ -136,7 +153,11 @@ const styles = StyleSheet.create({
         marginVertical: 15,
         elevation: 5,
     },
-    container: {
+    overlay: {   
+        ...StyleSheet.absoluteFillObject,     
+        backgroundColor: 'rgba(243,243,243,0.7)',
+      },
+    container: {  
         flex: 1,
         shadowColor: 'black',
         shadowOpacity: 0.26,

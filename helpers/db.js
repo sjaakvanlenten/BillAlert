@@ -24,7 +24,7 @@ export const init = () => {
     const promise = new Promise((resolve, reject) => {
         db.transaction(tx => {
             tx.executeSql(
-                'CREATE TABLE IF NOT EXISTS bills (id INTEGER PRIMARY KEY NOT NULL, title TEXT NOT NULL, receiver TEXT NOT NULL, dateCreated TEXT NOT NULL, dateExpiry TEXT NOT NULL, billAmount TEXT NOT NULL, IBANo TEXT NOT NULL, reference TEXT NOT NULL, paymentDate TEXT);',
+                'CREATE TABLE IF NOT EXISTS bills (id INTEGER PRIMARY KEY NOT NULL, title TEXT NOT NULL, receiver TEXT NOT NULL, dateCreated TEXT NOT NULL, dateExpiry TEXT NOT NULL, billAmount TEXT NOT NULL, IBANo TEXT NOT NULL, reference TEXT NOT NULL, paymentDate TEXT, deletionDate TEXT);',
                 [],
                 () => {
                     resolve();
@@ -38,12 +38,12 @@ export const init = () => {
     return promise;
 }
 
-export const insertBill = (title, receiver, dateCreated, dateExpiry, billAmount, IBANo, reference, paymentDate) => {
+export const insertBill = (title, receiver, dateCreated, dateExpiry, billAmount, IBANo, reference) => {
     const promise = new Promise((resolve, reject) => {
         db.transaction(tx => {
             tx.executeSql(
-                'INSERT INTO bills (title, receiver, dateCreated, dateExpiry, billAmount, IBANo, reference, paymentDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-                [title, receiver, dateCreated, dateExpiry, billAmount, IBANo, reference, paymentDate],
+                'INSERT INTO bills (title, receiver, dateCreated, dateExpiry, billAmount, IBANo, reference) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                [title, receiver, dateCreated, dateExpiry, billAmount, IBANo, reference],
                 (_, result) => {
                     resolve(result);
                 },
@@ -112,7 +112,26 @@ export const fetchBills = () => {
     return promise;    
 }
 
-export const deleteBill = (id) => {
+export const deleteBill = (deletionDate, id) => {
+    const promise = new Promise((resolve, reject) => {
+        db.transaction(tx => {
+            tx.executeSql(
+                'UPDATE bills SET deletionDate = ?  WHERE id = ?' 
+                ,
+                [deletionDate, id],
+                (_, result) => {
+                    resolve(result);
+                },
+                (_, err) => {
+                    reject(err);
+                }
+            );
+        });
+    });
+    return promise;    
+}
+
+export const deleteBillPermanent = (id) => {
     const promise = new Promise((resolve, reject) => {
         db.transaction(tx => {
             tx.executeSql(

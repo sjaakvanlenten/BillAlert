@@ -1,4 +1,12 @@
-import { CREATE_BILL, UPDATE_BILL, REMOVE_BILL, SET_BILLS, UPDATE_PAYMENT_DATE } from '../actions/bills';
+import { 
+    CREATE_BILL, 
+    UPDATE_BILL, 
+    REMOVE_BILL,
+    REMOVE_BILL_PERMANENT, 
+    SET_BILLS, 
+    UPDATE_PAYMENT_DATE, 
+} from '../actions/bills';
+
 import Bill from '../../models/bill';
 
 const initialState = {
@@ -24,6 +32,7 @@ const billsReducer = (state = initialState, action) => {
                 action.billData.IBANo, 
                 action.billData.reference, 
                 null,
+                null,
             );
             return {
                 ...state,
@@ -42,6 +51,8 @@ const billsReducer = (state = initialState, action) => {
                 action.billData.billAmount,
                 action.billData.IBANo, 
                 action.billData.reference, 
+                null,
+                null,
             );
             const updatedBills = [...state.bills];
             updatedBills[billIndex] = updatedBill;
@@ -54,13 +65,23 @@ const billsReducer = (state = initialState, action) => {
             billIndex = state.bills.findIndex(
                 bill => bill.id === action.billData.billId
             );
-            const BillsCopy = [...state.bills];
+            let BillsCopy = [...state.bills];
             BillsCopy[billIndex]['paymentDate'] = action.billData.datePayed;
             return {
                 ...state,
                 bills: BillsCopy
             }
         case REMOVE_BILL:
+            billIndex = state.bills.findIndex(
+                bill => bill.id === action.billData.billId
+            );
+            const deletedBill = [...state.bills];
+            deletedBill[billIndex]['deletionDate'] = action.billData.deletionDate;
+            return {
+                ...state,
+                bills: deletedBill
+            }
+        case REMOVE_BILL_PERMANENT:
             return {
                 ...state,
                 bills: state.bills.filter(

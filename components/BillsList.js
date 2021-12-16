@@ -24,14 +24,13 @@ const handleFilters = (item, filters) => {
     return showBillItem;
 };
 
-const BillsList = ({ listData , sortBy, filters, searchQuery }) => {
+const BillsList = ({ listData , sortBy, filters, searchQuery , deletedBillsList, selectBill}) => {
     
     const [currentSortby, setCurrentSortby] = useState('');
-    
+
     function sortData(sortBy) {
-        if(sortBy === currentSortby) {
-            return listData
-        }
+        if(sortBy === currentSortby) return listData
+        
         setCurrentSortby(sortBy)
 
         switch (sortBy) {
@@ -56,8 +55,14 @@ const BillsList = ({ listData , sortBy, filters, searchQuery }) => {
     }
 
     const renderBillItem = ({item}) => {
-        if(handleFilters(item, filters)) {
-            if(item.title.toLowerCase().includes(searchQuery)) {
+        if(item.title.toLowerCase().includes(searchQuery)) {
+            if(deletedBillsList) return ( 
+                <BillItem
+                    item={item}
+                    selectBill={selectBill}
+                />            
+            ) 
+            if(handleFilters(item, filters)) {               
                 return (
                     <BillItem
                         item={item}
@@ -71,7 +76,7 @@ const BillsList = ({ listData , sortBy, filters, searchQuery }) => {
     return (
         <View style={styles.billsList}>
             <FlatList
-                data={sortData(sortBy)}
+                data={deletedBillsList ? listData : sortData(sortBy)}
                 keyExtractor={item => item.id.toString()}
                 renderItem={renderBillItem}
             />

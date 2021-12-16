@@ -210,7 +210,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
             }           
         } catch(err) {
             Alert.alert('Er ging iets verkeerd, probeer opnieuw', [
-                { text: 'Okay' }
+                { text: 'Okee' }
             ]);
         } finally {      
             navigation.goBack(); 
@@ -380,7 +380,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
                         style={{marginTop: 50, borderRadius: 50}}
                         contentStyle={{paddingVertical: 5, paddingHorizontal: 15}}
                         uppercase={false}
-                        labelStyle={{fontSize: 14, fontFamily:'open-sans-medium'}}
+                        labelStyle={{fontSize: 14, fontFamily:'montserrat-semibold'}}
                     >
                         Rekening Opslaan 
                     </Button>
@@ -413,6 +413,7 @@ const styles = StyleSheet.create({
     },
     centered: {
         flex: 1,
+        backgroundColor: 'white',
         justifyContent: 'center',
         alignItems: 'center'
       }

@@ -14,7 +14,8 @@ import { AsyncStorageProvider } from '../hooks/useAsyncStorage';
 import HeaderButton from '../components/UI/HeaderButton';
 import DrawerContent from '../components/DrawerContent';
 import { DrawerActions } from '@react-navigation/native';
-import { Platform } from 'react-native';
+import SettingsScreen from '../Screens/Modals/SettingsScreen';
+import deletedBillsScreen from '../Screens/Modals/deletedBillsScreen';
 
 const defaultNavOptions = {
     headerBackTitleVisible: false,
@@ -39,32 +40,42 @@ const BillsStack = createStackNavigator();
 const BillsStackScreen = () => {
     return (
         <BillsStack.Navigator screenOptions={defaultNavOptions}>
-            <BillsStack.Screen 
-                name="Home" 
-                component={SideDrawer} 
-                options={({navigation}) => ({
-                    headerBackTitleVisible: false,
-                    headerLeft: () => (
-                        <HeaderButtons HeaderButtonComponent={HeaderButton} >
-                        <Item
-                            style={{marginRight: 0}}
-                            title="Drawer"
-                            IconComponent={MaterialIcons}
-                            iconName="menu"
-                            onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}                
-                        />
-                      </HeaderButtons>
-                    )
-                })}                            
-            /> 
-            <BillsStack.Screen 
-                name="Details" 
-                component={BillDetailsScreen} 
-            />
-            <BillsStack.Screen
-                name="ManualInput"
-                component={BillsManualInputScreen} 
+            <BillsStack.Group>
+                <BillsStack.Screen 
+                    name="Home" 
+                    component={SideDrawer} 
+                    options={({navigation}) => ({
+                        headerBackTitleVisible: false,
+                        headerLeft: () => (
+                            <HeaderButtons HeaderButtonComponent={HeaderButton} >
+                            <Item
+                                style={{marginRight: 0}}
+                                title="Drawer"
+                                IconComponent={MaterialIcons}
+                                iconName="menu"
+                                onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}                
+                            />
+                        </HeaderButtons>
+                        )
+                    })}                            
+                /> 
+                <BillsStack.Screen 
+                    name="Details" 
+                    component={BillDetailsScreen} 
                 />
+                <BillsStack.Screen
+                    name="ManualInput"
+                    component={BillsManualInputScreen} 
+                />
+            </BillsStack.Group>
+            <BillsStack.Group screenOptions={
+                { 
+                    presentation: "modal" 
+                }
+            }>
+                <BillsStack.Screen name="Settings" component={SettingsScreen} options={{headerTitle: 'Instellingen'}}/>
+                <BillsStack.Screen name="Trash" component={deletedBillsScreen} options={{headerTitle: 'Prullenbak'}}/>
+            </BillsStack.Group>
         </BillsStack.Navigator>
     );
 }

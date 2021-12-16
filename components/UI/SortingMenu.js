@@ -2,9 +2,8 @@ import React, { useState, memo } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Menu, RadioButton } from 'react-native-paper';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import { MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
 
-import { MaterialIcons } from '@expo/vector-icons';
-import { FontAwesome5 } from '@expo/vector-icons';
 import Colors from '../../constants/Colors';
 import HeaderButton from './HeaderButton';
 
@@ -20,7 +19,7 @@ const SortingMenu = ({ setBillsOrder }) => {
             onDismiss={() => setShowMenu(false)}
             anchor= {
                 <HeaderButtons HeaderButtonComponent={HeaderButton} >
-                    <Item title="sort" IconComponent={MaterialIcons} iconName="sort" onPress={() => setShowMenu(true)} />
+                    <Item title="sort" IconComponent={MaterialCommunityIcons} iconName="sort" onPress={() => setShowMenu(true)} />
                 </HeaderButtons>
             }
         >
@@ -69,12 +68,6 @@ const styles = StyleSheet.create({
     screen: {
       flex: 1,
       alignItems: 'center'
-    },
-    title: {
-      fontFamily: 'open-sans-bold',
-      fontSize: 22,
-      margin: 20,
-      textAlign: 'center'
     },
     filterContainer: {
       flex: 1,

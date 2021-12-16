@@ -1,21 +1,22 @@
 import React, { useState, useEffect, useCallback, useMemo, useLayoutEffect } from 'react';
-import { useSelector} from 'react-redux';
 import { View, Dimensions, BackHandler, Platform } from 'react-native';
-import moment from 'moment';
 import { StatusBar } from 'expo-status-bar';
-import FilterMenu from '../components/UI/FilterMenu'
-import SortingMenu from '../components/UI/SortingMenu'
+import { shallowEqual, useSelector} from 'react-redux';
+import { useFocusEffect } from '@react-navigation/core';
+import { FAB } from 'react-native-paper';
+import moment from 'moment';
+
+import FilterMenu from '../components/UI/FilterMenu';
+import SortingMenu from '../components/UI/SortingMenu';
 import BillsList from '../components/BillsList';
 import InfoBar from '../components/InfoBar';
 import CustomSearchbar from '../components/UI/CustomSearchbar';
-import { FAB } from 'react-native-paper';
-import { useFocusEffect } from '@react-navigation/core';
 
 const BillsOverviewScreen = ({navigation}) => {
 
     /* Local State */
     const [availableBills, setAvailableBills] = useState([]);
-    const [sortBy, setSortBy] = useState('');
+    const [sortBy, setSortBy] = useState('dateCreated_up');
     const [filters, setFilters] = useState({
         filterGreen: true,
         filterOrange: true,
@@ -28,8 +29,8 @@ const BillsOverviewScreen = ({navigation}) => {
     const [searchQuery, setSearchQuery] = useState('');
 
     /* Fetch bills from redux store */
-    const bills = useSelector(state => state.bills.bills)
-
+    const bills = useSelector(state => state.bills.bills.filter(bill => bill.deletionDate === null), shallowEqual)
+  
     /* Set local state when redux store changes and check for month filter*/
     useEffect (() => {    
         if(monthFilter !== null) {
@@ -154,10 +155,11 @@ const BillsOverviewScreen = ({navigation}) => {
             <FAB
                 style={{
                     position: 'absolute',
-                    margin: 16,
+                    margin: 24,
                     right: 0,
                     bottom: 0,           
-                    backgroundColor: '#69699a'
+                    backgroundColor: '#69699a',
+                    transform: [{scaleX: 1.3}, {scaleY: 1.3}]
                   }}
                 icon="plus"
                 onPress={() => navigation.navigate('ManualInput')}

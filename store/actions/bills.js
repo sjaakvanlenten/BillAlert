@@ -1,12 +1,20 @@
 export const CREATE_BILL = "CREATE_BILL";
 export const UPDATE_BILL = "UPDATE_BILL";
 export const SET_BILLS = 'SET_BILLS';
+export const REMOVE_BILL_PERMANENT = 'REMOVE_BILL_PERMANENT';
 export const REMOVE_BILL = 'REMOVE_BILL';
 export const UPDATE_PAYMENT_DATE = 'UPDATE_PAYMENT_DATE';
 
 import moment from 'moment';
 
-import { insertBill, fetchBills, deleteBill, db_updateBill, db_updatePaymentDate } from '../../helpers/db';
+import { 
+    insertBill, 
+    fetchBills, 
+    deleteBill, 
+    deleteBillPermanent, 
+    db_updateBill, 
+    db_updatePaymentDate 
+} from '../../helpers/db';
 
 export const createBill = (title, receiver, billAmount, IBANo, reference, dateExpiry) => {
     dateCreated = moment().format()
@@ -20,7 +28,6 @@ export const createBill = (title, receiver, billAmount, IBANo, reference, dateEx
                 billAmount, 
                 IBANo, 
                 reference, 
-                null,
             );
             dispatch({ type: CREATE_BILL, billData: {id: dbResult.insertId.toString(), title, receiver, dateCreated, billAmount, IBANo, reference, dateExpiry}})
             }
@@ -75,11 +82,23 @@ export const updatePaymentDate = billId => {
     };
 };
 
-export const removeBill = billId => {
+export const removeBill = (billId, revertBill=false) => {
+    const deletionDate = !revertBill ? moment().format() : null;
+    return async dispatch => {
+        try {    
+            const dbResult = await deleteBill(deletionDate, billId);
+            dispatch({ type: REMOVE_BILL, billData:{ billId, deletionDate }});
+        } catch (err) {
+            throw err;
+        }
+    };
+};
+
+export const removeBillPermanent = billId => {
     return async dispatch => {
         try {
-            const dbResult = await deleteBill(billId);
-            dispatch({ type: REMOVE_BILL, billId: billId });
+            const dbResult = await deleteBillPermanent(billId);
+            dispatch({ type: REMOVE_BILL_PERMANENT, billId: billId });
         } catch (err) {
             throw err;
         }

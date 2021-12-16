@@ -190,7 +190,6 @@ const styles = StyleSheet.create({
     },
     buttonLabel: {
         fontSize: 14, 
-        fontFamily:'open-sans-semibold'
     },
     title: {
         fontFamily: 'montserrat-medium', 

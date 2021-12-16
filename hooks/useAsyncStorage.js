@@ -5,10 +5,32 @@ const AsyncStorageContext = createContext({});
 
 export const AsyncStorageProvider = ({children}) => {
     const [receiversList, setReceiversList] = useState({})
+    const [settings, setSettings] = useState({})
 
     useEffect(() => {
         getReceiversList();
+        getSettings();
     }, [])
+
+    const getSettings = async () => {
+        try {
+            const result = await AsyncStorage.getItem('settings')
+            if(result !== null) setSettings(JSON.parse(result))
+        } catch(e) {
+          // error reading value
+        }
+    }
+
+    const storeSettings = async (settingsData) => {
+        try {
+            const jsonValue = JSON.stringify(settingsData)
+            await AsyncStorage.mergeItem('settings', jsonValue)
+        } catch (e) {
+        // errr
+        } finally {
+            getSettings();
+        }
+    }
 
     const getReceiversList = async () => {
         try {
@@ -45,6 +67,8 @@ export const AsyncStorageProvider = ({children}) => {
     }
 
     const memoedValue = useMemo(() => ({
+        settings,
+        storeSettings,
         receiversList,
         storeReceiver,
         deleteReceiver,

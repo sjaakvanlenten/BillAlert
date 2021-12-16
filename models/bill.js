@@ -1,5 +1,5 @@
 class Bill {
-    constructor(id, title, receiver, dateCreated, dateExpiry, billAmount, IBANo, reference, paymentDate,) {
+    constructor(id, title, receiver, dateCreated, dateExpiry, billAmount, IBANo, reference, paymentDate, deletionDate) {
       this.id = id;
       this.title = title;
       this.receiver = receiver
@@ -9,6 +9,7 @@ class Bill {
       this.IBANo = IBANo;
       this.reference = reference;
       this.paymentDate = paymentDate;
+      this.deletionDate = deletionDate
     }
   }
   
