@@ -1,18 +1,20 @@
 import React, { useState, useEffect, useCallback, useMemo, useLayoutEffect } from 'react';
 import { View, Dimensions, BackHandler, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { connect} from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/core';
-import { FAB } from 'react-native-paper';
+import { FAB, Snackbar } from 'react-native-paper';
 import moment from 'moment';
 
+import * as billsActions from '../store/actions/bills';
 import FilterMenu from '../components/UI/FilterMenu';
 import SortingMenu from '../components/UI/SortingMenu';
 import BillsList from '../components/BillsList';
 import InfoBar from '../components/InfoBar';
 import CustomSearchbar from '../components/UI/CustomSearchbar';
 
-const BillsOverviewScreen = ({bills, navigation}) => {
+const BillsOverviewScreen = ({bills, navigation, route}) => {
+    const dispatch = useDispatch();
 
     /* Local State */
     const [availableBills, setAvailableBills] = useState([]);
@@ -27,6 +29,17 @@ const BillsOverviewScreen = ({bills, navigation}) => {
     const [monthFilter, setMonthFilter] = useState(null)
     const [searchPressed, setSearchPressed] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [snackBarvisible, setSnackbarVisible] = useState(false);
+
+    const showSnackBar = () => setSnackbarVisible(true);
+    const onDismissSnackBar = () => setSnackbarVisible(false);
+    
+    /*Show snackbar when bill is deleted */
+    useEffect(() => {
+          if(route.params?.billId) {
+              showSnackBar();
+          }
+        }, [route.params])
  
     /* Set local state when redux store changes and check for month filter*/
     useEffect (() => {    
@@ -161,6 +174,19 @@ const BillsOverviewScreen = ({bills, navigation}) => {
                 icon="plus"
                 onPress={() => navigation.navigate('ManualInput')}
             />  
+            <Snackbar
+                style={{backgroundColor: '#464646'}}          
+                visible={snackBarvisible}
+                onDismiss={onDismissSnackBar}
+                duration={5000}
+                action={{
+                label: 'Ongedaan maken',
+                onPress: () => {
+                    dispatch(billsActions.removeBill(route.params?.billId, true))
+                },
+                }}>
+                Rekening verwijdert
+            </Snackbar>
             {Platform.OS === 'ios' && <StatusBar style="light" />} 
         </View>
     );

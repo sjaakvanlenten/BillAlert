@@ -1,4 +1,5 @@
 import React, { memo } from 'react'
+import Colors from '../constants/Colors'
 import { StyleSheet, Text, View } from 'react-native'
 
 const InfoBar = ({ openBillsAmount, totalBillAmount }) => {
@@ -31,7 +32,7 @@ const styles = StyleSheet.create({
         height: 30,
         width: 70,
         borderRadius: 50,
-        backgroundColor: '#69699a',
+        backgroundColor: Colors.primaryTint,
         transform:  [{rotate: '45deg' }]
     },
     right: {
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
         height: 30,
         width: 70,
         borderRadius: 50,
-        backgroundColor: '#69699a',
+        backgroundColor: Colors.primaryTint,
         transform:  [{rotate: '135deg' }]
     },
     main: {
@@ -52,7 +53,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         alignItems: 'center',
         borderRadius: 50,
-        backgroundColor: '#69699a',
+        backgroundColor: Colors.primaryTint,
     },
     text: {
         fontSize: 15,

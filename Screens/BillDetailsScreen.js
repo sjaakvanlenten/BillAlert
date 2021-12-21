@@ -24,7 +24,7 @@ const BillDetailsScreen = ({navigation, route : {params : { billId, itemInfo }}}
 
     const deleteHandler = () => {        
         dispatch(billsActions.removeBill(billId))
-        navigation.goBack();
+        navigation.navigate('Overview', { billId: billId});
     }
 
     const payBillHandler = () => {

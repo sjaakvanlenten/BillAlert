@@ -172,8 +172,7 @@ const deletedBillsScreen = ({navigation}) => {
                     <MaterialCommunityIcons
                         name='delete-empty-outline' 
                         size={80} 
-                        color={Colors.primary}       
-                        style={{transform: [{rotate: '10deg' }] }}          
+                        color={Colors.primary}             
                     />
                     </View>
                 </View>
