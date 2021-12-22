@@ -35,6 +35,7 @@
     },
     "android": {
       "useNextNotificationsApi": true,
+      "softwareKeyboardLayoutMode": "pan",
       "package": "com.sjaakvanlenten.BillAlert"
     },
     "description": ""

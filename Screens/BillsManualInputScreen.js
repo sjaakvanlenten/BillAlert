@@ -1,9 +1,10 @@
 import React, { useState, useReducer, useCallback, useRef, useLayoutEffect } from 'react';
-import { View, ScrollView, StyleSheet, Platform, ActivityIndicator, Alert, } from 'react-native';
+import { View, StyleSheet, Platform, ActivityIndicator, Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { TextInput, Button, IconButton, Text, Checkbox, } from 'react-native-paper';
 import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 
 import ReceiversMenu from '../components/UI/ReceiversMenu';
 import * as billsActions from '../store/actions/bills';
@@ -226,8 +227,11 @@ const BillsManualInputScreen = ({navigation, route}) => {
         );
       }
 
-    return (
-        <ScrollView style={{backgroundColor: 'white'}}>
+    return (  
+        <KeyboardAwareScrollView
+            keyboardOpeningTime={50}
+            enableOnAndroid
+        >
             <View style={styles.form}>
                 <Input
                     id='title'
@@ -243,7 +247,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
                     required
                     isSubmitted={isSubmitted}
                 /> 
-                <View style={{flexDirection: 'row', flex: 1}}>
+                <View style={{flexDirection: 'row'}}>
                 <Input
                     id='receiver'
                     label ="Ten name van"                    
@@ -332,7 +336,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
                     />
 
                 </View>  
-                <View style={{flexDirection: 'row', alignItems: 'center', width: 190}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', }}>
                     <Text style={{fontFamily: 'montserrat-medium', fontSize: 14, color: 'black', marginRight: 5}}>Ontvanger opslaan</Text>
                     <Checkbox.Android
                         label = 'ReceiverCheckbox'
@@ -353,7 +357,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
                     initiallyValid={true}
                     isSubmitted={isSubmitted}
                 />
-                <View style={{flexDirection:'row', alignItems: 'center', flex: 1}}>               
+                <View style={{flexDirection:'row', alignItems: 'center'}}>               
                 <TextInput 
                         label='Betalen voor'
                         outlineColor={Colors.primary}
@@ -371,7 +375,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
                         onPress={showDatepicker}
                     />    
                 </View>
-                <View style={{flexDirection:'row', width: '100%', justifyContent: 'center', flex: 1}}>
+                <View style={{flexDirection:'row', width: '100%', justifyContent: 'center'}}>
                     <Button 
                         mode="contained" 
                         disabled={!formState.formIsValid}
@@ -398,15 +402,14 @@ const BillsManualInputScreen = ({navigation, route}) => {
                     />
                 )}
             </View>
-        </ScrollView>
+        </KeyboardAwareScrollView>       
     );
       
 };
 
 const styles = StyleSheet.create({
     form: {
-        margin: 30,
-        marginTop: 0,
+        marginHorizontal: 30
     },
     iban: {       
         flexDirection:'row',
