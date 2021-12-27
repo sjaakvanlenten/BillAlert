@@ -1,17 +1,12 @@
 {
   "expo": {
-    "plugins": [
-      [
-        "expo-image-picker",
-        {
-          "photosPermission": "The app accesses your photos to let you share them with your friends."
-        }
-      ]
-    ],
     "androidStatusBar": {
       "barStyle": "light-content"
     },
     "name": "BillAlert",
+    "plugins": [
+        "@notifee/react-native"
+    ],
     "slug": "BillAlert",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -19,13 +14,13 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#7B7BA7"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": [
-      "**/*"
+      "assets/fonts/*"
     ],
     "ios": {
       "supportsTablet": true
@@ -34,10 +29,15 @@
       "favicon": "./assets/favicon.png"
     },
     "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
       "useNextNotificationsApi": true,
       "softwareKeyboardLayoutMode": "pan",
       "package": "com.sjaakvanlenten.BillAlert"
     },
-    "description": ""
+    "description": "",
+    "githubUrl": "https://github.com/sjaakvanlenten/BillAlert"
   }
 }

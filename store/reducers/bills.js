@@ -46,7 +46,7 @@ const billsReducer = (state = initialState, action) => {
                 action.billData.billId, 
                 action.billData.title, 
                 action.billData.receiver,
-                action.billData.dateCreated, 
+                state.bills[billIndex].dateCreated, 
                 action.billData.dateExpiry, 
                 action.billData.billAmount,
                 action.billData.IBANo, 

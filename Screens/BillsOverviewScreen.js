@@ -53,8 +53,7 @@ const BillsOverviewScreen = ({bills, navigation, route}) => {
     }, [bills, monthFilter]);
 
     useLayoutEffect(() => {
-        const stackNavigator = navigation.getParent()
-            stackNavigator.setOptions({
+        navigation.getParent().setOptions({
             headerTitle: !searchPressed ? 'Rekeningen' : '',
         
             headerRight: () => (   

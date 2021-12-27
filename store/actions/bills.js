@@ -38,20 +38,18 @@ export const createBill = (title, receiver, billAmount, IBANo, reference, dateEx
 }
 
 export const updateBill = (billId, title, receiver, billAmount, IBANo, reference, dateExpiry) => {
-    dateCreated = moment().format()
     return async dispatch => {
         try {
             const dbResult = await db_updateBill(
                 title,
                 receiver,
-                dateCreated, 
                 dateExpiry, 
                 billAmount, 
                 IBANo, 
                 reference, 
                 billId,
             );
-            dispatch({ type: UPDATE_BILL, billData: {billId, title, receiver, dateCreated, billAmount, IBANo, reference, dateExpiry}})
+            dispatch({ type: UPDATE_BILL, billData: {billId, title, receiver, billAmount, IBANo, reference, dateExpiry}})
             }
         catch (err) {
             throw err;

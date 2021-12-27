@@ -20,7 +20,7 @@ export const drop = () => {
     return promise;
 }
 
-export const init = () => {
+export const db_init = () => {
     const promise = new Promise((resolve, reject) => {
         db.transaction(tx => {
             tx.executeSql(
@@ -56,13 +56,13 @@ export const insertBill = (title, receiver, dateCreated, dateExpiry, billAmount,
     return promise;    
 }
 
-export const db_updateBill = ( title, receiver, dateCreated, dateExpiry, billAmount, IBANo, reference, billId) => {
+export const db_updateBill = ( title, receiver, dateExpiry, billAmount, IBANo, reference, billId) => {
     const promise = new Promise((resolve, reject) => {
         db.transaction(tx => {
             tx.executeSql(
-                'UPDATE bills SET title = ?, receiver = ?, dateCreated = ?, dateExpiry = ?, billAmount = ?, IBANo = ?, reference = ? WHERE id = ?' 
+                'UPDATE bills SET title = ?, receiver = ?, dateExpiry = ?, billAmount = ?, IBANo = ?, reference = ? WHERE id = ?' 
                 ,
-                [title, receiver, dateCreated, dateExpiry, billAmount, IBANo, reference, billId],
+                [title, receiver, dateExpiry, billAmount, IBANo, reference, billId],
                 (_, result) => {
                     resolve(result);
                 },

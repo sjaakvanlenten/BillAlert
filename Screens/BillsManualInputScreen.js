@@ -231,6 +231,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
         <KeyboardAwareScrollView
             keyboardOpeningTime={50}
             enableOnAndroid
+            style={{backgroundColor: 'white'}}
         >
             <View style={styles.form}>
                 <Input

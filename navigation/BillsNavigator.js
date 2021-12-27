@@ -101,7 +101,7 @@ const SideDrawer = () => {
 const BillsNavigator = () => {
     return (
         <PaperProvider>
-            <NavigationContainer theme={{ colors: { background: 'white' } }}>
+            <NavigationContainer theme={{ colors: { background: Colors.primary } }}>
                     <AsyncStorageProvider>
                         <BillsStackScreen />
                     </AsyncStorageProvider>          
