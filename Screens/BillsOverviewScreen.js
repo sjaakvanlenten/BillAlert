@@ -7,6 +7,7 @@ import { FAB, Snackbar } from 'react-native-paper';
 import moment from 'moment';
 
 import * as billsActions from '../store/actions/bills';
+
 import FilterMenu from '../components/UI/FilterMenu';
 import SortingMenu from '../components/UI/SortingMenu';
 import BillsList from '../components/BillsList';

@@ -5,17 +5,20 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import { DrawerActions } from '@react-navigation/native';
 
 import BillsOverviewScreen from '../Screens/BillsOverviewScreen';
 import BillDetailsScreen from '../Screens/BillDetailsScreen';
 import BillsManualInputScreen from '../Screens/BillsManualInputScreen';
-import Colors from '../constants/Colors';
-import { AsyncStorageProvider } from '../hooks/useAsyncStorage';
-import HeaderButton from '../components/UI/HeaderButton';
-import DrawerContent from '../components/DrawerContent';
-import { DrawerActions } from '@react-navigation/native';
 import SettingsScreen from '../Screens/Modals/SettingsScreen';
 import deletedBillsScreen from '../Screens/Modals/deletedBillsScreen';
+
+import { AsyncStorageProvider } from '../hooks/useAsyncStorage';
+import { NotificationsProvider } from '../hooks/useNotifications';
+
+import Colors from '../constants/Colors';
+import HeaderButton from '../components/UI/HeaderButton';
+import DrawerContent from '../components/DrawerContent';
 
 const defaultNavOptions = {
     headerBackTitleVisible: false,
@@ -103,7 +106,9 @@ const BillsNavigator = () => {
         <PaperProvider>
             <NavigationContainer theme={{ colors: { background: Colors.primary } }}>
                     <AsyncStorageProvider>
-                        <BillsStackScreen />
+                        <NotificationsProvider>
+                            <BillsStackScreen />
+                        </NotificationsProvider>
                     </AsyncStorageProvider>          
             </NavigationContainer>
         </PaperProvider>

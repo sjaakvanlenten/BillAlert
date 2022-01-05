@@ -14,3 +14,5 @@ web-build/
 knaken.js
 oldTabnavigator.js
 notifications.js
+google-services.json
+eas.json

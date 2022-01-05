@@ -5,7 +5,13 @@
     },
     "name": "BillAlert",
     "plugins": [
-        "@notifee/react-native"
+        [
+          "expo-notifications",
+          {
+            "icon": "./assets/notification-icon.png",
+            "color": "#ffffff"
+          }
+        ]
     ],
     "slug": "BillAlert",
     "version": "1.0.0",
@@ -15,6 +21,9 @@
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#7B7BA7"
+    },
+    "notification": {
+        "icon": "./assets/notification-icon.png"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -27,14 +36,14 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
+    }, 
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/adaptive-icon2.png"
       },
       "useNextNotificationsApi": true,
       "softwareKeyboardLayoutMode": "pan",
+      "googleServicesFile": "./google-services.json",
       "package": "com.sjaakvanlenten.BillAlert"
     },
     "description": "",

@@ -184,59 +184,59 @@ const deletedBillsScreen = ({navigation}) => {
                         deletedBillsList
                         selectBill={selectBill}
                     />  
-                <Portal>
-                    <Dialog visible={deleteDialogVisible} onDismiss={hideDeleteDialog}>
-                        <Dialog.Content>
-                            <Paragraph style={{fontFamily: 'montserrat-regular', fontSize: 16}}>
-                                {selectedBills.length === 1 ?
-                                    'Weet je zeker dat je deze rekening wil verwijderen?'
-                                : selectedBills.length > 1 ?
-                                    'Weet je zeker dat je deze rekeningen wil verwijderen?'
-                                :
-                                    'Weet je zeker dat je alle rekeningen wil verwijderen?'
-                                }
-                            </Paragraph>
-                        </Dialog.Content>
-                        <Dialog.Actions style={{justifyContent: 'space-between', paddingHorizontal: 45}}>
-                            <Button color={Colors.primary} onPress={hideDeleteDialog}>Annuleren</Button>
-                            <Button 
-                                color={Colors.primary} 
-                                onPress={() => {
-                                    selectedBills.length > 0 ?
-                                        deleteHandler()
+                    <Portal>
+                        <Dialog visible={deleteDialogVisible} onDismiss={hideDeleteDialog}>
+                            <Dialog.Content>
+                                <Paragraph style={{fontFamily: 'montserrat-regular', fontSize: 16}}>
+                                    {selectedBills.length === 1 ?
+                                        'Weet je zeker dat je deze rekening wil verwijderen?'
+                                    : selectedBills.length > 1 ?
+                                        'Weet je zeker dat je deze rekeningen wil verwijderen?'
                                     :
-                                        deleteHandler(true)
-                                }}
-                            >
-                                Verwijderen
-                            </Button>
-                        </Dialog.Actions>
-                    </Dialog>
-                    <Dialog visible={revertDialogVisible} onDismiss={hideRevertDialog}>
-                        <Dialog.Content>
-                            <Paragraph style={{fontFamily: 'montserrat-regular', fontSize: 16}}>
-                                {selectedBills.length === 1 ?
-                                    'Weet je zeker dat je deze rekening terug wil plaatsen?'
-                                : 
-                                    'Weet je zeker dat je deze rekeningen terug wil plaatsen?'
-                                }
-                            </Paragraph>
-                        </Dialog.Content>
-                        <Dialog.Actions style={{justifyContent: 'space-between', paddingHorizontal: 45}}>
-                            <Button color={Colors.primary} onPress={hideRevertDialog}>Annuleren</Button>
-                            <Button 
-                                color={Colors.primary} 
-                                onPress={() => {
-                                    revertHandler()
-                                }}
-                            >
-                                Terugplaatsen
-                            </Button>
-                        </Dialog.Actions>
-                    </Dialog>
-                </Portal>
-            </View>
-        )} 
+                                        'Weet je zeker dat je alle rekeningen wil verwijderen?'
+                                    }
+                                </Paragraph>
+                            </Dialog.Content>
+                            <Dialog.Actions style={{justifyContent: 'space-between', paddingHorizontal: 45}}>
+                                <Button color={Colors.primary} onPress={hideDeleteDialog}>Annuleren</Button>
+                                <Button 
+                                    color={Colors.primary} 
+                                    onPress={() => {
+                                        selectedBills.length > 0 ?
+                                            deleteHandler()
+                                        :
+                                            deleteHandler(true)
+                                    }}
+                                >
+                                    Verwijderen
+                                </Button>
+                            </Dialog.Actions>
+                        </Dialog>
+                        <Dialog visible={revertDialogVisible} onDismiss={hideRevertDialog}>
+                            <Dialog.Content>
+                                <Paragraph style={{fontFamily: 'montserrat-regular', fontSize: 16}}>
+                                    {selectedBills.length === 1 ?
+                                        'Weet je zeker dat je deze rekening terug wil plaatsen?'
+                                    : 
+                                        'Weet je zeker dat je deze rekeningen terug wil plaatsen?'
+                                    }
+                                </Paragraph>
+                            </Dialog.Content>
+                            <Dialog.Actions style={{justifyContent: 'space-between', paddingHorizontal: 45}}>
+                                <Button color={Colors.primary} onPress={hideRevertDialog}>Annuleren</Button>
+                                <Button 
+                                    color={Colors.primary} 
+                                    onPress={() => {
+                                        revertHandler()
+                                    }}
+                                >
+                                    Terugplaatsen
+                                </Button>
+                            </Dialog.Actions>
+                        </Dialog>
+                    </Portal>
+                </View>
+            )} 
         </View>      
     )
 }

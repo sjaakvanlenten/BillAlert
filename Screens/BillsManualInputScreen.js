@@ -10,7 +10,9 @@ import ReceiversMenu from '../components/UI/ReceiversMenu';
 import * as billsActions from '../store/actions/bills';
 import Colors from '../constants/Colors';
 import Input from '../components/UI/Input';
+
 import useAsyncStorage from '../hooks/useAsyncStorage';
+import useNotifications from '../hooks/useNotifications';
 
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE';
 const FORM_INPUT_RESET = 'FORM_INPUT_RESET';
@@ -79,6 +81,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
     const billId = route.params ? route.params.billId : null;
     const editedBill = billId !== null ? useSelector(state => state.bills.bills.find(bill => bill.id == billId)) : null
     const { receiversList, storeReceiver } = useAsyncStorage();
+    const { schedulePushNotification } = useNotifications();
     const dispatch = useDispatch();
 
     const initialState = {
@@ -189,7 +192,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
 
         try {
             if(editedBill) {
-                await dispatch(billsActions.updateBill(
+                dispatch(billsActions.updateBill(
                     billId,
                     formState.inputValues.title, 
                     formState.inputValues.receiver,
@@ -199,7 +202,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
                     moment(formState.inputValues.dateExpiry).format()),            
                 );
             } else {
-                await dispatch(billsActions.createBill(
+                dispatch(billsActions.createBill(
                     formState.inputValues.title, 
                     formState.inputValues.receiver,
                     formState.inputValues.billAmount,                   
@@ -207,10 +210,11 @@ const BillsManualInputScreen = ({navigation, route}) => {
                     formState.inputValues.reference, 
                     moment(formState.inputValues.dateExpiry).format())
                 );
+                // await schedulePushNotification();
                 setIsLoading(false);
             }           
         } catch(err) {
-            Alert.alert('Er ging iets verkeerd, probeer opnieuw', [
+            Alert.alert('Er ging iets verkeerd, probeer het opnieuw', [
                 { text: 'Okee' }
             ]);
         } finally {      
