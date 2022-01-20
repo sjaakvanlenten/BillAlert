@@ -1,17 +1,22 @@
-import React, { useReducer, useLayoutEffect, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
-import {  useNavigation } from '@react-navigation/native';
+import React, { useReducer, useLayoutEffect, useState, useCallback } from 'react'
+import { StyleSheet, View, Platform, BackHandler } from 'react-native'
+import { useSelector } from 'react-redux';
+import {  useFocusEffect, useNavigation } from '@react-navigation/native';
 import { Button, Portal, Dialog, Paragraph, Divider, Headline, Subheading, Switch, Title } from 'react-native-paper';
 import { HeaderBackButton } from '@react-navigation/elements'
+import DateTimePicker from '@react-native-community/datetimepicker';
 import Slider from '@react-native-community/slider';
+import moment from 'moment';
 import _ from 'lodash'
 
 import useAsyncStorage from '../../hooks/useAsyncStorage';
+import useNotifications from '../../hooks/useNotifications';
 import Colors from '../../constants/Colors';
 
 const ENABLE_NOTIFICATION = 'ENABLE_NOTIFICATION';
 const WHEN_START_NOTIFICATION = 'WHEN_START_NOTIFICATION';
 const REPEAT_NOTIFICATION = 'REPEAT_NOTIFICATION';
+const SET_NOTIFICATION_TIME = 'SET_NOTIFICATION_TIME'
 
 const settingsReducer = (state, action) => {
     switch (action.type) {
@@ -39,6 +44,14 @@ const settingsReducer = (state, action) => {
                     repeatNotification: action.value
                 }
             };
+        case SET_NOTIFICATION_TIME:
+            return {
+                ...state,
+                push_notifications: {
+                    ...state.push_notifications,
+                    notificationTime: action.value
+                }
+            };
         default:
             return state;
     }
@@ -47,32 +60,55 @@ const settingsReducer = (state, action) => {
 const SettingsScreen = () => {
     const navigation = useNavigation();
     const { settings, storeSettings } = useAsyncStorage();
+    const [timePicker, setTimePicker] = useState(false);
+    const { cancelAllScheduledNotifications, scheduleNotifications } = useNotifications();
     const [notificationsDialogVisible, setNotificationsDialogVisible] = useState(false);
-
+    const openBills = useSelector(state => state.bills.bills.filter(bill => bill.deletionDate === null && bill.paymentDate === null))
+      
     const initialState = {
         push_notifications: {
             isEnabled: settings.push_notifications.isEnabled,
             daysBeforeFirstNotification: settings.push_notifications.daysBeforeFirstNotification,
             repeatNotification: settings.push_notifications.repeatNotification,
+            notificationTime: settings.push_notifications.notificationTime
         }
     }
 
     const [settingsState, dispatch] = useReducer( settingsReducer, initialState);
 
+    useFocusEffect(
+        useCallback(() => {
+          const onBackPress = () => {
+              submitSettings();
+              return true;
+          };
+    
+        BackHandler.addEventListener('hardwareBackPress', onBackPress);
+    
+        return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+        }, [settingsState])
+    );   
+
     useLayoutEffect(() => {
         navigation.setOptions({
             headerLeft: (props) => {
                 return (
-                    <HeaderBackButton {...props} onPress={() => {
-                        if(!_.isEqual(settingsState, settings)) {
-                            storeSettings(settingsState)
-                        }
-                        navigation.goBack()
-                    }}/>                      
+                    <HeaderBackButton {...props} onPress={() => submitSettings()}
+                    />                      
                 )                
             }
         });
     }, [navigation, settingsState]);
+
+    const timeChangeHandler = (event, selectedTime) => {
+        const currentTime = selectedTime || settingsState.push_notifications.notificationTime;
+        setTimePicker(Platform.OS === 'ios'); 
+        dispatch({type: SET_NOTIFICATION_TIME, value: currentTime })
+      };
+
+    const showTimePicker = () => {
+        setTimePicker(true);
+      };
 
     const showNotificationsDialog = () => setNotificationsDialogVisible(true);
 
@@ -82,6 +118,27 @@ const SettingsScreen = () => {
        settingsState.push_notifications.isEnabled ? 
        showNotificationsDialog() : 
        dispatch({type: ENABLE_NOTIFICATION})
+    }
+
+    const submitSettings = () => { 
+        if(!_.isEqual(settingsState, settings)) {   
+           
+            if(!_.isEqual(settingsState.push_notifications.isEnabled, settings.push_notifications.isEnabled)) {
+                if(!settingsState.push_notifications.isEnabled) {
+                    cancelAllScheduledNotifications();
+                } else {
+                    openBills.map(bill => {
+                        scheduleNotifications(bill.id, bill.dateExpiry, bill.title)
+                    })
+                }
+            }
+            storeSettings(settingsState)
+            cancelAllScheduledNotifications();
+            openBills.map(bill => {
+                scheduleNotifications(bill.id, bill.dateExpiry, bill.title)
+            })
+        }
+        navigation.goBack()
     }
 
     return (
@@ -124,7 +181,7 @@ const SettingsScreen = () => {
                         disabled={!settingsState.push_notifications.isEnabled}
                     />
                 </View>
-                <View style={{paddingLeft: 20, paddingVertical: 15,}}>
+                <View style={{paddingLeft: 20, paddingTop: 15,}}>
                     <Subheading style={[
                         styles.subHeading,
                         {color: settingsState.push_notifications.isEnabled ? 'black' : "#b7b7be"}
@@ -152,6 +209,25 @@ const SettingsScreen = () => {
                         disabled={!settingsState.push_notifications.isEnabled}
                     />
                 </View>
+                <View style={{flexDirection: 'row', paddingLeft: 20, paddingVertical: 15}}>
+                    <Button 
+                        mode="contained" 
+                        disabled={!settingsState.push_notifications.isEnabled}
+                        color={Colors.primary} 
+                        style={{borderRadius: 50, marginRight: 40}}                 
+                        uppercase={false}
+                        labelStyle={{fontSize: 14, fontFamily:'montserrat-semibold'}}
+                        onPress={showTimePicker}
+                    >
+                        Kies een tijd
+                    </Button>
+                    <Headline style={[
+                        styles.headLine,
+                        {color: settingsState.push_notifications.isEnabled ? Colors.primary : "#b7b7be"}
+                    ]}>
+                        {moment(settingsState.push_notifications.notificationTime).format('LT').split(":").join(" : ")}
+                    </Headline>
+                </View>
                 <Divider />
             </View>
             <Portal>
@@ -169,6 +245,18 @@ const SettingsScreen = () => {
                     </Dialog.Actions> 
                 </Dialog>
             </Portal>
+            <View>
+                {timePicker && (
+                    <DateTimePicker
+                    testID="dateTimePicker"
+                    value={new Date(settingsState.push_notifications.notificationTime)}
+                    mode="time"
+                    is24Hour={true}
+                    display="default"
+                    onChange={timeChangeHandler}
+                    />
+                )}
+            </View>
         </View>
     )
 }

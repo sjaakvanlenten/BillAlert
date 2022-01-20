@@ -7,6 +7,8 @@ import { HeaderButtons, Item } from 'react-navigation-header-buttons'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import moment from 'moment'
 
+import useNotifications from '../../hooks/useNotifications';
+
 import * as billsActions from '../../store/actions/bills';
 import BillsList from '../../components/BillsList'
 import CustomSearchbar from '../../components/UI/CustomSearchbar'
@@ -19,6 +21,8 @@ const deletedBillsScreen = ({navigation}) => {
     const [menuVisible, setMenuVisible] = useState(false);
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [revertDialogVisible, setRevertDialogVisible] = useState(false);
+    const { scheduleNotifications } = useNotifications();
+    
     const [selectedBills, setSelectedBills] = useState([]);
 
     const windowHeight = Dimensions.get('window').height;
@@ -76,6 +80,11 @@ const deletedBillsScreen = ({navigation}) => {
     const revertHandler = () => {
         selectedBills.forEach(id => {
             dispatch(billsActions.removeBill(id, true)) //revert
+            scheduleNotifications(
+                id, 
+                bills.find(bill => bill.id === id).dateExpiry,
+                bills.find(bill => bill.id === id).title,
+            )
         })
         setSelectedBills([])
         hideRevertDialog();
@@ -149,8 +158,9 @@ const deletedBillsScreen = ({navigation}) => {
     useFocusEffect(
         useCallback(() => {
           const onBackPress = () => {
-            if (searchPressed) {
+            if (searchPressed || selectedBills.length > 0) {
               setSearchPressed(false);
+              setSelectedBills([]);
               return true;
             } else {
               return false;
@@ -160,7 +170,7 @@ const deletedBillsScreen = ({navigation}) => {
         BackHandler.addEventListener('hardwareBackPress', onBackPress);
     
         return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-        }, [searchPressed])
+        }, [searchPressed, selectedBills])
     );    
 
     return (
@@ -183,6 +193,7 @@ const deletedBillsScreen = ({navigation}) => {
                         listData={bills} 
                         deletedBillsList
                         selectBill={selectBill}
+                        selectedBills={selectedBills}
                     />  
                     <Portal>
                         <Dialog visible={deleteDialogVisible} onDismiss={hideDeleteDialog}>

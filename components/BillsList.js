@@ -24,7 +24,7 @@ const handleFilters = (item, filters) => {
     return showBillItem;
 };
 
-const BillsList = ({ listData , sortBy, filters, searchQuery , deletedBillsList, selectBill}) => {
+const BillsList = ({ listData , sortBy, filters, searchQuery , deletedBillsList, selectBill,  selectedBills}) => {
 
     function sortData() {    
         switch (sortBy) {
@@ -49,11 +49,13 @@ const BillsList = ({ listData , sortBy, filters, searchQuery , deletedBillsList,
     }
 
     const renderBillItem = ({item}) => {
+       
         if(item.title.toLowerCase().includes(searchQuery)) {
             if(deletedBillsList) return ( 
                 <BillItem
                     item={item}
                     selectBill={selectBill}
+                    selectedBills={selectedBills}
                 />            
             ) 
             if(handleFilters(item, filters)) {               

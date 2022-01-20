@@ -80,8 +80,8 @@ const BillsManualInputScreen = ({navigation, route}) => {
     const IBANaccountNumberRef = useRef();
     const billId = route.params ? route.params.billId : null;
     const editedBill = billId !== null ? useSelector(state => state.bills.bills.find(bill => bill.id == billId)) : null
-    const { receiversList, storeReceiver } = useAsyncStorage();
-    const { schedulePushNotification } = useNotifications();
+    const { settings, receiversList, storeReceiver, storedNotifications,  deleteStoredNotification } = useAsyncStorage();
+    const { scheduleNotifications, cancelScheduledNotification } = useNotifications();
     const dispatch = useDispatch();
 
     const initialState = {
@@ -201,26 +201,35 @@ const BillsManualInputScreen = ({navigation, route}) => {
                     formState.inputValues.reference, 
                     moment(formState.inputValues.dateExpiry).format()),            
                 );
+                if(editedBill.dateExpiry !== moment(formState.inputValues.dateExpiry).format() && storedNotifications[billId]) {
+                    storedNotifications[billId].map(notificationId => {
+                        cancelScheduledNotification(notificationId);
+                    })
+                    deleteStoredNotification(billId);
+                    scheduleNotifications(billId, formState.inputValues.dateExpiry, formState.inputValues.title);
+                }   
+                
             } else {
-                dispatch(billsActions.createBill(
+                const addedBillId = await dispatch(billsActions.createBill(
                     formState.inputValues.title, 
                     formState.inputValues.receiver,
                     formState.inputValues.billAmount,                   
                     IBANo, 
                     formState.inputValues.reference, 
                     moment(formState.inputValues.dateExpiry).format())
-                );
-                // await schedulePushNotification();
-                setIsLoading(false);
-            }           
+                )
+                if(settings.push_notifications.isEnabled) {
+                    scheduleNotifications(addedBillId, formState.inputValues.dateExpiry, formState.inputValues.title);    
+                }   
+            }   
+            navigation.goBack();         
         } catch(err) {
-            Alert.alert('Er ging iets verkeerd, probeer het opnieuw', [
+            Alert.alert('Foutmelding', 'Er ging iets verkeerd, probeer het opnieuw', [
                 { text: 'Okee' }
             ]);
-        } finally {      
-            navigation.goBack(); 
-            setIsSubmitted(false)
-        }           
+        }      
+        setIsSubmitted(false)
+        setIsLoading(false);            
     }, [saveReceiverChecked, formState, billId, dispatch]);
 
     if (isLoading) {

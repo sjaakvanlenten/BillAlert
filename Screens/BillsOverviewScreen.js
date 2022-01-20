@@ -7,6 +7,7 @@ import { FAB, Snackbar } from 'react-native-paper';
 import moment from 'moment';
 
 import * as billsActions from '../store/actions/bills';
+import useNotifications from '../hooks/useNotifications';
 
 import FilterMenu from '../components/UI/FilterMenu';
 import SortingMenu from '../components/UI/SortingMenu';
@@ -15,9 +16,10 @@ import InfoBar from '../components/InfoBar';
 import CustomSearchbar from '../components/UI/CustomSearchbar';
 
 const BillsOverviewScreen = ({bills, navigation, route}) => {
+
+    const { scheduleNotifications } = useNotifications();
     const dispatch = useDispatch();
 
-    /* Local State */
     const [availableBills, setAvailableBills] = useState([]);
     const [sortBy, setSortBy] = useState('dateCreated_up');
     const [filters, setFilters] = useState({
@@ -30,7 +32,7 @@ const BillsOverviewScreen = ({bills, navigation, route}) => {
     const [monthFilter, setMonthFilter] = useState(null)
     const [searchPressed, setSearchPressed] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
-    const [snackBarvisible, setSnackbarVisible] = useState(false);
+    const [snackBarVisible, setSnackbarVisible] = useState(false);
 
     const showSnackBar = () => setSnackbarVisible(true);
     const onDismissSnackBar = () => setSnackbarVisible(false);
@@ -167,7 +169,7 @@ const BillsOverviewScreen = ({bills, navigation, route}) => {
                     position: 'absolute',
                     margin: 24,
                     right: 0,
-                    bottom: 0,           
+                    bottom: snackBarVisible ? 62 : 0,           
                     backgroundColor: '#69699a',
                     transform: [{scaleX: 1.3}, {scaleY: 1.3}]
                   }}
@@ -176,16 +178,17 @@ const BillsOverviewScreen = ({bills, navigation, route}) => {
             />  
             <Snackbar
                 style={{backgroundColor: '#464646'}}          
-                visible={snackBarvisible}
+                visible={snackBarVisible}
                 onDismiss={onDismissSnackBar}
-                duration={5000}
+                duration={2000}
                 action={{
-                label: 'Ongedaan maken',
-                onPress: () => {
-                    dispatch(billsActions.removeBill(route.params?.billId, true))
-                },
+                    label: 'Ongedaan maken',
+                    onPress: () => {
+                        dispatch(billsActions.removeBill(route.params?.billId, true))
+                        scheduleNotifications(route.params?.billId, route.params?.dateExpiry, route.params?.title)
+                    },
                 }}>
-                Rekening verwijdert
+                {`"${route.params?.title}" is naar de prullenbak verplaatst.`}
             </Snackbar>
             {Platform.OS === 'ios' && <StatusBar style="light" />} 
         </View>

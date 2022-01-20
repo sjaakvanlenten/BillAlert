@@ -30,6 +30,7 @@ export const createBill = (title, receiver, billAmount, IBANo, reference, dateEx
                 reference, 
             );
             dispatch({ type: CREATE_BILL, billData: {id: dbResult.insertId.toString(), title, receiver, dateCreated, billAmount, IBANo, reference, dateExpiry}})
+            return(dbResult.insertId);
             }
         catch (err) {
             throw err;

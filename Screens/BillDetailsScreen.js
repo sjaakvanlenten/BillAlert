@@ -6,16 +6,22 @@ import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import moment from 'moment';
 
+import useAsyncStorage from '../hooks/useAsyncStorage';
+import useNotifications from '../hooks/useNotifications';
+import { setItemInfo } from '../helpers/billInfo';
+
 import * as billsActions from '../store/actions/bills';
 import HeaderButton from '../components/UI/HeaderButton';
 import Colors from '../constants/Colors';
 
-const BillDetailsScreen = ({navigation, route : {params : { billId, itemInfo }}}) => {
-    const [billInfo, setBillInfo] = useState(itemInfo)
-    
-    const dispatch = useDispatch();
+const BillDetailsScreen = ({navigation, route : {params : { billId }}}) => {
+    const { storedNotifications, deleteStoredNotification } = useAsyncStorage();
+    const { cancelScheduledNotification } = useNotifications();
 
     const selectedBill = useSelector(state => state.bills.bills.find(bill => bill.id == billId), next => next === undefined);
+    const [billInfo, setBillInfo] = useState(setItemInfo(selectedBill))
+    
+    const dispatch = useDispatch();
 
     const paymentDateDaysDifference = moment(selectedBill.paymentDate).startOf('day').diff(
         moment(selectedBill.dateExpiry).startOf('day'), 
@@ -24,7 +30,17 @@ const BillDetailsScreen = ({navigation, route : {params : { billId, itemInfo }}}
 
     const deleteHandler = () => {        
         dispatch(billsActions.removeBill(billId))
-        navigation.navigate('Overview', { billId: billId});
+        if(storedNotifications[billId]) {
+            storedNotifications[billId].map(notificationId => {
+                cancelScheduledNotification(notificationId);
+            })
+            deleteStoredNotification(billId);
+        }
+        navigation.navigate('Overview', { 
+            billId: billId, 
+            title: selectedBill.title,
+            dateExpiry: selectedBill.dateExpiry,
+        });
     }
 
     const payBillHandler = () => {
@@ -36,6 +52,12 @@ const BillDetailsScreen = ({navigation, route : {params : { billId, itemInfo }}}
                 ['cardColor'] : Colors.billPayed,
                 }});
         dispatch(billsActions.updatePaymentDate(billId))
+        if(storedNotifications[billId]) {
+            storedNotifications[billId].map(notificationId => {
+                cancelScheduledNotification(notificationId);
+            })
+            deleteStoredNotification(billId);
+        }   
     }
 
     useLayoutEffect(() => {
@@ -125,7 +147,7 @@ const BillDetailsScreen = ({navigation, route : {params : { billId, itemInfo }}}
                     : 
                         <View style={[styles.cardContentItem, {marginBottom: 0}]}>        
                             <Text style={styles.title}>Resterende dagen</Text>
-                            <Text style={styles.paragraph}>{itemInfo.headerText}</Text>                    
+                            <Text style={styles.paragraph}>{billInfo.headerText}</Text>                    
                         </View>        
                     }
                 </Card.Content>
