@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo, useLayoutEffect } from 'react';
 import { View, Dimensions, BackHandler, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { connect, useDispatch } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/core';
 import { FAB, Snackbar } from 'react-native-paper';
@@ -17,7 +18,8 @@ import CustomSearchbar from '../components/UI/CustomSearchbar';
 
 const BillsOverviewScreen = ({bills, navigation, route}) => {
 
-    const { scheduleNotifications } = useNotifications();
+    const { scheduleNotifications} = useNotifications();
+    const headerHeight = useHeaderHeight();
     const dispatch = useDispatch();
 
     const [availableBills, setAvailableBills] = useState([]);
@@ -72,6 +74,7 @@ const BillsOverviewScreen = ({bills, navigation, route}) => {
                         setSearchPressHandler={setSearchPressHandler}
                         searchHandler={searchHandler}
                         searchPressed={searchPressed}
+                        headerHeight={headerHeight}
                     />
                     <SortingMenu setBillsOrder={setBillsOrder} />
                     <FilterMenu 

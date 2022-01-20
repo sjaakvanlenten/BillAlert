@@ -14,13 +14,13 @@ export const AsyncStorageProvider = ({children}) => {
         getNotifications();
     }, [])
 
-    useEffect(() => {
+    useEffect(() => {     
         init_user_settings();
-    }, [init_user_settings])
+    }, [])
 
     const init_user_settings = async () => {
         const keys = await AsyncStorage.getAllKeys()
-      
+     
         if (keys.includes('settings')) return
 
         const init_settings = {

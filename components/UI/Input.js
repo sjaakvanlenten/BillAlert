@@ -53,6 +53,9 @@ const Input = forwardRef((props, ref) => {
     useEffect(() => {
         if (inputState.touched) {
             onInputChange(id, inputState.value, inputState.isValid);
+            if(props.iban) {
+                props.ibanErrorHandler(inputState.isValid)
+            }
         }
     }, [inputState.touched, id]);
 
@@ -78,7 +81,10 @@ const Input = forwardRef((props, ref) => {
         }
         if (props.minLength != null && text.length < props.minLength) {
             isValid = false;
-          }
+        }
+        if(id === 'billAmount') {
+            text = text.replace(',','.')
+        }
         dispatch({type: INPUT_CHANGE, value: text, isValid: isValid });
     }
 

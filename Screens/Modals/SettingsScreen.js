@@ -63,6 +63,7 @@ const SettingsScreen = () => {
     const [timePicker, setTimePicker] = useState(false);
     const { cancelAllScheduledNotifications, scheduleNotifications } = useNotifications();
     const [notificationsDialogVisible, setNotificationsDialogVisible] = useState(false);
+    const [IosTimePickerVisible, setIosTimePickerVisible] = useState(false);
     const openBills = useSelector(state => state.bills.bills.filter(bill => bill.deletionDate === null && bill.paymentDate === null))
       
     const initialState = {
@@ -102,7 +103,7 @@ const SettingsScreen = () => {
 
     const timeChangeHandler = (event, selectedTime) => {
         const currentTime = selectedTime || settingsState.push_notifications.notificationTime;
-        setTimePicker(Platform.OS === 'ios'); 
+        setTimePicker(false); 
         dispatch({type: SET_NOTIFICATION_TIME, value: currentTime })
       };
 
@@ -113,6 +114,11 @@ const SettingsScreen = () => {
     const showNotificationsDialog = () => setNotificationsDialogVisible(true);
 
     const hideNotificationsDialog = () => setNotificationsDialogVisible(false);
+
+    const showIosTimePicker = () => setIosTimePickerVisible(true);
+
+    const hideIosTimePicker = () => setIosTimePickerVisible(false);
+
 
     const notificationsToggleSwitch = () => {
        settingsState.push_notifications.isEnabled ? 
@@ -217,7 +223,7 @@ const SettingsScreen = () => {
                         style={{borderRadius: 50, marginRight: 40}}                 
                         uppercase={false}
                         labelStyle={{fontSize: 14, fontFamily:'montserrat-semibold'}}
-                        onPress={showTimePicker}
+                        onPress={Platform.OS === 'ios' ? showIosTimePicker : showTimePicker}
                     >
                         Kies een tijd
                     </Button>
@@ -229,6 +235,18 @@ const SettingsScreen = () => {
                     </Headline>
                 </View>
                 <Divider />
+                <View>
+                    {timePicker && (
+                        <DateTimePicker
+                        testID="dateTimePicker"
+                        value={new Date(settingsState.push_notifications.notificationTime)}
+                        mode="time"
+                        is24Hour={true}
+                        display="default"
+                        onChange={timeChangeHandler}
+                        />
+                    )}
+                </View>
             </View>
             <Portal>
                 <Dialog visible={notificationsDialogVisible} onDismiss={hideNotificationsDialog}>
@@ -245,18 +263,30 @@ const SettingsScreen = () => {
                     </Dialog.Actions> 
                 </Dialog>
             </Portal>
-            <View>
-                {timePicker && (
-                    <DateTimePicker
-                    testID="dateTimePicker"
-                    value={new Date(settingsState.push_notifications.notificationTime)}
-                    mode="time"
-                    is24Hour={true}
-                    display="default"
-                    onChange={timeChangeHandler}
-                    />
-                )}
-            </View>
+            <Portal>
+                <Dialog visible={IosTimePickerVisible} onDismiss={hideIosTimePicker}>
+                    <Dialog.Content>
+                        <DateTimePicker
+                        testID="dateTimePicker"
+                        value={new Date(settingsState.push_notifications.notificationTime)}
+                        mode="time"
+                        is24Hour={true}
+                        display='spinner'
+                        textColor={Colors.primary}
+                        onChange={timeChangeHandler}
+                        />
+                    </Dialog.Content>
+                    <Dialog.Actions style={{justifyContent: 'space-between', paddingHorizontal: 45}}>
+                        <Button color={Colors.primary} onPress={() => {
+                            dispatch({type: SET_NOTIFICATION_TIME, value: settings.push_notifications.notificationTime });
+                            hideIosTimePicker()
+                        }}>Annuleren</Button>
+                        <Button color={Colors.primary} onPress={() => {
+                            hideIosTimePicker()
+                        }}>Ok</Button>
+                    </Dialog.Actions> 
+                </Dialog>
+            </Portal>
         </View>
     )
 }

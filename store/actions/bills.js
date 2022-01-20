@@ -17,7 +17,7 @@ import {
 } from '../../helpers/db';
 
 export const createBill = (title, receiver, billAmount, IBANo, reference, dateExpiry) => {
-    dateCreated = moment().format()
+    dateCreated = moment().startOf('day').format()
     return async dispatch => {
         try {
             const dbResult = await insertBill(

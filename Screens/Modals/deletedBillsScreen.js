@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { BackHandler, StyleSheet, View, Dimensions } from 'react-native'
+import { useHeaderHeight } from '@react-navigation/elements';
 import { useFocusEffect } from '@react-navigation/core'
 import { shallowEqual, useSelector, useDispatch } from 'react-redux'
 import { Menu, Button, Portal, Dialog, Paragraph, Title } from 'react-native-paper'
@@ -25,6 +26,7 @@ const deletedBillsScreen = ({navigation}) => {
     
     const [selectedBills, setSelectedBills] = useState([]);
 
+    const headerHeight = useHeaderHeight();
     const windowHeight = Dimensions.get('window').height;
 
     const dispatch = useDispatch();
@@ -105,6 +107,7 @@ const deletedBillsScreen = ({navigation}) => {
                         setSearchPressHandler={setSearchPressHandler}
                         searchHandler={searchHandler}
                         searchPressed={searchPressed}
+                        headerHeight={headerHeight}
                     />
                     {selectedBills.length < 1 ? (
                         <Menu

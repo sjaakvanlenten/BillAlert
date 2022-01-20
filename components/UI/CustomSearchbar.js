@@ -6,7 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 import HeaderButton from './HeaderButton';
 
-const CustomSearchbar = ({ setSearchPressHandler, searchHandler, searchPressed }) => {
+const CustomSearchbar = ({ setSearchPressHandler, searchHandler, searchPressed, headerHeight }) => {
     const [searchQuery, setSearchQuery] = useState('')
 
     return (
@@ -21,10 +21,10 @@ const CustomSearchbar = ({ setSearchPressHandler, searchHandler, searchPressed }
                     />
                 </HeaderButtons>
             ) : (
-                <View style={{flex: 1}}>
+                <View>
                     <Searchbar
-                    autoFocus
-                        style={{flex: 1, borderRadius: 25, marginRight: 10}}
+                        autoFocus
+                        style={{height: headerHeight * 0.44, borderRadius: 25, marginRight: 10}}
                         placeholder="Zoeken"
                         onChangeText={query => {
                             setSearchQuery(query)

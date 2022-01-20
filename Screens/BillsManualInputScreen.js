@@ -1,7 +1,7 @@
 import React, { useState, useReducer, useCallback, useRef, useLayoutEffect } from 'react';
 import { View, StyleSheet, Platform, ActivityIndicator, Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { TextInput, Button, IconButton, Text, Checkbox, } from 'react-native-paper';
+import { TextInput, Button, IconButton, Text, Checkbox, HelperText, } from 'react-native-paper';
 import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
@@ -113,6 +113,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [saveReceiverChecked, setSaveReceiverChecked] = useState(false);
+    const [ibanErrorVisible, setIbanErrorVisisble] = useState(false);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -152,6 +153,10 @@ const BillsManualInputScreen = ({navigation, route}) => {
             });
         }
       }, [dispatchFormstate, formState]);
+
+    const ibanErrorHandler = (isValid) => {
+        setIbanErrorVisisble(!isValid);
+    }
 
     const focusNextInputHandler = (inputIdentifier, inputValue, inputMaxLength) => {
         switch(inputIdentifier){
@@ -199,9 +204,9 @@ const BillsManualInputScreen = ({navigation, route}) => {
                     formState.inputValues.billAmount, 
                     IBANo, 
                     formState.inputValues.reference, 
-                    moment(formState.inputValues.dateExpiry).format()),            
+                    moment(formState.inputValues.dateExpiry).startOf('day').format()),            
                 );
-                if(editedBill.dateExpiry !== moment(formState.inputValues.dateExpiry).format() && storedNotifications[billId]) {
+                if(editedBill.dateExpiry !== moment(formState.inputValues.dateExpiry).startOf('day').format() && storedNotifications[billId]) {
                     storedNotifications[billId].map(notificationId => {
                         cancelScheduledNotification(notificationId);
                     })
@@ -216,7 +221,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
                     formState.inputValues.billAmount,                   
                     IBANo, 
                     formState.inputValues.reference, 
-                    moment(formState.inputValues.dateExpiry).format())
+                    moment(formState.inputValues.dateExpiry).startOf('day').format())
                 )
                 if(settings.push_notifications.isEnabled) {
                     scheduleNotifications(addedBillId, formState.inputValues.dateExpiry, formState.inputValues.title);    
@@ -245,6 +250,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
             keyboardOpeningTime={50}
             enableOnAndroid
             style={{backgroundColor: 'white'}}
+            contentContainerStyle={{flex: 1, justifyContent: 'space-between'}}
         >
             <View style={styles.form}>
                 <Input
@@ -287,7 +293,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
                     label='Bedrag'
                     placeholder='€0,00'
                     errorText ="Geef een geldig bedrag op!"
-                    keyboardType='numeric'
+                    keyboardType="decimal-pad"
                     returnKeyType="next"
                     onInputChange={inputChangeHandler}
                     initialValue={editedBill ? editedBill.billAmount : formState.inputValues.billAmount}
@@ -317,6 +323,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
                         maxLength={2}
                         isSubmitted={isSubmitted} 
                         focusNextInput={focusNextInputHandler}      
+                        ibanErrorHandler={ibanErrorHandler}
                     />
                     <Input
                         iban
@@ -332,6 +339,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
                         maxLength={4}
                         isSubmitted={isSubmitted} 
                         focusNextInput={focusNextInputHandler}  
+                        ibanErrorHandler={ibanErrorHandler}
                     />
                     <Input
                         iban
@@ -347,9 +355,12 @@ const BillsManualInputScreen = ({navigation, route}) => {
                         minLength={10}
                         maxLength={10}
                         isSubmitted={isSubmitted}
+                        ibanErrorHandler={ibanErrorHandler}
                     />
-
                 </View>  
+                <HelperText type="error" visible={ibanErrorVisible}>
+                        Geef een geldige IBAN op
+                </HelperText>
                 <View style={{flexDirection: 'row', alignItems: 'center', }}>
                     <Text style={{fontFamily: 'montserrat-medium', fontSize: 14, color: 'black', marginRight: 5}}>Ontvanger opslaan</Text>
                     <Checkbox.Android
@@ -389,20 +400,20 @@ const BillsManualInputScreen = ({navigation, route}) => {
                         onPress={showDatepicker}
                     />    
                 </View>
-                <View style={{flexDirection:'row', width: '100%', justifyContent: 'center'}}>
+            </View>
+            <View style={{flexDirection:'row', width: '100%', justifyContent: 'center'}}>
                     <Button 
                         mode="contained" 
                         disabled={!formState.formIsValid}
                         onPress={submitHandler} 
                         color={Colors.primary} 
-                        style={{marginTop: 50, borderRadius: 50}}
+                        style={{borderRadius: 50}}
                         contentStyle={{paddingVertical: 5, paddingHorizontal: 15}}
                         uppercase={false}
                         labelStyle={{fontSize: 14, fontFamily:'montserrat-semibold'}}
                     >
                         Rekening Opslaan 
                     </Button>
-                </View>
             </View>
             <View>
                 {datePicker && (

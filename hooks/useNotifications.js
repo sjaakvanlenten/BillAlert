@@ -102,9 +102,11 @@ export const NotificationsProvider = ({children}) => {
         const notification_ids = {
             [billId]: []
         }
+        
+        const dateNow = new Date(moment().startOf('day').format())
 
         for(let i= 0; i < amountOfNotifications; i++) {     //warning notifications
-            if(trigger1 > Date.now()) {
+            if(trigger1 > dateNow) {
                 await Notifications.scheduleNotificationAsync({
                 content: {
                     title: title,
@@ -121,7 +123,7 @@ export const NotificationsProvider = ({children}) => {
         }
         
         for(let i= 1; i <= 4; i++) {    //Overdue notifications
-            if(trigger2 > Date.now()) {    
+            if(trigger2 > dateNow) {    
                 await Notifications.scheduleNotificationAsync({
                 content: {
                     title: "Billalert! 📬",

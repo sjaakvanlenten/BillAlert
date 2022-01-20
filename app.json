@@ -8,7 +8,7 @@
       [
         "expo-notifications",
         {
-          "icon": "./assets/ic_stat_name.png",
+          "icon": "./assets/notification_icon.png",
           "color": "#434381"
         }
       ]
@@ -23,7 +23,7 @@
       "backgroundColor": "#434381"
     },
     "notification": {
-      "icon": "./assets/ic_stat_name.png",
+      "icon": "./assets/notification_icon.png",
       "color": "#434381"
     },
     "updates": {
@@ -40,7 +40,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon2.png"
+        "foregroundImage": "./assets/adaptive-icon.png"
       },
       "softwareKeyboardLayoutMode": "pan",
       "package": "com.sjaakvanlenten.BillAlert"
