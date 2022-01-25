@@ -1,7 +1,8 @@
 {
   "expo": {
     "androidStatusBar": {
-      "barStyle": "light-content"
+      "barStyle": "light-content",
+      "translucent": true
     },
     "name": "BillAlert",
     "plugins": [
@@ -11,12 +12,13 @@
           "icon": "./assets/notification_icon.png",
           "color": "#434381"
         }
-      ]
+      ],
+      "./styles.plugin.js"
     ],
     "slug": "BillAlert",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/adaptive-icon.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -34,9 +36,6 @@
     ],
     "ios": {
       "supportsTablet": true
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
     },
     "android": {
       "adaptiveIcon": {

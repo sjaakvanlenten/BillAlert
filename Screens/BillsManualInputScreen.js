@@ -204,9 +204,9 @@ const BillsManualInputScreen = ({navigation, route}) => {
                     formState.inputValues.billAmount, 
                     IBANo, 
                     formState.inputValues.reference, 
-                    moment(formState.inputValues.dateExpiry).startOf('day').format()),            
+                    moment(formState.inputValues.dateExpiry).format()),            
                 );
-                if(editedBill.dateExpiry !== moment(formState.inputValues.dateExpiry).startOf('day').format() && storedNotifications[billId]) {
+                if(editedBill.dateExpiry !== moment(formState.inputValues.dateExpiry).format() && storedNotifications[billId]) {
                     storedNotifications[billId].map(notificationId => {
                         cancelScheduledNotification(notificationId);
                     })
@@ -221,7 +221,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
                     formState.inputValues.billAmount,                   
                     IBANo, 
                     formState.inputValues.reference, 
-                    moment(formState.inputValues.dateExpiry).startOf('day').format())
+                    moment(formState.inputValues.dateExpiry).format())
                 )
                 if(settings.push_notifications.isEnabled) {
                     scheduleNotifications(addedBillId, formState.inputValues.dateExpiry, formState.inputValues.title);    

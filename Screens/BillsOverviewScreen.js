@@ -38,14 +38,14 @@ const BillsOverviewScreen = ({bills, navigation, route}) => {
 
     const showSnackBar = () => setSnackbarVisible(true);
     const onDismissSnackBar = () => setSnackbarVisible(false);
-    
+
     /*Show snackbar when bill is deleted */
     useEffect(() => {
           if(route.params?.billId) {
               showSnackBar();
           }
         }, [route.params])
- 
+
     /* Set local state when redux store changes and check for month filter*/
     useEffect (() => {    
         if(monthFilter !== null) {

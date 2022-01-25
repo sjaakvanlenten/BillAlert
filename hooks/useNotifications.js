@@ -105,7 +105,7 @@ export const NotificationsProvider = ({children}) => {
         
         const dateNow = new Date(moment().startOf('day').format())
 
-        for(let i= 0; i < amountOfNotifications; i++) {     //warning notifications
+        for(let i= 0; i < amountOfNotifications; i++) {     //warning notifications     
             if(trigger1 > dateNow) {
                 await Notifications.scheduleNotificationAsync({
                 content: {
@@ -126,7 +126,7 @@ export const NotificationsProvider = ({children}) => {
             if(trigger2 > dateNow) {    
                 await Notifications.scheduleNotificationAsync({
                 content: {
-                    title: "Billalert! 📬",
+                    title: title,
                     body: `Je bent ${i} ${i === 1 ? 'week' : 'weken'} te laat met betalen`,
                 },
                 trigger: {

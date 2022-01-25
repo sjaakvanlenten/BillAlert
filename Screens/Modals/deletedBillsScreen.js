@@ -22,14 +22,13 @@ const deletedBillsScreen = ({navigation}) => {
     const [menuVisible, setMenuVisible] = useState(false);
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [revertDialogVisible, setRevertDialogVisible] = useState(false);
-    const { scheduleNotifications } = useNotifications();
-    
     const [selectedBills, setSelectedBills] = useState([]);
-
+   
+    const { scheduleNotifications } = useNotifications();
+    const dispatch = useDispatch();
+    
     const headerHeight = useHeaderHeight();
     const windowHeight = Dimensions.get('window').height;
-
-    const dispatch = useDispatch();
 
     const showDeleteDialog = () => setDeleteDialogVisible(true);
     const hideDeleteDialog = () => setDeleteDialogVisible(false);
@@ -53,7 +52,7 @@ const deletedBillsScreen = ({navigation}) => {
 
     const selectBill = (billId, billSelected) => {
         if(!billSelected) setSelectedBills(selectedBills => selectedBills.filter(bill => bill !== billId))
-        else setSelectedBills([...selectedBills, billId])   
+        else setSelectedBills(selectedBills => [...selectedBills, billId])   
     }
 
     const setSearchPressHandler = useCallback(() => {
@@ -92,7 +91,26 @@ const deletedBillsScreen = ({navigation}) => {
         hideRevertDialog();
     }
 
-    useLayoutEffect(() => {
+    useFocusEffect(
+        useCallback(() => {
+            
+          const onBackPress = () => {
+            if (searchPressed || selectedBills.length > 0) {
+              setSearchPressed(false);
+              setSelectedBills([]);
+              return true;
+            } else {
+              return false;
+            }
+          };
+    
+        BackHandler.addEventListener('hardwareBackPress', onBackPress);
+    
+        return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+        }, [searchPressed, selectedBills])
+    );    
+
+    useLayoutEffect(() => {  
             navigation.setOptions({
             headerTitle: !searchPressed ? 'Prullenbak' : '',
             headerRight: () => (   
@@ -158,24 +176,6 @@ const deletedBillsScreen = ({navigation}) => {
         });
       }, [navigation, searchPressed, searchQuery, menuVisible, selectedBills]);
 
-    useFocusEffect(
-        useCallback(() => {
-          const onBackPress = () => {
-            if (searchPressed || selectedBills.length > 0) {
-              setSearchPressed(false);
-              setSelectedBills([]);
-              return true;
-            } else {
-              return false;
-            }
-          };
-    
-        BackHandler.addEventListener('hardwareBackPress', onBackPress);
-    
-        return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-        }, [searchPressed, selectedBills])
-    );    
-
     return (
        <View style={styles.screen}>
             {bills.length < 1 ? (
@@ -196,7 +196,7 @@ const deletedBillsScreen = ({navigation}) => {
                         listData={bills} 
                         deletedBillsList
                         selectBill={selectBill}
-                        selectedBills={selectedBills}
+                        selectedBills={selectedBills}     
                     />  
                     <Portal>
                         <Dialog visible={deleteDialogVisible} onDismiss={hideDeleteDialog}>

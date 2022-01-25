@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import { View, StyleSheet, TouchableOpacity,  Platform, TouchableNativeFeedback, Text } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Card, Title, Paragraph } from 'react-native-paper';
@@ -12,7 +12,7 @@ const BillItem = ({item, selectBill,  selectedBills}) => {
     const navigation = useNavigation()
     const [billSelected, setBillSelected] = useState(false);
     const itemInfo = setItemInfo(item)
-    
+
     let TouchableCmp = TouchableOpacity;
     if (Platform.OS === 'android' && Platform.Version >= 21) {
         TouchableCmp = TouchableNativeFeedback;
@@ -21,7 +21,7 @@ const BillItem = ({item, selectBill,  selectedBills}) => {
     useEffect(() => {
         if(selectedBills && selectedBills.length < 1) setBillSelected(false);
     }, [selectedBills])
-
+ 
     return (
         <View style={styles.billItem}>
             <TouchableCmp 
@@ -145,4 +145,11 @@ const styles = StyleSheet.create({
     }
 });
 
-export default BillItem;
+export default memo(BillItem, (prevProps, nextProps) => {
+    if(nextProps.selectedBills) {     
+        if(nextProps.selectedBills.includes(nextProps.item.id) || prevProps.selectedBills.includes(nextProps.item.id)) { 
+            return false
+        }
+        return true
+    }
+});

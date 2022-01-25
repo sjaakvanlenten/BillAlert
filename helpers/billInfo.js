@@ -31,7 +31,7 @@ export const setItemInfo = (item) => {
             itemInfo.textColor = Colors.billOverdue,
             itemInfo.headerText = `${(daysDifference*-1)+1} ${daysDifference == 0 ? 'dag' : 'dagen'} te laat!`
         } 
-        else if(daysDifference < 7) { //Urgent Bill
+        else if(daysDifference <= 7) { //Urgent Bill
             itemInfo.cardColor = Colors.billUrgent
             itemInfo.statusIcon = "alert"     
             itemInfo.statusText = 'Urgent' 

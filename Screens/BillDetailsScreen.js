@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { Card, Button } from 'react-native-paper';
@@ -18,10 +18,14 @@ const BillDetailsScreen = ({navigation, route : {params : { billId }}}) => {
     const { storedNotifications, deleteStoredNotification } = useAsyncStorage();
     const { cancelScheduledNotification } = useNotifications();
 
-    const selectedBill = useSelector(state => state.bills.bills.find(bill => bill.id == billId), next => next === undefined);
+    const selectedBill = useSelector(state => state.bills.bills.find(bill => bill.id == billId));
     const [billInfo, setBillInfo] = useState(setItemInfo(selectedBill))
-    
+
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        setBillInfo(setItemInfo(selectedBill))
+    }, [selectedBill])
 
     const paymentDateDaysDifference = moment(selectedBill.paymentDate).startOf('day').diff(
         moment(selectedBill.dateExpiry).startOf('day'), 

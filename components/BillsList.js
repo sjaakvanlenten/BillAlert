@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
-import { View, FlatList, StyleSheet, } from 'react-native';
+import React, { useCallback } from 'react';
+import { View, FlatList, StyleSheet } from 'react-native';
 
 import BillItem  from './BillItem'
 import moment from 'moment';
 
 const handleFilters = (item, filters) => {
 
-    const daysDifference = moment.duration(moment(item.dateExpiry) - moment()).days();
+    const daysDifference =  moment(item.dateExpiry).startOf('day').diff(moment().startOf('day'), 'days')
     let showBillItem = false;
 
     if(item.paymentDate === null) {
         if(filters.filterRed && daysDifference < 1) {
             showBillItem = true;
-        } else if(filters.filterOrange && daysDifference < 7 && daysDifference >= 1) {
+        } else if(filters.filterOrange && daysDifference <= 7 && daysDifference >= 1) {
             showBillItem = true;
-        } else if(filters.filterGreen && daysDifference >= 7) {
+        } else if(filters.filterGreen && daysDifference > 7) {
             showBillItem = true;
         } 
     }
@@ -48,32 +48,40 @@ const BillsList = ({ listData , sortBy, filters, searchQuery , deletedBillsList,
         }
     }
 
-    const renderBillItem = ({item}) => {
-       
-        if(item.title.toLowerCase().includes(searchQuery)) {
-            if(deletedBillsList) return ( 
-                <BillItem
-                    item={item}
-                    selectBill={selectBill}
-                    selectedBills={selectedBills}
-                />            
-            ) 
-            if(handleFilters(item, filters)) {               
-                return (
-                    <BillItem
-                        item={item}
-                    />
-                );
+    const renderBillItem = useCallback(
+        ({item}) => {
+            if(item.title.toLowerCase().includes(searchQuery)) {
+                if(deletedBillsList) {            
+                    return ( 
+                        <BillItem
+                            item={item}
+                            selectBill={selectBill}
+                            selectedBills={selectedBills}
+                        />            
+                    ) 
+                }
+                if(handleFilters(item, filters)) {               
+                    return (
+                        <BillItem
+                            item={item}
+                        />
+                    );
+                }
             }
-        }
-        else return null;
-    };
+            else return null;
+        }, [sortBy, filters, searchQuery, selectedBills]
+    );
+
+    const keyExtractor = useCallback(item => item.id.toString(), [])
 
     return (
         <View style={styles.billsList}>
             <FlatList
+                windowSize={10}
+                maxToRenderPerBatch={5}
+                initialNumToRender={4}
                 data={deletedBillsList ? listData : sortData()}
-                keyExtractor={item => item.id.toString()}
+                keyExtractor={keyExtractor}
                 renderItem={renderBillItem}
             />
         </View>

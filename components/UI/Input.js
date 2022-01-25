@@ -1,6 +1,7 @@
 import React, { useReducer, useEffect, forwardRef} from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput, HelperText } from 'react-native-paper';
+import Colors from '../../constants/Colors';
 
 const INPUT_CHANGE = 'INPUT_CHANGE';
 const INPUT_BLUR = 'INPUT_BLUR';
@@ -107,6 +108,7 @@ const Input = forwardRef((props, ref) => {
                 onChangeText={textChangeHandler}
                 onBlur={lostFocusHandler}
                 onFocus={focusHandler}
+                activeUnderlineColor={Colors.primaryTint}
             />
             { (!inputState.isValid && inputState.touched && !props.iban) &&
                 <HelperText type="error" visible={!inputState.isValid && inputState.touched}>
