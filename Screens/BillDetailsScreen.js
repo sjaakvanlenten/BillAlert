@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { Card, Button } from 'react-native-paper';
+import { Card, Button, Divider } from 'react-native-paper';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import moment from 'moment';
@@ -47,15 +47,15 @@ const BillDetailsScreen = ({navigation, route : {params : { billId }}}) => {
         });
     }
 
-    const payBillHandler = () => {
+    const payBillHandler = async () => {
+        await dispatch(billsActions.updatePaymentDate(billId))
         setBillInfo(billInfo => {
             return {
                 ...billInfo, 
-                ['textColor'] : 'black',
+                ['textColor'] : '#000000',
                 ['statusIcon'] : "check-circle", 
                 ['cardColor'] : Colors.billPayed,
                 }});
-        dispatch(billsActions.updatePaymentDate(billId))
         if(storedNotifications[billId]) {
             storedNotifications[billId].map(notificationId => {
                 cancelScheduledNotification(notificationId);
@@ -106,9 +106,12 @@ const BillDetailsScreen = ({navigation, route : {params : { billId }}}) => {
                         <Text style={styles.paragraph}>{selectedBill.IBANo}</Text>                     
                     </View>
                     {selectedBill.reference !== '' &&
-                        <View style={styles.cardContentItem}>
+                        <View style={[styles.cardContentItem, {maxHeight: 65}]}>                        
                             <Text style={styles.title}>Beschrijving</Text>
-                            <Text style={styles.paragraph}>{selectedBill.reference}</Text>                     
+                            <ScrollView persistentScrollbar={true}>
+                                <Text style={styles.paragraph}>{selectedBill.reference}</Text>    
+                            </ScrollView>  
+                            <Divider />               
                         </View>
                     }
                     <View style={styles.cardContentItem}>

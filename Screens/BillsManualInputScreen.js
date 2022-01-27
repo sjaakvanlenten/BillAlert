@@ -197,7 +197,7 @@ const BillsManualInputScreen = ({navigation, route}) => {
 
         try {
             if(editedBill) {
-                dispatch(billsActions.updateBill(
+                await dispatch(billsActions.updateBill(
                     billId,
                     formState.inputValues.title, 
                     formState.inputValues.receiver,
@@ -381,6 +381,8 @@ const BillsManualInputScreen = ({navigation, route}) => {
                     initialValue={editedBill ? editedBill.reference : formState.inputValues.reference}
                     initiallyValid={true}
                     isSubmitted={isSubmitted}
+                    style={Platform.OS === 'ios' ? {maxHeight : 70}: ''}
+                    numberOfLines={2}
                 />
                 <View style={{flexDirection:'row', alignItems: 'center'}}>               
                 <TextInput 

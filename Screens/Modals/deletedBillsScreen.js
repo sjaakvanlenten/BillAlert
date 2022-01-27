@@ -93,7 +93,6 @@ const deletedBillsScreen = ({navigation}) => {
 
     useFocusEffect(
         useCallback(() => {
-            
           const onBackPress = () => {
             if (searchPressed || selectedBills.length > 0) {
               setSearchPressed(false);
@@ -194,6 +193,7 @@ const deletedBillsScreen = ({navigation}) => {
                     <BillsList 
                         searchQuery={searchQuery}
                         listData={bills} 
+                        sortBy='deletionDate'
                         deletedBillsList
                         selectBill={selectBill}
                         selectedBills={selectedBills}     

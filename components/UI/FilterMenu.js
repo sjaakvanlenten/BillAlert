@@ -71,7 +71,7 @@ const FilterMenu = ({ filtersHandler, filterMonthHandler, filters }) => {
                 <Title style={{fontFamily: 'montserrat-medium', fontSize: 14, }}>Selecteer Maand</Title>                            
                 <MonthList                 
                     updateMonth={updateMonth}
-                    month ={month}
+                    month={month}
                 />               
             </View>
             <View style={styles.periodFilterContainer}>

@@ -1,4 +1,4 @@
-import { withAndroidStyles } from "@expo/config-plugins"
+const { withAndroidStyles } = require("@expo/config-plugins")
 
 module.exports = function dateTimePickerPlugin(config) {
   return withAndroidStyles(config, async config => {

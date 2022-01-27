@@ -8,7 +8,7 @@ export const setItemInfo = (item) => {
         cardColor: Colors.primary,
         statusIcon: null, 
         statusText: 'Open',
-        textColor: 'black',
+        textColor: '#000000',
         headerText : `Nog ${daysDifference} dagen`,
     }
     if(item.deletionDate !== null){
