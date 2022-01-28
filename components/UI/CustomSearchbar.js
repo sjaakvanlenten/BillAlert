@@ -20,21 +20,20 @@ const CustomSearchbar = ({ setSearchPressHandler, searchHandler, searchPressed, 
                         onPress={() => setSearchPressHandler()} 
                     />
                 </HeaderButtons>
-            ) : (
-                <View>
-                    <Searchbar
-                        autoFocus
-                        style={{height: headerHeight * 0.44, borderRadius: 25, marginRight: 10}}
-                        placeholder="Zoeken"
-                        onChangeText={query => {
-                            setSearchQuery(query)
-                            searchHandler(query)
-                        }}
-                        value={searchQuery}
-                        icon="chevron-left"
-                        onIconPress={() => setSearchPressHandler()}
-                    />    
-                </View>
+            ) : (               
+                <Searchbar
+                    autoFocus
+                    style={{ borderRadius: 25, marginRight: 10, height: 0.44 * headerHeight }}
+                    inputStyle={{padding: 0}}
+                    placeholder="Zoeken"
+                    onChangeText={query => {
+                        setSearchQuery(query)
+                        searchHandler(query)
+                    }}
+                    value={searchQuery}
+                    icon="chevron-left"
+                    onIconPress={() => setSearchPressHandler()}
+                />                
             )}
         </View>
     )

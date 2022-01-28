@@ -152,4 +152,5 @@ export default memo(BillItem, (prevProps, nextProps) => {
         }
         return true
     }
+    return true
 });

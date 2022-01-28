@@ -226,6 +226,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     paragraph: {
+        color: '#000000',
         fontSize: 16,
         fontFamily: 'montserrat-medium'
     }
