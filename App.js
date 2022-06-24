@@ -13,7 +13,7 @@ import moment from 'moment';
 import 'moment/locale/nl';
 import { Animated, StyleSheet, View } from "react-native";
 
-import { db_init, drop } from './helpers/db';
+import { db_init, drop } from './utils/db';
 import billsReducer from './store/reducers/bills';
 
 import BillsNavigator from './navigation/BillsNavigator';

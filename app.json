@@ -5,7 +5,10 @@
       "barStyle": "light-content",
       "translucent": true
     },
-    "name": "BillAlert",
+    "androidNavigationBar": {
+      "backgroundColor": "#434381"
+    },
+    "name": "Rekening Alert",
     "plugins": [
       [
         "expo-notifications",
@@ -16,7 +19,7 @@
       ],
       "./styles.plugin.js"
     ],
-    "slug": "BillAlert",
+    "slug": "Rekening-Alert",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/adaptive-icon.png",
@@ -32,13 +35,12 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "assets/fonts/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
     "android": {
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png"
       },

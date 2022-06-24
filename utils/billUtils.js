@@ -40,3 +40,27 @@ export const setItemInfo = (item) => {
     }
     return itemInfo
 }
+
+export const shouldShowBillItem = (item, filters) => {
+    const daysDifference = moment(item.dateExpiry)
+      .startOf("day")
+      .diff(moment().startOf("day"), "days");
+  
+    if (item.paymentDate === null) {
+      if (filters.filterRed && daysDifference < 1) {
+        return true;
+      } else if (
+        filters.filterOrange &&
+        daysDifference <= 7 &&
+        daysDifference >= 1
+      ) {
+        return true;
+      } else if (filters.filterGreen && daysDifference > 7) {
+        return true;
+      }
+    }
+  
+    if (filters.filterPayedBills && item.paymentDate !== null) return true;
+  
+    return false;
+  };

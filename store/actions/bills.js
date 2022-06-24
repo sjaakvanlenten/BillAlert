@@ -14,7 +14,7 @@ import {
     deleteBillPermanent, 
     db_updateBill, 
     db_updatePaymentDate 
-} from '../../helpers/db';
+} from '../../utils/db';
 
 export const createBill = (title, receiver, billAmount, IBANo, reference, dateExpiry) => {
     dateCreated = moment().format()

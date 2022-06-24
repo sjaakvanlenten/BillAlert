@@ -6,9 +6,8 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 import HeaderButton from './HeaderButton';
 
-const CustomSearchbar = ({ setSearchPressHandler, searchHandler, searchPressed, headerHeight }) => {
-    const [searchQuery, setSearchQuery] = useState('')
-
+const CustomSearchbar = ({ setSearchPressHandler, searchHandler, searchPressed, headerHeight, searchQuery }) => {
+    
     return (
         <View style={{flex: searchPressed ? 1 : 0}}>
             {!searchPressed ? (

@@ -15,6 +15,7 @@ import BillsList from '../../components/BillsList'
 import CustomSearchbar from '../../components/UI/CustomSearchbar'
 import HeaderButton from '../../components/UI/HeaderButton';
 import Colors from '../../constants/Colors'
+import { sortData } from '../../utils/transformData';
 
 const deletedBillsScreen = ({navigation}) => {
     const [searchPressed, setSearchPressed] = useState(false);
@@ -39,7 +40,7 @@ const deletedBillsScreen = ({navigation}) => {
     const openMenu = () => setMenuVisible(true);
     const closeMenu = () => setMenuVisible(false);
 
-    const bills = useSelector(state => state.bills.bills.filter(bill => bill.deletionDate !== null), shallowEqual)
+    const bills = sortData(useSelector(state => state.bills.bills.filter(bill => bill.deletionDate !== null), shallowEqual), 'deletionDate')
 
     //Delete after 30 days
     useEffect(() => {
@@ -193,7 +194,6 @@ const deletedBillsScreen = ({navigation}) => {
                     <BillsList 
                         searchQuery={searchQuery}
                         listData={bills} 
-                        sortBy='deletionDate'
                         deletedBillsList
                         selectBill={selectBill}
                         selectedBills={selectedBills}     

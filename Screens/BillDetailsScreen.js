@@ -8,7 +8,7 @@ import moment from 'moment';
 
 import useAsyncStorage from '../hooks/useAsyncStorage';
 import useNotifications from '../hooks/useNotifications';
-import { setItemInfo } from '../helpers/billInfo';
+import { setItemInfo } from '../utils/billUtils';
 
 import * as billsActions from '../store/actions/bills';
 import HeaderButton from '../components/UI/HeaderButton';
