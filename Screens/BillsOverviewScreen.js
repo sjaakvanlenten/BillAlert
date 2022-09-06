@@ -22,6 +22,7 @@ import BillsList from "../components/BillsList";
 import InfoBar from "../components/InfoBar";
 import CustomSearchbar from "../components/UI/CustomSearchbar";
 import { sortData } from "../utils/transformData";
+import Colors from "../constants/Colors";
 
 const BillsOverviewScreen = ({ bills, navigation, route }) => {
   const { scheduleNotifications } = useNotifications();
@@ -128,9 +129,12 @@ const BillsOverviewScreen = ({ bills, navigation, route }) => {
   };
 
   /* Setting the order of the bills for the listData from SortingMenu */
-  const setBillsOrder = useCallback(sortBy => {
-    setAvailableBills((availableBills) => sortData(availableBills, sortBy))
-  },[availableBills]);
+  const setBillsOrder = useCallback(
+    (sortBy) => {
+      setAvailableBills((availableBills) => sortData(availableBills, sortBy));
+    },
+    [availableBills]
+  );
 
   /* Setting the filters for the listData from FilterMenu */
   const filtersHandler = useCallback(
@@ -138,9 +142,9 @@ const BillsOverviewScreen = ({ bills, navigation, route }) => {
       if (filter === "filterOnlyPayed") {
         setFilters((filters) => ({
           ...filters,
-          ["filterGreen"]: value == true ? false : true,
-          ["filterOrange"]: value == true ? false : true,
-          ["filterRed"]: value == true ? false : true,
+          ["filterGreen"]: !value,
+          ["filterOrange"]: !value,
+          ["filterRed"]: !value,
           ["filterPayedBills"]: value,
           ["filterOnlyPayed"]: value,
         }));
@@ -156,9 +160,12 @@ const BillsOverviewScreen = ({ bills, navigation, route }) => {
   );
 
   /* Setting the available bills filtered by month */
-  const filterMonthHandler = useCallback(month => {
+  const filterMonthHandler = useCallback(
+    (month) => {
       month === "Alle Maanden" ? setMonthFilter(null) : setMonthFilter(month);
-    },[monthFilter]);
+    },
+    [monthFilter]
+  );
 
   /* Calculating and storing the total billAmount */
   const totalBillAmount = useMemo(() => {
@@ -190,7 +197,7 @@ const BillsOverviewScreen = ({ bills, navigation, route }) => {
           margin: 24,
           right: 0,
           bottom: snackBarVisible ? 62 : 0,
-          backgroundColor: "#69699a",
+          backgroundColor: Colors.primary,
           transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }],
         }}
         icon="plus"

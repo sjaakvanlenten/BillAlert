@@ -1,57 +1,53 @@
-import React, { useEffect, useState, memo, useCallback } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Platform,
-  TouchableNativeFeedback,
-  Text,
-} from "react-native";
-import * as Haptics from "expo-haptics";
+import React, { memo, useCallback } from "react";
+import { View, StyleSheet, TouchableNativeFeedback, Text } from "react-native";
 import { Card, Title, Paragraph } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
 
 import { setItemInfo } from "../utils/billUtils";
-import moment from "moment";
 
-const BillItem = ({ item, selectBill, selectedBills }) => {
-  const navigation = useNavigation();
-  const [billSelected, setBillSelected] = useState(false);
+import SwipeableView from "./UI/SwipeableView";
+import { formatDate } from "../utils/transformData";
+
+const BillItem = ({
+  item,
+  activeFilters,
+  selectedBills,
+  handlePress,
+  handlePayedPress,
+  handleDeletePress,
+  simultaneousHandlers,
+  TouchableCmp,
+}) => {
+  const billSelected = selectedBills ? selectedBills.includes(item.id) : null;
   const itemInfo = setItemInfo(item);
 
-  let TouchableCmp = TouchableOpacity;
-  if (Platform.OS === "android" && Platform.Version >= 21) {
-    TouchableCmp = TouchableNativeFeedback;
-  }
+  const formattedDateCreated = formatDate(item.dateCreated);
 
-  const handlePress = useCallback(() => {
-    if (item.deletionDate !== null) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      selectBill(item.id, !billSelected);
-      setBillSelected((billSelected) => !billSelected);
-    } else {
-      navigation.navigate("Details", {
-        billId: item.id,
-      });
-    }
-  });
+  const formattedDateExpired = formatDate(item.dateExpiry);
 
-  useEffect(() => {
-    if (selectedBills && selectedBills.length < 1) setBillSelected(false);
-  }, [selectedBills]);
+  const formattedPaymentDate = item.paymentDate && formatDate(item.paymentDate);
+
+  const onPress = useCallback(() => {
+    handlePress(item);
+  }, [item, handlePress]);
 
   return (
-    <View style={styles.billItem}>
+    <SwipeableView
+      billItem={item}
+      activeFilters={activeFilters}
+      onPayedPress={handlePayedPress}
+      onDeletePress={handleDeletePress}
+      simultaneousHandlers={simultaneousHandlers}
+    >
       <TouchableCmp
         useForeground
         background={TouchableNativeFeedback.Ripple("#F3F3F3")}
-        onPress={handlePress}
+        onPress={onPress}
       >
         <Card style={styles.container}>
           <Card.Title
             title={item.title}
-            subtitle={moment(item.dateCreated).format("LL")}
+            subtitle={formattedDateCreated}
             style={{
               backgroundColor: itemInfo.cardColor,
               marginBottom: 5,
@@ -104,9 +100,19 @@ const BillItem = ({ item, selectBill, selectedBills }) => {
             </View>
             <View style={styles.cardContentItem}>
               <Title style={styles.title}>Status</Title>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
                 <Paragraph
-                  style={[styles.paragraph, { color: itemInfo.textColor }]}
+                  style={[
+                    styles.paragraph,
+                    {
+                      color: itemInfo.textColor,
+                    },
+                  ]}
                 >
                   {itemInfo.statusText}
                 </Paragraph>
@@ -114,7 +120,10 @@ const BillItem = ({ item, selectBill, selectedBills }) => {
                   name={itemInfo.statusIcon}
                   size={16}
                   color={itemInfo.cardColor}
-                  style={{ paddingLeft: 2, paddingTop: 2 }}
+                  style={{
+                    paddingLeft: 2,
+                    paddingTop: 2,
+                  }}
                 />
               </View>
             </View>
@@ -125,9 +134,7 @@ const BillItem = ({ item, selectBill, selectedBills }) => {
               <Paragraph
                 style={[styles.paragraph, { color: itemInfo.textColor }]}
               >
-                {item.paymentDate !== null
-                  ? moment(item.paymentDate).format("LL")
-                  : moment(item.dateExpiry).format("LL")}
+                {item.paymentDate ? formattedPaymentDate : formattedDateExpired}
               </Paragraph>
             </View>
             {
@@ -138,19 +145,11 @@ const BillItem = ({ item, selectBill, selectedBills }) => {
           </Card.Content>
         </Card>
       </TouchableCmp>
-    </View>
+    </SwipeableView>
   );
 };
 
 const styles = StyleSheet.create({
-  billItem: {
-    flex: 1,
-    borderRadius: 10,
-    overflow: Platform.OS === "android" ? "hidden" : "visible",
-    marginHorizontal: Platform.OS === "android" ? 20 : 10,
-    marginVertical: 15,
-    elevation: 5,
-  },
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(243,243,243,0.7)",
@@ -179,16 +178,19 @@ const styles = StyleSheet.create({
 });
 
 export default memo(BillItem, (prevProps, nextProps) => {
-  if (prevProps != nextProps) return false;
-
   if (nextProps.selectedBills) {
     if (
-      nextProps.selectedBills.includes(nextProps.item.id) ||
-      prevProps.selectedBills.includes(nextProps.item.id)
+      nextProps.selectedBills.includes(nextProps.item.id) &&
+      !prevProps.selectedBills.includes(nextProps.item.id)
+    ) {
+      return false;
+    } else if (
+      prevProps.selectedBills.includes(nextProps.item.id) &&
+      !nextProps.selectedBills.includes(nextProps.item.id)
     ) {
       return false;
     }
     return true;
   }
-  return true;
+  return prevProps.item !== nextProps.item;
 });
