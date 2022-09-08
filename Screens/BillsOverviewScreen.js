@@ -5,11 +5,10 @@ import React, {
   useMemo,
   useLayoutEffect,
 } from "react";
-import { View, Dimensions, BackHandler, Platform } from "react-native";
+import { View, Platform } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { connect, useDispatch } from "react-redux";
-import { useFocusEffect } from "@react-navigation/core";
 import { FAB, Snackbar } from "react-native-paper";
 import moment from "moment";
 
@@ -38,7 +37,6 @@ const BillsOverviewScreen = ({ bills, navigation, route }) => {
     filterOnlyPayed: false,
   });
   const [monthFilter, setMonthFilter] = useState(null);
-  const [searchPressed, setSearchPressed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [snackBarVisible, setSnackbarVisible] = useState(false);
 
@@ -69,8 +67,6 @@ const BillsOverviewScreen = ({ bills, navigation, route }) => {
 
   useLayoutEffect(() => {
     navigation.getParent().setOptions({
-      headerTitle: !searchPressed ? "Rekeningen" : "",
-
       headerRight: () => (
         <View
           style={{
@@ -78,16 +74,14 @@ const BillsOverviewScreen = ({ bills, navigation, route }) => {
             flex: 1,
             alignItems: "center",
             paddingVertical: 10,
-            width: searchPressed ? Dimensions.get("window").width : "100%",
             justifyContent: "flex-end",
             paddingLeft: 5,
           }}
         >
           <CustomSearchbar
+            navigation={navigation}
             searchQuery={searchQuery}
-            setSearchPressHandler={setSearchPressHandler}
             searchHandler={searchHandler}
-            searchPressed={searchPressed}
             headerHeight={headerHeight}
           />
           <SortingMenu setBillsOrder={setBillsOrder} />
@@ -99,30 +93,7 @@ const BillsOverviewScreen = ({ bills, navigation, route }) => {
         </View>
       ),
     });
-  }, [navigation, searchPressed, filters, searchQuery]);
-
-  /* Android Backbutton will hide searchBar */
-  useFocusEffect(
-    useCallback(() => {
-      const onBackPress = () => {
-        if (searchPressed) {
-          setSearchPressed(false);
-          return true;
-        } else {
-          return false;
-        }
-      };
-
-      BackHandler.addEventListener("hardwareBackPress", onBackPress);
-
-      return () =>
-        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-    }, [searchPressed])
-  );
-
-  const setSearchPressHandler = useCallback(() => {
-    setSearchPressed((searchPressed) => !searchPressed);
-  }, [searchPressed]);
+  }, [navigation, filters, searchQuery]);
 
   const searchHandler = (query) => {
     setSearchQuery(query.trim().toLowerCase());

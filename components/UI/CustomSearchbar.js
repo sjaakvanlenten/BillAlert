@@ -1,18 +1,48 @@
-import React from "react";
-import { View } from "react-native";
+import React, { useCallback, useLayoutEffect, useState } from "react";
+import { BackHandler, View } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { Searchbar } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import HeaderButton from "./HeaderButton";
+import { useFocusEffect } from "@react-navigation/native";
 
 const CustomSearchbar = ({
-  setSearchPressHandler,
+  navigation,
   searchHandler,
-  searchPressed,
   headerHeight,
   searchQuery,
 }) => {
+  const [searchPressed, setSearchPressed] = useState(false);
+
+  useLayoutEffect(() => {
+    navigation.getParent().setOptions({
+      headerTitle: searchPressed ? "" : "Rekeningen",
+
+      headerTitleContainerStyle: {
+        marginHorizontal: searchPressed ? 0 : 10,
+      },
+    });
+  }, [searchPressed, navigation]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        if (searchPressed) {
+          setSearchPressed(false);
+          return true;
+        } else {
+          return false;
+        }
+      };
+
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    }, [searchPressed])
+  );
+
   return (
     <View style={{ flex: searchPressed ? 1 : 0 }}>
       {!searchPressed ? (
@@ -21,7 +51,7 @@ const CustomSearchbar = ({
             title="search"
             IconComponent={MaterialIcons}
             iconName="search"
-            onPress={() => setSearchPressHandler()}
+            onPress={() => setSearchPressed(true)}
           />
         </HeaderButtons>
       ) : (
@@ -39,7 +69,7 @@ const CustomSearchbar = ({
           }}
           value={searchQuery}
           icon="chevron-left"
-          onIconPress={() => setSearchPressHandler()}
+          onIconPress={() => setSearchPressed(false)}
         />
       )}
     </View>
