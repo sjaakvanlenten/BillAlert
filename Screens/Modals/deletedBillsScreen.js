@@ -104,9 +104,9 @@ const deletedBillsScreen = ({ navigation }) => {
       selectedBills.forEach((id) => {
         dispatch(billsActions.removeBillPermanent(id));
       });
-      setSelectedBills([]);
-      hideDeleteDialog();
     }
+    setSelectedBills([]);
+    hideDeleteDialog();
   };
 
   const revertHandler = useCallback(async () => {

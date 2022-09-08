@@ -74,7 +74,7 @@ const SwipeableView = ({
   };
 
   const handlePayedPress = () => {
-    if (activeFilters.filterGreen) {
+    if (activeFilters.filterPayedBills) {
       translateX.value = withTiming(0, undefined, (isFinished) => {
         if (isFinished && onPayedPress) {
           runOnJS(onPayedPress)(billItem.id);
