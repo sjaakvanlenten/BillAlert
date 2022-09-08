@@ -18,6 +18,7 @@ const BillItem = ({
   simultaneousHandlers,
   TouchableCmp,
 }) => {
+  console.log("rerender", item.title);
   const billSelected = selectedBills ? selectedBills.includes(item.id) : null;
   const itemInfo = setItemInfo(item);
 
@@ -192,5 +193,5 @@ export default memo(BillItem, (prevProps, nextProps) => {
     }
     return true;
   }
-  return prevProps.item !== nextProps.item;
+  return prevProps.item === nextProps.item;
 });
