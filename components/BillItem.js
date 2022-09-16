@@ -5,20 +5,9 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { setItemInfo } from "../utils/billUtils";
 
-import SwipeableView from "./UI/SwipeableView";
 import { formatDate } from "../utils/transformData";
 
-const BillItem = ({
-  item,
-  activeFilters,
-  selectedBills,
-  handlePress,
-  handlePayedPress,
-  handleDeletePress,
-  simultaneousHandlers,
-  TouchableCmp,
-}) => {
-  console.log("rerender", item.title);
+const BillItem = ({ item, selectedBills, handlePress, TouchableCmp }) => {
   const billSelected = selectedBills ? selectedBills.includes(item.id) : null;
   const itemInfo = setItemInfo(item);
 
@@ -33,120 +22,108 @@ const BillItem = ({
   }, [item, handlePress]);
 
   return (
-    <SwipeableView
-      billItem={item}
-      activeFilters={activeFilters}
-      onPayedPress={handlePayedPress}
-      onDeletePress={handleDeletePress}
-      simultaneousHandlers={simultaneousHandlers}
+    <TouchableCmp
+      useForeground
+      background={TouchableNativeFeedback.Ripple("#F3F3F3")}
+      onPress={onPress}
     >
-      <TouchableCmp
-        useForeground
-        background={TouchableNativeFeedback.Ripple("#F3F3F3")}
-        onPress={onPress}
-      >
-        <Card style={styles.container}>
-          <Card.Title
-            title={item.title}
-            subtitle={formattedDateCreated}
-            style={{
-              backgroundColor: itemInfo.cardColor,
-              marginBottom: 5,
-              borderTopLeftRadius: 10,
-              borderTopRightRadius: 10,
-              minHeight: 60,
-              paddingRight: 16,
-            }}
-            titleStyle={{
-              fontFamily: "montserrat-medium",
-              color: "white",
-              fontSize: 16,
-            }}
-            subtitleStyle={{
-              fontFamily: "montserrat-medium",
-              color: "white",
-              fontSize: 10,
-              lineHeight: 12,
-            }}
-            right={() => (
-              <Text
-                style={{
-                  fontFamily: "montserrat-semibold",
-                  color: "white",
-                  fontSize: 14,
-                }}
+      <Card style={styles.container}>
+        <Card.Title
+          title={item.title}
+          subtitle={formattedDateCreated}
+          style={{
+            backgroundColor: itemInfo.cardColor,
+            marginBottom: 5,
+            borderTopLeftRadius: 10,
+            borderTopRightRadius: 10,
+            minHeight: 60,
+            paddingRight: 16,
+          }}
+          titleStyle={{
+            fontFamily: "montserrat-medium",
+            color: "white",
+            fontSize: 16,
+          }}
+          subtitleStyle={{
+            fontFamily: "montserrat-medium",
+            color: "white",
+            fontSize: 10,
+            lineHeight: 12,
+          }}
+          right={() => (
+            <Text
+              style={{
+                fontFamily: "montserrat-semibold",
+                color: "white",
+                fontSize: 14,
+              }}
+            >
+              {itemInfo.headerText}
+            </Text>
+          )}
+        />
+        {billSelected && <View style={styles.overlay} /> /*selection overlay */}
+        <Card.Content
+          backgroundColor="white"
+          style={{
+            flexDirection: "row",
+            borderBottomLeftRadius: 10,
+            borderBottomRightRadius: 10,
+          }}
+        >
+          <View style={styles.cardContentItem}>
+            <Title style={styles.title}>Bedrag</Title>
+            <Paragraph
+              style={[styles.paragraph, { color: itemInfo.textColor }]}
+            >{`€${item.billAmount}`}</Paragraph>
+          </View>
+          <View style={styles.cardContentItem}>
+            <Title style={styles.title}>Status</Title>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <Paragraph
+                style={[
+                  styles.paragraph,
+                  {
+                    color: itemInfo.textColor,
+                  },
+                ]}
               >
-                {itemInfo.headerText}
-              </Text>
-            )}
-          />
+                {itemInfo.statusText}
+              </Paragraph>
+              <MaterialCommunityIcons
+                name={itemInfo.statusIcon}
+                size={16}
+                color={itemInfo.cardColor}
+                style={{
+                  paddingLeft: 2,
+                  paddingTop: 2,
+                }}
+              />
+            </View>
+          </View>
+          <View style={[styles.cardContentItem, { flex: 1.4 }]}>
+            <Title style={styles.title}>
+              {item.paymentDate !== null ? "Betaald op" : "Betalen voor"}
+            </Title>
+            <Paragraph
+              style={[styles.paragraph, { color: itemInfo.textColor }]}
+            >
+              {item.paymentDate ? formattedPaymentDate : formattedDateExpired}
+            </Paragraph>
+          </View>
           {
             billSelected && (
               <View style={styles.overlay} />
             ) /*selection overlay */
           }
-          <Card.Content
-            backgroundColor="white"
-            style={{
-              flexDirection: "row",
-              borderBottomLeftRadius: 10,
-              borderBottomRightRadius: 10,
-            }}
-          >
-            <View style={styles.cardContentItem}>
-              <Title style={styles.title}>Bedrag</Title>
-              <Paragraph
-                style={[styles.paragraph, { color: itemInfo.textColor }]}
-              >{`€${item.billAmount}`}</Paragraph>
-            </View>
-            <View style={styles.cardContentItem}>
-              <Title style={styles.title}>Status</Title>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <Paragraph
-                  style={[
-                    styles.paragraph,
-                    {
-                      color: itemInfo.textColor,
-                    },
-                  ]}
-                >
-                  {itemInfo.statusText}
-                </Paragraph>
-                <MaterialCommunityIcons
-                  name={itemInfo.statusIcon}
-                  size={16}
-                  color={itemInfo.cardColor}
-                  style={{
-                    paddingLeft: 2,
-                    paddingTop: 2,
-                  }}
-                />
-              </View>
-            </View>
-            <View style={[styles.cardContentItem, { flex: 1.4 }]}>
-              <Title style={styles.title}>
-                {item.paymentDate !== null ? "Betaald op" : "Betalen voor"}
-              </Title>
-              <Paragraph
-                style={[styles.paragraph, { color: itemInfo.textColor }]}
-              >
-                {item.paymentDate ? formattedPaymentDate : formattedDateExpired}
-              </Paragraph>
-            </View>
-            {
-              billSelected && (
-                <View style={styles.overlay} />
-              ) /*selection overlay */
-            }
-          </Card.Content>
-        </Card>
-      </TouchableCmp>
-    </SwipeableView>
+        </Card.Content>
+      </Card>
+    </TouchableCmp>
   );
 };
 
@@ -193,5 +170,7 @@ export default memo(BillItem, (prevProps, nextProps) => {
     }
     return true;
   }
-  return prevProps.item === nextProps.item;
+  if (prevProps.item === nextProps.item) {
+    return true;
+  }
 });

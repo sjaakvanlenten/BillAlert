@@ -79,9 +79,9 @@ const BillsOverviewScreen = ({ bills, navigation, route }) => {
           }}
         >
           <CustomSearchbar
-            navigation={navigation}
             searchQuery={searchQuery}
             searchHandler={searchHandler}
+            onSearchPress={searchPressHandler}
             headerHeight={headerHeight}
           />
           <SortingMenu setBillsOrder={setBillsOrder} />
@@ -98,6 +98,19 @@ const BillsOverviewScreen = ({ bills, navigation, route }) => {
   const searchHandler = (query) => {
     setSearchQuery(query.trim().toLowerCase());
   };
+
+  const searchPressHandler = useCallback(
+    (searchPressed) => {
+      navigation.getParent().setOptions({
+        headerTitle: searchPressed ? "" : "Rekeningen",
+
+        headerTitleContainerStyle: {
+          marginHorizontal: searchPressed ? 0 : 10,
+        },
+      });
+    },
+    [navigation]
+  );
 
   /* Setting the order of the bills for the listData from SortingMenu */
   const setBillsOrder = useCallback(

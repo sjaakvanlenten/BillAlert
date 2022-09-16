@@ -16,6 +16,8 @@ import useAsyncStorage from "../hooks/useAsyncStorage";
 import useNotifications from "../hooks/useNotifications";
 import * as billsActions from "../store/actions/bills";
 
+import SwipeableView from "./UI/SwipeableView";
+
 const ITEM_HEIGHT = 150;
 
 const BillsList = ({
@@ -86,16 +88,21 @@ const BillsList = ({
     ({ item }) => {
       if (item.title.toLowerCase().includes(searchQuery)) {
         return (
-          <BillItem
-            item={item}
-            selectedBills={selectedBills}
-            handlePress={handlePress}
+          <SwipeableView
+            billItem={item}
             activeFilters={filters}
-            handleDeletePress={handleBillDeletion}
-            handlePayedPress={handleBillPayed}
+            onPayedPress={handleBillPayed}
+            onDeletePress={handleBillDeletion}
             simultaneousHandlers={listRef}
-            TouchableCmp={TouchableCmp}
-          />
+          >
+            <BillItem
+              item={item}
+              selectedBills={selectedBills}
+              handlePress={handlePress}
+              activeFilters={filters}
+              TouchableCmp={TouchableCmp}
+            />
+          </SwipeableView>
         );
       } else return null;
     },

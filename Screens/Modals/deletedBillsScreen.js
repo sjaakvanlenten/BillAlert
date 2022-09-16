@@ -30,7 +30,6 @@ import Colors from "../../constants/Colors";
 import { sortData } from "../../utils/transformData";
 
 const deletedBillsScreen = ({ navigation }) => {
-  const [searchPressed, setSearchPressed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [menuVisible, setMenuVisible] = useState(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
@@ -86,9 +85,18 @@ const deletedBillsScreen = ({ navigation }) => {
     [selectedBills]
   );
 
-  const setSearchPressHandler = useCallback(() => {
-    setSearchPressed((searchPressed) => !searchPressed);
-  }, [searchPressed]);
+  const searchPressHandler = useCallback(
+    (searchPressed) => {
+      navigation.setOptions({
+        headerTitle: searchPressed ? "" : "Prullenbak",
+
+        headerTitleContainerStyle: {
+          marginHorizontal: searchPressed ? 0 : 10,
+        },
+      });
+    },
+    [navigation]
+  );
 
   const searchHandler = (query) => {
     setSearchQuery(query.trim().toLowerCase());
@@ -127,8 +135,7 @@ const deletedBillsScreen = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
-        if (searchPressed || selectedBills.length > 0) {
-          setSearchPressed(false);
+        if (selectedBills.length > 0) {
           setSelectedBills([]);
           return true;
         } else {
@@ -140,12 +147,11 @@ const deletedBillsScreen = ({ navigation }) => {
 
       return () =>
         BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-    }, [searchPressed, selectedBills])
+    }, [selectedBills])
   );
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: !searchPressed ? "Prullenbak" : "",
       headerRight: () => (
         <View
           style={{
@@ -158,9 +164,9 @@ const deletedBillsScreen = ({ navigation }) => {
           }}
         >
           <CustomSearchbar
-            setSearchPressHandler={setSearchPressHandler}
+            searchQuery={searchQuery}
             searchHandler={searchHandler}
-            searchPressed={searchPressed}
+            onSearchPress={searchPressHandler}
             headerHeight={headerHeight}
           />
           {selectedBills.length < 1 ? (
@@ -210,7 +216,7 @@ const deletedBillsScreen = ({ navigation }) => {
         </View>
       ),
     });
-  }, [navigation, searchPressed, searchQuery, menuVisible, selectedBills]);
+  }, [navigation, searchQuery, menuVisible, selectedBills]);
 
   return (
     <View style={styles.screen}>

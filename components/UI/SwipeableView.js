@@ -31,36 +31,38 @@ const SwipeableView = ({
   const opacity = useSharedValue(1);
   const marginVertical = useSharedValue(15);
   const itemHeight = useSharedValue(LIST_ITEM_HEIGHT);
+  const swipeGesture = useAnimatedGestureHandler(
+    {
+      onStart: (_, context) => {
+        context.startX = translateX.value;
+      },
+      onActive: (event, context) => {
+        if (billItem.deletionDate) return;
 
-  const swipeGesture = useAnimatedGestureHandler({
-    onStart: (_, context) => {
-      context.startX = translateX.value;
+        if (billItem.paymentDate) {
+          translateX.value = Math.min(
+            Math.max(context.startX + event.translationX, -TRANSLATE_X_MAX),
+            0
+          );
+        } else {
+          translateX.value = Math.min(
+            Math.max(context.startX + event.translationX, -TRANSLATE_X_MAX),
+            TRANSLATE_X_MAX
+          );
+        }
+      },
+      onEnd: () => {
+        if (translateX.value > TRANSLATE_X_THRESHOLD) {
+          translateX.value = withTiming(TRANSLATE_X_MAX - 10);
+        } else if (translateX.value < -TRANSLATE_X_THRESHOLD) {
+          translateX.value = withTiming(-TRANSLATE_X_MAX + 10);
+        } else {
+          translateX.value = withTiming(0);
+        }
+      },
     },
-    onActive: (event, context) => {
-      if (billItem.deletionDate) return;
-
-      if (billItem.paymentDate) {
-        translateX.value = Math.min(
-          Math.max(context.startX + event.translationX, -TRANSLATE_X_MAX),
-          0
-        );
-      } else {
-        translateX.value = Math.min(
-          Math.max(context.startX + event.translationX, -TRANSLATE_X_MAX),
-          TRANSLATE_X_MAX
-        );
-      }
-    },
-    onEnd: () => {
-      if (translateX.value > TRANSLATE_X_THRESHOLD) {
-        translateX.value = withTiming(TRANSLATE_X_MAX - 10);
-      } else if (translateX.value < -TRANSLATE_X_THRESHOLD) {
-        translateX.value = withTiming(-TRANSLATE_X_MAX + 10);
-      } else {
-        translateX.value = withTiming(0);
-      }
-    },
-  });
+    []
+  );
 
   const handleDeletePress = () => {
     translateX.value = withTiming(-SCREEN_WIDTH);
@@ -110,7 +112,7 @@ const SwipeableView = ({
         : 1
     );
     return { opacity };
-  });
+  }, []);
 
   const rBillItemContainerStyle = useAnimatedStyle(() => {
     return {
@@ -118,7 +120,7 @@ const SwipeableView = ({
       marginVertical: marginVertical.value,
       opacity: opacity.value,
     };
-  });
+  }, []);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

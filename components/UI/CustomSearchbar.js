@@ -1,4 +1,4 @@
-import React, { useCallback, useLayoutEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { BackHandler, View } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { Searchbar } from "react-native-paper";
@@ -8,22 +8,12 @@ import HeaderButton from "./HeaderButton";
 import { useFocusEffect } from "@react-navigation/native";
 
 const CustomSearchbar = ({
-  navigation,
+  onSearchPress,
   searchHandler,
   headerHeight,
   searchQuery,
 }) => {
   const [searchPressed, setSearchPressed] = useState(false);
-
-  useLayoutEffect(() => {
-    navigation.getParent().setOptions({
-      headerTitle: searchPressed ? "" : "Rekeningen",
-
-      headerTitleContainerStyle: {
-        marginHorizontal: searchPressed ? 0 : 10,
-      },
-    });
-  }, [searchPressed, navigation]);
 
   useFocusEffect(
     useCallback(() => {
@@ -42,6 +32,10 @@ const CustomSearchbar = ({
         BackHandler.removeEventListener("hardwareBackPress", onBackPress);
     }, [searchPressed])
   );
+
+  useEffect(() => {
+    onSearchPress(searchPressed);
+  }, [searchPressed]);
 
   return (
     <View style={{ flex: searchPressed ? 1 : 0 }}>
