@@ -13,3 +13,12 @@
 - Redux - version 4
 
 ## Screenshots
+
+<p float="left">
+<img src="./screenshots/Main.png" width="270" height="480">
+<img src="./screenshots/Menu.png" width="270" height="480">
+<img src="./screenshots/Input.png" width="270" height="480">
+</p>
+<p float="left">
+<img src="./screenshots/Details.png" width="270" height="480">
+</p>
