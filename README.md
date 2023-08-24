@@ -15,10 +15,10 @@
 ## Screenshots
 
 <p float="left">
-<img src="./screenshots/Main.jpg" width="270" height="480">
-<img src="./screenshots/Menu.jpg" width="270" height="480">
-<img src="./screenshots/Input.jpg" width="270" height="480">
+<img src="./screenshots/Main.jpg" width="270" height="540">
+<img src="./screenshots/Menu.jpg" width="270" height="540">
+<img src="./screenshots/Input.jpg" width="270" height="540">
 </p>
 <p float="left">
-<img src="./screenshots/Details.jpg" width="270" height="480">
+<img src="./screenshots/Details.jpg" width="270" height="540">
 </p>
