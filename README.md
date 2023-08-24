@@ -16,6 +16,9 @@
 
 <p float="left">
 <img src="./screenshots/Main.jpg" width="270" height="540">
+  <p align="center">
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</p>
 <img src="./screenshots/Menu.jpg" width="270" height="540">
 <img src="./screenshots/Input.jpg" width="270" height="540">
 </p>
