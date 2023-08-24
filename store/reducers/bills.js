@@ -65,20 +65,9 @@ const billsReducer = (state = initialState, action) => {
       billIndex = state.bills.findIndex(
         (bill) => bill.id === action.billData.billId
       );
-      const billUpdatedWithPayment = new Bill(
-        state.bills[billIndex].id,
-        state.bills[billIndex].title,
-        state.bills[billIndex].receiver,
-        state.bills[billIndex].dateCreated,
-        state.bills[billIndex].dateExpiry,
-        state.bills[billIndex].billAmount,
-        state.bills[billIndex].IBANo,
-        state.bills[billIndex].reference,
-        action.billData.datePayed,
-        null
-      );
+
       const BillsCopy = [...state.bills];
-      BillsCopy[billIndex] = billUpdatedWithPayment;
+      BillsCopy[billIndex]["paymentDate"] = action.billData.datePayed;
       return {
         ...state,
         bills: BillsCopy,
