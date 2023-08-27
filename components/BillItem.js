@@ -33,10 +33,8 @@ const BillItem = ({ item, selectedBills, handlePress, TouchableCmp }) => {
           subtitle={formattedDateCreated}
           style={{
             backgroundColor: itemInfo.cardColor,
-            marginBottom: 5,
             borderTopLeftRadius: 10,
             borderTopRightRadius: 10,
-            minHeight: 60,
             paddingRight: 16,
           }}
           titleStyle={{
@@ -69,6 +67,7 @@ const BillItem = ({ item, selectedBills, handlePress, TouchableCmp }) => {
             flexDirection: "row",
             borderBottomLeftRadius: 10,
             borderBottomRightRadius: 10,
+            paddingBottom: 100,
           }}
         >
           <View style={styles.cardContentItem}>

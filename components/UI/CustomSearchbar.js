@@ -54,9 +54,10 @@ const CustomSearchbar = ({
           style={{
             borderRadius: 25,
             marginRight: 10,
-            height: 0.44 * headerHeight,
+            height: headerHeight * 0.43,
+            minHeight: 34,
           }}
-          inputStyle={{ padding: 0 }}
+          inputStyle={{ minHeight: 0 }}
           placeholder="Zoeken"
           onChangeText={(query) => {
             searchHandler(query);

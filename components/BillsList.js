@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
+import { FlashList } from "@shopify/flash-list";
 import * as Haptics from "expo-haptics";
 
 import { shouldShowBillItem } from "../utils/billUtils";
@@ -109,24 +109,15 @@ const BillsList = ({
     [filters, searchQuery, selectedBills]
   );
 
-  const keyExtractor = useCallback((item) => item.id.toString(), []);
-
-  const getItemLayout = (data, index) => ({
-    length: ITEM_HEIGHT,
-    offset: ITEM_HEIGHT * index,
-    index,
-  });
-
   return (
     <View style={{ backgroundColor: "#fff", flex: 1 }}>
-      <FlatList
+      <FlashList
         ref={listRef}
         windowSize={15}
         maxToRenderPerBatch={8}
         initialNumToRender={5}
-        getItemLayout={getItemLayout}
+        estimatedItemSize={ITEM_HEIGHT}
         data={filters ? filteredListData : listData}
-        keyExtractor={keyExtractor}
         renderItem={renderBillItem}
       />
     </View>

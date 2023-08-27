@@ -496,7 +496,7 @@ const BillsManualInputScreen = ({ navigation, route }) => {
           <IconButton
             style={{ top: 10, marginLeft: 15 }}
             icon="calendar"
-            color={Colors.primary}
+            iconColor={Colors.primary}
             size={34}
             onPress={showDatepicker}
           />
@@ -513,7 +513,7 @@ const BillsManualInputScreen = ({ navigation, route }) => {
           mode="contained"
           disabled={!formState.formIsValid}
           onPress={submitHandler}
-          color={Colors.primary}
+          buttonColor={Colors.primary}
           style={{ borderRadius: 50 }}
           contentStyle={{ paddingVertical: 5, paddingHorizontal: 15 }}
           uppercase={false}

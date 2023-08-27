@@ -182,9 +182,11 @@ const BillsOverviewScreen = ({ bills, navigation, route }) => {
           right: 0,
           bottom: snackBarVisible ? 62 : 0,
           backgroundColor: Colors.primary,
-          transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }],
+          borderRadius: 64 / 2,
         }}
         icon="plus"
+        color="white"
+        customSize={64}
         onPress={() => navigation.navigate("ManualInput")}
       />
       <Snackbar
