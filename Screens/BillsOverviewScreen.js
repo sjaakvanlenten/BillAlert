@@ -7,9 +7,18 @@ import React, {
 } from "react";
 import { View, Platform } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import * as Battery from "expo-battery";
+import { openSettings } from "expo-linking";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { connect, useDispatch } from "react-redux";
-import { FAB, Snackbar } from "react-native-paper";
+import {
+  FAB,
+  Snackbar,
+  Dialog,
+  Portal,
+  Paragraph,
+  Button,
+} from "react-native-paper";
 import moment from "moment";
 
 import * as billsActions from "../store/actions/bills";
@@ -22,9 +31,11 @@ import InfoBar from "../components/InfoBar";
 import CustomSearchbar from "../components/UI/CustomSearchbar";
 import { sortData } from "../utils/transformData";
 import Colors from "../constants/Colors";
+import useAsyncStorage from "../hooks/useAsyncStorage";
 
 const BillsOverviewScreen = ({ bills, navigation, route }) => {
   const { scheduleNotifications } = useNotifications();
+  const { settings, storeSettings } = useAsyncStorage();
   const headerHeight = useHeaderHeight();
   const dispatch = useDispatch();
 
@@ -39,9 +50,29 @@ const BillsOverviewScreen = ({ bills, navigation, route }) => {
   const [monthFilter, setMonthFilter] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [snackBarVisible, setSnackbarVisible] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
 
   const showSnackBar = () => setSnackbarVisible(true);
   const onDismissSnackBar = () => setSnackbarVisible(false);
+
+  useEffect(() => {
+    const checkAndPromptBatteryOptimization = async () => {
+      if (
+        Platform.OS === "android" &&
+        settings.battery_optimization_alert_send === false
+      ) {
+        const isBatteryOptimizationEnabled =
+          await Battery.isBatteryOptimizationEnabledAsync();
+
+        if (isBatteryOptimizationEnabled) {
+          setShowDialog(true);
+          storeSettings({ ...settings, battery_optimization_alert_send: true });
+        }
+      }
+    };
+
+    checkAndPromptBatteryOptimization();
+  }, [settings]);
 
   /*Show snackbar when bill is deleted */
   useEffect(() => {
@@ -96,7 +127,7 @@ const BillsOverviewScreen = ({ bills, navigation, route }) => {
   }, [navigation, filters, searchQuery]);
 
   const searchHandler = (query) => {
-    setSearchQuery(query.trim().toLowerCase());
+    setSearchQuery(query);
   };
 
   const searchPressHandler = useCallback(
@@ -208,6 +239,33 @@ const BillsOverviewScreen = ({ bills, navigation, route }) => {
       >
         {`"${route.params?.title}" is naar de prullenbak verplaatst.`}
       </Snackbar>
+      <Portal>
+        <Dialog visible={showDialog} onDismiss={() => setShowDialog(false)}>
+          <Dialog.Content>
+            <Paragraph
+              style={{ fontFamily: "montserrat-regular", fontSize: 16 }}
+            >
+              Schakel batterijoptimalisatie uit voor optimale meldingen.
+            </Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions
+            style={{
+              justifyContent: "center",
+              paddingHorizontal: 45,
+            }}
+          >
+            <Button
+              textColor={Colors.primary}
+              onPress={() => {
+                openSettings();
+                setShowDialog(false);
+              }}
+            >
+              OK
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
       {Platform.OS === "ios" && <StatusBar style="light" />}
     </View>
   );

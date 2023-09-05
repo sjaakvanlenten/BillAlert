@@ -5,6 +5,7 @@ import React, {
   useCallback,
 } from "react";
 import { StyleSheet, View, Platform, BackHandler } from "react-native";
+import * as Battery from "expo-battery";
 import { useSelector } from "react-redux";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import {
@@ -27,6 +28,7 @@ import _ from "lodash";
 import useAsyncStorage from "../../hooks/useAsyncStorage";
 import useNotifications from "../../hooks/useNotifications";
 import Colors from "../../constants/Colors";
+import { openSettings } from "expo-linking";
 
 const ENABLE_NOTIFICATION = "ENABLE_NOTIFICATION";
 const WHEN_START_NOTIFICATION = "WHEN_START_NOTIFICATION";
@@ -76,6 +78,7 @@ const SettingsScreen = () => {
   const navigation = useNavigation();
   const { settings, storeSettings } = useAsyncStorage();
   const [timePicker, setTimePicker] = useState(false);
+  const [showBatteryAlertDialog, setShowBatteryAlertDialog] = useState(false);
   const { cancelAllScheduledNotifications, scheduleNotifications } =
     useNotifications();
   const [notificationsDialogVisible, setNotificationsDialogVisible] =
@@ -141,9 +144,16 @@ const SettingsScreen = () => {
   const hideIosTimePicker = () => setIosTimePickerVisible(false);
 
   const notificationsToggleSwitch = () => {
-    settingsState.push_notifications.isEnabled
-      ? showNotificationsDialog()
-      : dispatch({ type: ENABLE_NOTIFICATION });
+    if (settingsState.push_notifications.isEnabled) {
+      showNotificationsDialog();
+    } else {
+      dispatch({ type: ENABLE_NOTIFICATION });
+      Battery.isBatteryOptimizationEnabledAsync().then(
+        (isBatteryOptimizationEnabled) => {
+          if (isBatteryOptimizationEnabled) setShowBatteryAlertDialog(true);
+        }
+      );
+    }
   };
 
   const submitSettings = () => {
@@ -344,13 +354,13 @@ const SettingsScreen = () => {
             style={{ justifyContent: "space-between", paddingHorizontal: 45 }}
           >
             <Button
-              buttonColor={Colors.primary}
+              textColor={Colors.primary}
               onPress={() => hideNotificationsDialog()}
             >
               Annuleren
             </Button>
             <Button
-              buttonColor={Colors.primary}
+              textColor={Colors.primary}
               onPress={() => {
                 dispatch({ type: ENABLE_NOTIFICATION });
                 hideNotificationsDialog();
@@ -398,6 +408,36 @@ const SettingsScreen = () => {
               }}
             >
               Ok
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+      <Portal>
+        <Dialog
+          visible={showBatteryAlertDialog}
+          onDismiss={() => setShowBatteryAlertDialog(false)}
+        >
+          <Dialog.Content>
+            <Paragraph
+              style={{ fontFamily: "montserrat-regular", fontSize: 16 }}
+            >
+              Schakel batterijoptimalisatie uit voor optimale meldingen.
+            </Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions
+            style={{
+              justifyContent: "center",
+              paddingHorizontal: 45,
+            }}
+          >
+            <Button
+              textColor={Colors.primary}
+              onPress={() => {
+                openSettings();
+                setShowBatteryAlertDialog(false);
+              }}
+            >
+              OK
             </Button>
           </Dialog.Actions>
         </Dialog>

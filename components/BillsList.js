@@ -86,7 +86,8 @@ const BillsList = ({
 
   const renderBillItem = useCallback(
     ({ item }) => {
-      if (item.title.toLowerCase().includes(searchQuery)) {
+      console.log(searchQuery);
+      if (item.title.toLowerCase().includes(searchQuery.trim().toLowerCase())) {
         return (
           <SwipeableView
             billItem={item}
@@ -119,6 +120,7 @@ const BillsList = ({
         estimatedItemSize={ITEM_HEIGHT}
         data={filters ? filteredListData : listData}
         renderItem={renderBillItem}
+        extraData={searchQuery}
       />
     </View>
   );

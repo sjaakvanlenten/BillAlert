@@ -99,7 +99,7 @@ const deletedBillsScreen = ({ navigation }) => {
   );
 
   const searchHandler = (query) => {
-    setSearchQuery(query.trim().toLowerCase());
+    setSearchQuery(query);
   };
 
   const deleteHandler = (selectAll = false) => {
@@ -264,11 +264,11 @@ const deletedBillsScreen = ({ navigation }) => {
                   paddingHorizontal: 45,
                 }}
               >
-                <Button color={Colors.primary} onPress={hideDeleteDialog}>
+                <Button textColor={Colors.primary} onPress={hideDeleteDialog}>
                   Annuleren
                 </Button>
                 <Button
-                  color={Colors.primary}
+                  textColor={Colors.primary}
                   onPress={() => {
                     selectedBills.length > 0
                       ? deleteHandler()
@@ -295,10 +295,10 @@ const deletedBillsScreen = ({ navigation }) => {
                   paddingHorizontal: 45,
                 }}
               >
-                <Button color={Colors.primary} onPress={hideRevertDialog}>
+                <Button textColor={Colors.primary} onPress={hideRevertDialog}>
                   Annuleren
                 </Button>
-                <Button color={Colors.primary} onPress={revertHandler}>
+                <Button textColor={Colors.primary} onPress={revertHandler}>
                   Terugplaatsen
                 </Button>
               </Dialog.Actions>
